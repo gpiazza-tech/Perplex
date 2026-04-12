@@ -1,4 +1,4 @@
-workspace "Holloware"
+workspace "Perplex"
     architecture "x64"
 
     configurations
@@ -11,25 +11,25 @@ workspace "Holloware"
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
-IncludeDir["GLFW"] = "Holloware/vendor/GLFW/include"
-IncludeDir["Glad"] = "Holloware/vendor/Glad/include"
-IncludeDir["ImGui"] = "Holloware/vendor/imgui"
-IncludeDir["glm"] = "Holloware/vendor/glm"
-IncludeDir["stb_image"] = "Holloware/vendor/stb_image"
-IncludeDir["entt"] = "Holloware/vendor/entt/include"
-IncludeDir["nlohmann_json"] = "Holloware/vendor/nlohmann_json/include"
-IncludeDir["tcc"] = "Holloware/vendor/tcc/win32/libtcc"
-IncludeDir["efsw"] = "Holloware/vendor/efsw/include"
+IncludeDir["GLFW"] = "PerplexCore/vendor/GLFW/include"
+IncludeDir["Glad"] = "PerplexCore/vendor/Glad/include"
+IncludeDir["ImGui"] = "PerplexCore/vendor/imgui"
+IncludeDir["glm"] = "PerplexCore/vendor/glm"
+IncludeDir["stb_image"] = "PerplexCore/vendor/stb_image"
+IncludeDir["entt"] = "PerplexCore/vendor/entt/include"
+IncludeDir["nlohmann_json"] = "PerplexCore/vendor/nlohmann_json/include"
+IncludeDir["tcc"] = "PerplexCore/vendor/tcc/win32/libtcc"
+IncludeDir["efsw"] = "PerplexCore/vendor/efsw/include"
 
 group "Dependencies"
-    include "Holloware/vendor/GLFW"
-    include "Holloware/vendor/Glad"
-    include "Holloware/vendor/imgui"
-    include "Holloware/vendor/efsw"
+    include "PerplexCore/vendor/GLFW"
+    include "PerplexCore/vendor/Glad"
+    include "PerplexCore/vendor/imgui"
+    include "PerplexCore/vendor/efsw"
 group ""
 
-project "Holloware"
-    location "Holloware"
+project "PerplexCore"
+    location "PerplexCore"
     kind "StaticLib"
     language "C++"
     cppdialect "C++17"
@@ -40,7 +40,7 @@ project "Holloware"
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
     pchheader "pch.h"
-    pchsource "Holloware/src/pch.cpp"
+    pchsource "PerplexCore/src/pch.cpp"
 
     files
     {
@@ -67,8 +67,8 @@ project "Holloware"
 
     libdirs 
     {
-        "Holloware/vendor/tcc/bin/Debug-windows-x86_64/tcc",
-        "Holloware/vendor/efsw/bin/Debug-windows-x86_64/efsw"
+        "PerplexCore/vendor/tcc/bin/Debug-windows-x86_64/tcc",
+        "PerplexCore/vendor/efsw/bin/Debug-windows-x86_64/efsw"
     }
 
     links
@@ -111,8 +111,8 @@ project "Holloware"
         runtime "Release"
         optimize "on"
 
-project "Holloware-Editor"
-    location "Holloware-Editor"
+project "PerplexEditor"
+    location "PerplexEditor"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++17"
@@ -130,9 +130,9 @@ project "Holloware-Editor"
 
     includedirs
     {
-        "Holloware/vendor/spdlog/include",
-        "Holloware/src",
-        "Holloware/vendor",
+        "PerplexCore/vendor/spdlog/include",
+        "PerplexCore/src",
+        "PerplexCore/vendor",
         "%{IncludeDir.glm}",
         "%{IncludeDir.entt}",
         "%{IncludeDir.nlohmann_json}",
@@ -141,13 +141,13 @@ project "Holloware-Editor"
 
     libdirs 
     { 
-        "Holloware/vendor/tcc/bin/Debug-windows-x86_64/tcc",
-        "Holloware/vendor/efsw/bin/Debug-windows-x86_64/efsw"
+        "PerplexCore/vendor/tcc/bin/Debug-windows-x86_64/tcc",
+        "PerplexCore/vendor/efsw/bin/Debug-windows-x86_64/efsw"
     }
 
     links
     {
-        "Holloware",
+        "PerplexCore",
         "efsw-static-debug",
         "tcc"
     }
@@ -180,8 +180,8 @@ project "Holloware-Editor"
         runtime "Release"
         optimize "on"
 
-project "Sandbox"
-    location "Sandbox"
+project "PerplexRuntime"
+    location "PerplexRuntime"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++17"
@@ -199,9 +199,9 @@ project "Sandbox"
 
     includedirs
     {
-        "Holloware/vendor/spdlog/include",
-        "Holloware/src",
-        "Holloware/vendor",
+        "PerplexCore/vendor/spdlog/include",
+        "PerplexCore/src",
+        "PerplexCore/vendor",
         "%{IncludeDir.glm}",
         "%{IncludeDir.entt}",
         "%{IncludeDir.nlohmann_json}",
@@ -211,7 +211,7 @@ project "Sandbox"
 
     links
     {
-        "Holloware"
+        "PerplexCore"
     }
 
     buildoptions

@@ -1,0 +1,402 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Holloware">
+      <UniqueIdentifier>{6954FCE2-D514-7819-9E4F-C1960ACFBCF5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Holloware\Assets">
+      <UniqueIdentifier>{2B6B4872-17FA-D13B-C018-E636AC86E2E1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Holloware\Core">
+      <UniqueIdentifier>{61A2370A-4D86-F85F-B6E6-F2B2A2E9E2E1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Holloware\Debug">
+      <UniqueIdentifier>{9F493851-0BAB-155F-9418-5C1100794C1E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Holloware\Events">
+      <UniqueIdentifier>{2DD0CB7B-195F-5545-C27D-6940AEEB65EB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Holloware\ImGui">
+      <UniqueIdentifier>{53B49651-BF15-745F-4883-BA11B4E3AA1E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Holloware\Renderer">
+      <UniqueIdentifier>{2F9EFB94-1B98-24E7-0405-BBF7F09D8A53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Holloware\Scene">
+      <UniqueIdentifier>{46AC4652-B20D-2460-3B7B-6A12A7DB5A1F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Holloware\Scripting">
+      <UniqueIdentifier>{AB20C310-1758-0BA8-2062-6FCB8C1832A1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Holloware\Serialization">
+      <UniqueIdentifier>{B6B0C951-22BE-F737-ABA4-F32217B1C3EE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Platform">
+      <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Platform\OpenGL">
+      <UniqueIdentifier>{35A49437-A105-7245-2A73-B8F796D3A804}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Platform\Windows">
+      <UniqueIdentifier>{5B054582-4794-CE4B-F0B2-E246DC20DFF1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor">
+      <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\stb_image">
+      <UniqueIdentifier>{0DA0BA59-F998-D9AB-22CB-BE300E23B9B7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Holloware.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Assets\Asset.h">
+      <Filter>src\Holloware\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Assets\AssetImporter.h">
+      <Filter>src\Holloware\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Assets\AssetManager.h">
+      <Filter>src\Holloware\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Assets\AssetType.h">
+      <Filter>src\Holloware\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Assets\AssetUpdateListener.h">
+      <Filter>src\Holloware\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Assets\SceneAssetImporter.h">
+      <Filter>src\Holloware\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Assets\ScriptAssetImporter.h">
+      <Filter>src\Holloware\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Assets\TextureAssetImporter.h">
+      <Filter>src\Holloware\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Core\Application.h">
+      <Filter>src\Holloware\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Core\Core.h">
+      <Filter>src\Holloware\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Core\EntryPoint.h">
+      <Filter>src\Holloware\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Core\HollowareObject.h">
+      <Filter>src\Holloware\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Core\HollowareTypes.h">
+      <Filter>src\Holloware\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Core\Input.h">
+      <Filter>src\Holloware\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Core\KeyCodes.h">
+      <Filter>src\Holloware\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Core\Layer.h">
+      <Filter>src\Holloware\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Core\LayerStack.h">
+      <Filter>src\Holloware\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Core\Log.h">
+      <Filter>src\Holloware\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Core\MouseButtonCodes.h">
+      <Filter>src\Holloware\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Core\Project.h">
+      <Filter>src\Holloware\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Core\Timestep.h">
+      <Filter>src\Holloware\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Core\UUID.h">
+      <Filter>src\Holloware\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Core\Window.h">
+      <Filter>src\Holloware\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Debug\Instrumentor.h">
+      <Filter>src\Holloware\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Events\ApplicationEvent.h">
+      <Filter>src\Holloware\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Events\Event.h">
+      <Filter>src\Holloware\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Events\KeyEvent.h">
+      <Filter>src\Holloware\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Events\MouseEvent.h">
+      <Filter>src\Holloware\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\ImGui\Drawer.h">
+      <Filter>src\Holloware\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\ImGui\ImGuiLayer.h">
+      <Filter>src\Holloware\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\ImGui\ImGuiUtilities.h">
+      <Filter>src\Holloware\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Renderer\Buffer.h">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Renderer\Camera.h">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Renderer\Framebuffer.h">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Renderer\GameObject.h">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Renderer\GraphicsContext.h">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Renderer\OrthographicCamera.h">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Renderer\RenderCommand.h">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Renderer\Renderer.h">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Renderer\Renderer2D.h">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Renderer\RendererAPI.h">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Renderer\Shader.h">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Renderer\SubTexture2D.h">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Renderer\Texture.h">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Renderer\VertexArray.h">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Scene\Components.h">
+      <Filter>src\Holloware\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Scene\EditorCamera.h">
+      <Filter>src\Holloware\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Scene\Entity.h">
+      <Filter>src\Holloware\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Scene\Scene.h">
+      <Filter>src\Holloware\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Scene\SceneCamera.h">
+      <Filter>src\Holloware\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Scene\SceneSerializer.h">
+      <Filter>src\Holloware\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Scene\SerializableValue.h">
+      <Filter>src\Holloware\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Scripting\Interpreter.h">
+      <Filter>src\Holloware\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Scripting\ScriptData.h">
+      <Filter>src\Holloware\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Scripting\ScriptInstance.h">
+      <Filter>src\Holloware\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Scripting\ScriptProperty.h">
+      <Filter>src\Holloware\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Holloware\Serialization\Json.h">
+      <Filter>src\Holloware\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
+      <Filter>src\Platform\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pch.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\stb_image\stb_image.h">
+      <Filter>vendor\stb_image</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Holloware\Assets\Asset.cpp">
+      <Filter>src\Holloware\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Assets\AssetImporter.cpp">
+      <Filter>src\Holloware\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Assets\AssetManager.cpp">
+      <Filter>src\Holloware\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Assets\SceneAssetImporter.cpp">
+      <Filter>src\Holloware\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Assets\ScriptAssetImporter.cpp">
+      <Filter>src\Holloware\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Assets\TextureAssetImporter.cpp">
+      <Filter>src\Holloware\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Core\Application.cpp">
+      <Filter>src\Holloware\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Core\Layer.cpp">
+      <Filter>src\Holloware\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Core\LayerStack.cpp">
+      <Filter>src\Holloware\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Core\Log.cpp">
+      <Filter>src\Holloware\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Core\UUID.cpp">
+      <Filter>src\Holloware\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\ImGui\Drawer.cpp">
+      <Filter>src\Holloware\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\ImGui\ImGuiBuild.cpp">
+      <Filter>src\Holloware\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\ImGui\ImGuiLayer.cpp">
+      <Filter>src\Holloware\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\ImGui\ImGuiUtilities.cpp">
+      <Filter>src\Holloware\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Renderer\Buffer.cpp">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Renderer\Framebuffer.cpp">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Renderer\GameObject.cpp">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Renderer\OrthographicCamera.cpp">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Renderer\RenderCommand.cpp">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Renderer\Renderer.cpp">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Renderer\Renderer2D.cpp">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Renderer\RendererAPI.cpp">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Renderer\Shader.cpp">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Renderer\SubTexture2D.cpp">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Renderer\Texture.cpp">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Renderer\VertexArray.cpp">
+      <Filter>src\Holloware\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Scene\EditorCamera.cpp">
+      <Filter>src\Holloware\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Scene\Entity.cpp">
+      <Filter>src\Holloware\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Scene\Scene.cpp">
+      <Filter>src\Holloware\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Scene\SceneCamera.cpp">
+      <Filter>src\Holloware\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Scene\SceneSerializer.cpp">
+      <Filter>src\Holloware\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Scripting\Interpreter.cpp">
+      <Filter>src\Holloware\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Scripting\ScriptInstance.cpp">
+      <Filter>src\Holloware\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Scripting\ScriptProperty.cpp">
+      <Filter>src\Holloware\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Holloware\Serialization\Json.cpp">
+      <Filter>src\Holloware\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
+      <Filter>src\Platform\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
+      <Filter>src\Platform\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pch.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\stb_image\stb_image.cpp">
+      <Filter>vendor\stb_image</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -1,8 +1,22 @@
 # Directories
 .vs/
-bin/
-bin-int/
-Sandbox/profiling
+
+# build folders
+**/bin/*
+**/bin-int/*
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+
+**/profiling
 
 # Files
 *.user

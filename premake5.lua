@@ -26,6 +26,7 @@ group "Dependencies"
     include "PerplexCore/vendor/Glad"
     include "PerplexCore/vendor/imgui"
     include "PerplexCore/vendor/efsw"
+    include "PerplexCore/vendor/tcc"
 group ""
 
 project "PerplexCore"
@@ -65,19 +66,13 @@ project "PerplexCore"
         "%{IncludeDir.efsw}",
     }
 
-    libdirs 
-    {
-        "PerplexCore/vendor/tcc/bin/Debug-windows-x86_64/tcc",
-        "PerplexCore/vendor/efsw/bin/Debug-windows-x86_64/efsw"
-    }
-
     links
     {
         "GLFW",
         "Glad",
         "ImGui",
         "opengl32.lib",
-        "efsw-static-debug",
+        "efsw",
         "tcc"
     }
 
@@ -139,16 +134,10 @@ project "PerplexEditor"
         "%{IncludeDir.tcc}",
     }
 
-    libdirs 
-    { 
-        "PerplexCore/vendor/tcc/bin/Debug-windows-x86_64/tcc",
-        "PerplexCore/vendor/efsw/bin/Debug-windows-x86_64/efsw"
-    }
-
     links
     {
         "PerplexCore",
-        "efsw-static-debug",
+        "efsw",
         "tcc"
     }
 

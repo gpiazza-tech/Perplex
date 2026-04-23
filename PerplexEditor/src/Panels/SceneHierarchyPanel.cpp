@@ -11,12 +11,14 @@
 namespace Holloware
 {
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
+		: m_SelectionContext(0)
 	{
 		SetContext(scene);
 	}
 	void SceneHierarchyPanel::SetContext(const Ref<Scene>& context)
 	{
 		m_Context = context;
+		m_SelectionContext.clear();
 	}
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
@@ -37,7 +39,7 @@ namespace Holloware
 		}
 
 		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
-			m_SelectionContext = {};
+			m_SelectionContext.clear();
 		
 		// Right-click on blank space
 		if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
@@ -46,6 +48,8 @@ namespace Holloware
 				m_Context->CreateEntity("Entity");
 			if (ImGui::MenuItem("Create Abstract Entity"))
 				m_Context->CreateAbstractEntity("Abstract Entity");
+			if (m_Clipboard.size() > 0 && ImGui::MenuItem("Paste"))
+				m_Context->CopyEntity(m_Clipboard[0]);
 
 			ImGui::EndPopup();
 		}
@@ -53,36 +57,38 @@ namespace Holloware
 		ImGui::End();
 
 		ImGui::Begin("Properties");
-		if (m_SelectionContext)
+		if (m_SelectionContext.size() == 1)
 		{
-			DrawComponents(m_SelectionContext);
+			Entity& selection = m_SelectionContext[0];
+
+			DrawComponents(selection);
 
 			if (ImGui::Button("Add Component"))
 				ImGui::OpenPopup("AddComponent");
 
 			if (ImGui::BeginPopup("AddComponent"))
 			{
-				if (!m_SelectionContext.HasComponent<TransformComponent>() && ImGui::MenuItem("Transform"))
+				if (!selection.HasComponent<TransformComponent>() && ImGui::MenuItem("Transform"))
 				{
-					m_SelectionContext.AddComponent<TransformComponent>();
+					selection.AddComponent<TransformComponent>();
 					ImGui::CloseCurrentPopup();
 				}
 
-				if (!m_SelectionContext.HasComponent<CameraComponent>() && ImGui::MenuItem("Camera"))
+				if (!selection.HasComponent<CameraComponent>() && ImGui::MenuItem("Camera"))
 				{
-					m_SelectionContext.AddComponent<CameraComponent>();
+					selection.AddComponent<CameraComponent>();
 					ImGui::CloseCurrentPopup();
 				}
 
-				if (!m_SelectionContext.HasComponent<SpriteRendererComponent>() && ImGui::MenuItem("Sprite Renderer"))
+				if (!selection.HasComponent<SpriteRendererComponent>() && ImGui::MenuItem("Sprite Renderer"))
 				{
-					m_SelectionContext.AddComponent<SpriteRendererComponent>();
+					selection.AddComponent<SpriteRendererComponent>();
 					ImGui::CloseCurrentPopup();
 				}
 
-				if (!m_SelectionContext.HasComponent<ScriptComponent>() && ImGui::MenuItem("Script"))
+				if (!selection.HasComponent<ScriptComponent>() && ImGui::MenuItem("Script"))
 				{
-					m_SelectionContext.AddComponent<ScriptComponent>();
+					selection.AddComponent<ScriptComponent>();
 					ImGui::CloseCurrentPopup();
 				}
 
@@ -94,18 +100,23 @@ namespace Holloware
 
 	void SceneHierarchyPanel::SetSelectedEntity(Entity entity)
 	{
-		m_SelectionContext = entity;
+		m_SelectionContext.resize(1);
+		m_SelectionContext[0] = entity;
 	}
 
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
 	{
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 
-		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
+		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
+		for (auto& selection : m_SelectionContext)
+			if (selection == entity)
+				flags |= ImGuiTreeNodeFlags_Selected;
+
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
-		if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(0))
+		if (ImGui::IsItemHovered() && (ImGui::IsMouseReleased(0) || ImGui::IsMouseReleased(1))) // selects on both left and right click
 		{
-			m_SelectionContext = entity;
+			SetSelectedEntity(entity);
 		}
 
 		if (ImGui::BeginDragDropSource())
@@ -114,11 +125,13 @@ namespace Holloware
 			ImGui::EndDragDropSource();
 		}
 		
-		bool entityDeleted = false;
+		bool deleteEntity = false;
 		if (ImGui::BeginPopupContextItem())
 		{
-			if (ImGui::MenuItem("Delete Entity"))
-				entityDeleted = true;
+			if (ImGui::MenuItem("Delete"))
+				deleteEntity = true;
+			if (ImGui::MenuItem("Copy"))
+				m_Clipboard = m_SelectionContext;
 
 			ImGui::EndPopup();
 		}
@@ -129,11 +142,11 @@ namespace Holloware
 			ImGui::TreePop();
 		}
 
-		if (entityDeleted)
+		if (deleteEntity)
 		{
 			m_Context->DestroyEntity(entity);
-			if (m_SelectionContext == entity)
-				m_SelectionContext = {};
+			if (m_SelectionContext[0] == entity)
+				m_SelectionContext.erase(m_SelectionContext.begin());
 		}
 	}
 
@@ -177,20 +190,12 @@ namespace Holloware
 	{
 		if (entity.HasComponent<T>())
 		{
-			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(4, 4));
-
 			bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowOverlap, name);
-			ImGui::SameLine(ImGui::GetWindowWidth() - 25.0f);
-			if (ImGui::Button("+", ImVec2(20, 20)))
-			{
-				ImGui::OpenPopup(name);
-			}
-			ImGui::PopStyleVar();
-
 			bool removeComponent = false;
-			if (ImGui::BeginPopup(name))
+
+			if (ImGui::BeginPopupContextItem())
 			{
-				if (ImGui::MenuItem("Remove Component"))
+				if (ImGui::MenuItem("Remove"))
 					removeComponent = true;
 
 				ImGui::EndPopup();

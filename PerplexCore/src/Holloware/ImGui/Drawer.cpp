@@ -2,8 +2,11 @@
 #include "Drawer.h"
 
 #include "Holloware/Core/Core.h"
+#include "Holloware/Core/Log.h"
 #include "Holloware/Core/HollowareTypes.h"
 #include "Holloware/Core/HollowareObject.h"
+#include <Holloware/Assets/Asset.h>
+#include <Holloware/Assets/AssetType.h>
 
 #include <imgui.h>
 #include <glm/fwd.hpp>
@@ -60,5 +63,60 @@ namespace Holloware
 	void Drawer::Draw(HollowareObject* value)
 	{
 		value->DrawGui();
+	}
+
+	bool Drawer::DrawAssetField(const char* label, Asset& asset, AssetType type)
+	{
+		ImGui::PushID(&asset);
+
+		std::string valueLabel = !asset ? "<none>" : asset.GetName().string();
+		ImGui::Button(valueLabel.c_str(), { 200, 20 });
+
+		bool reset = false;
+		if (ImGui::BeginPopupContextItem())
+		{
+			if (ImGui::MenuItem("Reset"))
+				reset = true;
+			ImGui::EndPopup();
+		}
+
+		bool changed = false;
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+			{
+				Asset* payloadAsset = (Asset*)payload->Data;
+				if (!payloadAsset)
+				{
+					HW_CORE_WARN("File is not a valid Perplex Asset!");
+				}
+				else if (payloadAsset->GetType() != type)
+				{
+					HW_CORE_WARN("{0} does not match the field's asset type!", payloadAsset->GetName().string());
+				}
+				else
+				{
+					const std::string& pathString = payloadAsset->GetName().string();
+					valueLabel = pathString;
+
+					asset = *payloadAsset;
+					changed = true;
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}
+
+		ImGui::SameLine();
+		ImGui::Text(label);
+
+		ImGui::PopID();
+
+		if (reset)
+		{
+			asset = Asset();
+			changed = true;
+		}
+
+		return changed;
 	}
 }

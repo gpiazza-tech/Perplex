@@ -131,12 +131,14 @@ project "PerplexCore"
     includedirs
     {
         "PerplexRenderer/include",
+        "PerplexRenderer/src",
         "%{prj.name}/src",
         "%{prj.name}/vendor/spdlog/include",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.Glad}",
         "%{IncludeDir.ImGui}",
         "%{IncludeDir.glm}",
+        "%{IncludeDir.glm}/glm",
         "%{IncludeDir.stb_image}",
         "%{IncludeDir.entt}",
         "%{IncludeDir.nlohmann_json}",
@@ -204,6 +206,8 @@ project "PerplexEditor"
 
     includedirs
     {
+        "PerplexRenderer/include",
+        "PerplexRenderer/src",
         "PerplexCore/vendor/spdlog/include",
         "PerplexCore/src",
         "PerplexCore/vendor",
@@ -267,6 +271,8 @@ project "PerplexRuntime"
 
     includedirs
     {
+        "PerplexRenderer/include",
+        "PerplexRenderer/src",
         "PerplexCore/vendor/spdlog/include",
         "PerplexCore/src",
         "PerplexCore/vendor",

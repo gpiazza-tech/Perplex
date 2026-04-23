@@ -1,7 +1,9 @@
 #include <pch.h>
 #include "OpenGLTexture.h"
 
-#include "stb_image.h"
+#include "../../Holloware/Debug/Instrumentor.h"
+
+#include <pxr/pxr.h>
 
 #include <glad/glad.h>
 
@@ -31,11 +33,10 @@ namespace Holloware
 		HW_PROFILE_FUNCTION();
 
 		int width, height, channels;
-		stbi_set_flip_vertically_on_load(1);
-		stbi_uc* data = nullptr;
+		void* data = nullptr;
 		{
-			HW_PROFILE_SCOPE("stbi_load - OpenGLTexture2D::OpenGLTexture2D(const std::string&)");
-			data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+			HW_PROFILE_SCOPE("ImageLoad() - OpenGLTexture2D::OpenGLTexture2D(const std::string&)");
+			data = pxr::ImageLoad(path.c_str(), &width, &height, &channels, 0);
 		}
 		HW_CORE_ASSERT(data, "Failed to load image!");
 		m_Width = width;
@@ -69,7 +70,7 @@ namespace Holloware
 
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
 
-		stbi_image_free(data);
+		pxr::ImageFree(data);
 	}
 
 	OpenGLTexture2D::~OpenGLTexture2D()

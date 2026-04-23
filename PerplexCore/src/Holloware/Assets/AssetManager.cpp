@@ -3,12 +3,13 @@
 
 #include "Holloware/Core/Core.h"
 
-#include "Holloware/Assets/Asset.h"
-#include "Holloware/Assets/AssetUpdateListener.h" 
-#include "Holloware/Assets/AssetImporter.h"
-#include "Holloware/Assets/TextureAssetImporter.h"
-#include "Holloware/Assets/ScriptAssetImporter.h"
-#include "Holloware/Assets/SceneAssetImporter.h"
+#include "Asset.h"
+#include "AssetType.h"
+#include "AssetUpdateListener.h" 
+#include "AssetImporter.h"
+#include "SpriteAssetImporter.h"
+#include "ScriptAssetImporter.h"
+#include "SceneAssetImporter.h"
 
 #include "Holloware/Core/Application.h"
 #include "Holloware/Core/Project.h"
@@ -31,6 +32,7 @@ namespace Holloware
 
 	static std::unordered_map<UUID, fs::path> s_PathMap;
 	static std::unordered_map<UUID, Ref<void>> s_DataMap;
+	static std::unordered_map<UUID, AssetType> s_TypeMap;
 
 	static std::vector<std::unique_ptr<AssetImporter>> s_Importers;
 
@@ -41,7 +43,7 @@ namespace Holloware
 		s_AssetsPath = fs::path(Application::Get().GetCurrentProject().GetAssetsPath());
 
 		// Register importers
-		s_Importers.push_back(std::make_unique<TextureAssetImporter>());
+		s_Importers.push_back(std::make_unique<SpriteAssetImporter>());
 		s_Importers.push_back(std::make_unique<ScriptAssetImporter>());
 		s_Importers.push_back(std::make_unique<SceneAssetImporter>());
 
@@ -102,6 +104,7 @@ namespace Holloware
 
 			s_PathMap[uuid] = path;
 			s_DataMap[uuid] = nullptr;
+			s_TypeMap[uuid] = importer->Type();
 
 			if (s_OnAssetImported)
 				s_OnAssetImported(Asset(uuid));
@@ -151,6 +154,15 @@ namespace Holloware
 			HW_CORE_ERROR("AssetManager: {0}", e.what());
 		}
 		return nullptr;
+	}
+
+	AssetType AssetManager::GetType(Asset asset)
+	{
+		if (s_TypeMap.find(asset) != s_TypeMap.end())
+		{
+			return s_TypeMap[asset];
+		}
+		return AssetType::Asset;
 	}
 
 	Asset AssetManager::Get(const fs::path& path)

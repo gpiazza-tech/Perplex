@@ -18,7 +18,7 @@ namespace Holloware
 
 		void OnImGuiRender();
 
-		Entity GetSelectedEntity() const { return m_SelectionContext; }
+		Entity GetSelectedEntity() const { return m_SelectionContext[0]; }
 		void SetSelectedEntity(Entity entity);
 	private:
 		void DrawEntityNode(Entity entity);
@@ -28,6 +28,7 @@ namespace Holloware
 		void DrawComponent(Entity entity, const char* name, void (*DrawBody)(T&));
 	private:
 		Ref<Scene> m_Context;
-		Entity m_SelectionContext;
+		std::vector<Entity> m_SelectionContext;
+		std::vector<Entity> m_Clipboard;
 	};
 }

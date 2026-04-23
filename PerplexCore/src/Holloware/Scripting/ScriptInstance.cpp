@@ -1,6 +1,7 @@
 #include <pch.h>
 #include "ScriptInstance.h"
 
+#include <Holloware/Core/Input.h>
 #include <Holloware/Core/UUID.h>
 #include <Holloware/Core/Log.h>
 #include <Holloware/Core/Application.h>
@@ -20,7 +21,10 @@ namespace Holloware
 	ScriptInstance::~ScriptInstance()
 	{
 		if (m_State != nullptr)
+		{
 			tcc_delete(m_State);
+			m_State = nullptr;
+		}
 	}
 
 	static glm::vec3* get_position_ptr(Scene* scene, UUID uuid) { return &scene->GetEntity(uuid).GetComponent<TransformComponent>().Position; }

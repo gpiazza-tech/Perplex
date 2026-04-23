@@ -23,13 +23,7 @@ namespace Holloware
         AssetManager::SetAssetImportedCallback([this](Asset asset) { OnAssetImported(asset); });
 
         m_PlayIcon = Texture2D::Create(m_AssetsPath / "textures/play_icon.png");
-        m_StopIcon = Texture2D::Create(m_AssetsPath / "textures/pause_icon.png");
-
-        FramebufferSpecification fbSpec;
-        fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
-        fbSpec.Width = 1280;
-        fbSpec.Height = 720;
-        m_Framebuffer = Framebuffer::Create(fbSpec);
+        m_StopIcon = Texture2D::Create(m_AssetsPath / "textures/pause_icon.png"); 
 
         m_ActiveScene = CreateRef<Scene>();
         m_ActiveScene->CreateAbstractEntity("Placeholder");
@@ -53,14 +47,6 @@ namespace Holloware
             OnResize();
         }
 
-        // Render
-        m_Framebuffer->Bind();
-        RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
-        RenderCommand::Clear();
-
-        // Clear our entity ID attachment to -1
-        m_Framebuffer->ClearAttachment(1, -1);
-
         // Update
         if (m_SceneState == SceneState::Edit)
         {
@@ -72,6 +58,7 @@ namespace Holloware
             m_ActiveScene->OnUpdateRuntime(ts);
         }
 
+        /* Entity Selection
         auto [mx, my] = ImGui::GetMousePos();
         mx -= m_ViewportBounds[0].x;
         my -= m_ViewportBounds[0].y;
@@ -85,8 +72,7 @@ namespace Holloware
             int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
             m_HoveredEntity = (pixelData == -1) ? Entity() : Entity((entt::entity)pixelData, m_ActiveScene.get());
         }
-
-        m_Framebuffer->Unbind();
+        */
     }
 
     void EditorLayer::OnImGuiRender()
@@ -117,10 +103,10 @@ namespace Holloware
 
     bool EditorLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
     {
+        /* Entity Selection
         if (m_ViewportHovered && e.GetMouseButton() == 0)
-        {
             m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
-        }
+        */
 
         return false;
     }
@@ -205,6 +191,7 @@ namespace Holloware
             {
                 Asset sceneAsset = Asset(filepathString);
                 m_ActiveScene = sceneAsset.GetData<Scene>();
+
                 OnSceneLoad();
                 ImGui::CloseCurrentPopup();
             }
@@ -225,7 +212,7 @@ namespace Holloware
         m_ViewportHovered = ImGui::IsWindowHovered();
         Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
 
-        uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+        uint32_t textureID = SceneRenderer::GetMainFramebufferTexture();
         ImGui::Image((void*)textureID, { m_ViewportSize.x, m_ViewportSize.y }, ImVec2(0, 1), ImVec2(1, 0));
 
         if (ImGui::BeginDragDropTarget())
@@ -256,9 +243,6 @@ namespace Holloware
         ImGui::Begin("Stats");
         ImGui::Text("FPS: %.3f", 1000.0f / m_frameMS);
 
-        std::string name = m_HoveredEntity ? m_HoveredEntity.GetComponent<TagComponent>().Tag : "None";
-
-        ImGui::Text("Hovered Entity: %s", name.c_str());
         ImGui::End();
     }
 
@@ -296,7 +280,6 @@ namespace Holloware
     void EditorLayer::OnSceneLoad()
     {
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-        m_SceneHierarchyPanel.SetSelectedEntity(Entity());
         OnResize();
     }
 
@@ -320,7 +303,6 @@ namespace Holloware
     {
         m_ViewportSize = { m_ViewportPanelSize.x, m_ViewportPanelSize.y };
 
-        m_Framebuffer->Resize((uint32_t)m_ViewportPanelSize.x, (uint32_t)m_ViewportPanelSize.y);
         m_EditorCamera.OnResize(m_ViewportPanelSize.x, m_ViewportPanelSize.y);
 
         m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);

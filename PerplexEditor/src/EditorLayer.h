@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Holloware.h>
+#include <Holloware/Renderer/Texture.h>
 
 #include "Panels/Dockspace.h"
 #include "Panels/ContentBrowserPanel.h"
@@ -45,13 +46,10 @@ namespace Holloware
 
 		Ref<Texture2D> m_PlayIcon, m_StopIcon;
 
-		Ref<Framebuffer> m_Framebuffer;
-
 		float m_frameMS;
 		float m_FPS;
 
 		Ref<Scene> m_ActiveScene;
-		Entity m_HoveredEntity;
 
 		bool m_ViewportFocused, m_ViewportHovered;
 		ImVec2 m_ViewportPanelSize = ImVec2(1.0f, 1.0f);

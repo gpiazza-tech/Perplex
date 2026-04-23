@@ -10,9 +10,10 @@
 #include "Holloware/Events/Event.h"
 #include "Holloware/Events/ApplicationEvent.h"
 #include "Holloware/Renderer/Renderer.h"
-#include "Holloware/Renderer/Renderer2D.h"
+#include "Holloware/Scene/SceneRenderer.h"
 #include "Holloware/ImGui/ImGuiLayer.h"
 #include "Holloware/Assets/AssetManager.h"
+#include <pxr/pxr.h>
 
 #include <GLFW/glfw3.h>
 
@@ -31,7 +32,8 @@ namespace Holloware
 		s_Instance = this;
 
 		// Set Current Project
-		m_Project = new Project("C:/dev/Holloware-Projects/Test-Game");
+		m_Project = new Project("C:/dev/PerplexProjects/Game");
+		pxr::SetResourceFolder(m_Project->GetProjectPath() / "renderer");
 
 		// Create window
 		m_Window = std::unique_ptr<Window>(Window::Create(WindowProps(name)));
@@ -39,8 +41,9 @@ namespace Holloware
 		m_Window->SetVSync(false);
 
 		// Initialize renderers
-		Renderer::Init();
-		Renderer2D::Init();
+		// Renderer::Init();
+		// Renderer2D::Init();
+		SceneRenderer::Init(m_Window.get()->GetWidth(), m_Window.get()->GetHeight(), 16);
 		
 		// Initialize Asset Manager
 		AssetManager::Init();

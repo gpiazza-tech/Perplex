@@ -6,6 +6,7 @@
 #include <Holloware/Core/Timestep.h>
 #include <Holloware/Events/Event.h>
 #include <Holloware/Events/MouseEvent.h>
+#include <pxr/pxr.h>
 
 #include <glm/glm.hpp>
 #include <glm/fwd.hpp>
@@ -16,6 +17,7 @@ namespace Holloware
 {
 	EditorCamera::EditorCamera()
 	{
+		SetZoom(m_Position.z);
 		CalculateView();
 	}
 
@@ -37,25 +39,23 @@ namespace Holloware
 	inline bool EditorCamera::OnMouseScrolled(MouseScrolledEvent& e)
 	{
 		m_Position.z -= e.GetYOffset();
+		SetZoom(m_Position.z);
 		CalculateView();
 		return false;
 	}
 
 	void EditorCamera::OnResize(float width, float height)
 	{
-		if (width == 0.0f || height == 0.0f) return;
-
-		m_AspectRatio = width / height;
-		CalculateProjection();
+		Resize({ width, height });
 	}
 
 	void EditorCamera::CalculateView()
 	{
-		m_View = glm::inverse(glm::translate(glm::mat4(1.0f), m_Position) * glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f)));
+		m_View = glm::inverse(glm::translate(glm::mat4(1.0f), { m_Position.x, m_Position.y, 0.0f }) * glm::scale(glm::mat4(1.0f), glm::vec3(1.0f)));
 	}
 
-	void EditorCamera::CalculateProjection()
+	const glm::mat4& EditorCamera::GetViewProjection() const 
 	{
-		m_Projection = glm::perspective(m_PerspectiveFOV, m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
+		return GetProjection() * m_View;
 	}
 }

@@ -3,14 +3,13 @@
 #include "Holloware/Core/Core.h"
 #include "Holloware/Core/UUID.h"
 #include "Holloware/Assets/AssetManager.h"
+#include "AssetType.h"
 
 #include <filesystem>
 #include <cstdint>
 
 namespace Holloware
 {
-	enum class AssetType : uint8_t;
-
 	class Asset
 	{
 	public:
@@ -19,12 +18,20 @@ namespace Holloware
 		Asset(UUID uuid) : m_Handler(uuid) {}
 		Asset(std::filesystem::path path);
 
-		const std::filesystem::path& GetPath();
+		const std::filesystem::path& GetPath() const;
+		std::filesystem::path GetName() const;
+		AssetType GetType() const;
 
 		template<typename T>
 		Ref<T> GetData()
 		{
 			return std::static_pointer_cast<T>(AssetManager::GetData(m_Handler));
+		}
+
+		template<typename T>
+		Ref<const T> GetData() const
+		{
+			return std::static_pointer_cast<const T>(AssetManager::GetData(m_Handler));
 		}
 		
 		operator UUID() const { return m_Handler; };

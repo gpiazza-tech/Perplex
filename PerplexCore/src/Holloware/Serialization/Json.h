@@ -16,8 +16,8 @@ namespace Holloware
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(IDComponent, ID);
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TagComponent, Tag);
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TransformComponent, Position, Rotation, Scale);
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpriteRendererComponent, Color, TextureAsset);
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CameraComponent, Camera, Primary, FixedAspectRatio);
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpriteRendererComponent, SpriteAsset, Color, EmissionSpriteAsset, Emission);
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CameraComponent, Primary, Zoom, Background, PixelsPerUnit, PixelPerfect, ScalingMode);
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ScriptComponent, ScriptAsset, Properties);
 
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EntityData, ID, Tag);

@@ -6,6 +6,7 @@
 #include <Holloware/Scene/SceneCamera.h>
 #include <Holloware/Scripting/ScriptInstance.h>
 #include <Holloware/Scripting/ScriptData.h>
+#include <rendering/Camera.h>
 
 #include <glm/glm.hpp>
 #include <glm/fwd.hpp>
@@ -75,8 +76,11 @@ namespace Holloware
 
 	struct SpriteRendererComponent : public HollowareObject
 	{
+		Asset SpriteAsset = Asset();
 		glm::vec4 Color = glm::vec4(1.0f);
-		Asset TextureAsset = Asset();
+
+		Asset EmissionSpriteAsset = Asset();
+		float Emission = 0.0f;
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
@@ -88,9 +92,12 @@ namespace Holloware
 
 	struct CameraComponent : public HollowareObject
 	{
-		SceneCamera Camera;
-		bool Primary = true; // TODO: Scene should be responsible for this
-		bool FixedAspectRatio = false;
+		bool Primary = true;
+		float Zoom = 10.0f;
+		glm::vec4 Background = { 0.0f, 0.05f, 0.2f, 1.0f };
+		int PixelsPerUnit = 16; 
+		bool PixelPerfect = true;
+		pxr::ScalingMode ScalingMode = pxr::ScalingMode::Width;
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;

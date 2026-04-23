@@ -1,11 +1,20 @@
 #include "Holloware/Scene/Components.h"
 
+#include <Holloware/Core/Log.h>
 #include "Holloware/Assets/Asset.h"
 #include "Holloware/Assets/AssetManager.h"
 #include "Holloware/ImGui/ImGuiUtilities.h"
+#include "Holloware/ImGui/Drawer.h"
+#include <Holloware/Assets/AssetType.h>
+#include <Holloware/Scripting/ScriptData.h>
+#include <rendering/Camera.h>
 
 #include <imgui/imgui.h>
+#include <glm/fwd.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include <string.h>
+#include <string>
 
 namespace Holloware
 {
@@ -39,43 +48,35 @@ namespace Holloware
 
 	void SpriteRendererComponent::DrawGui()
 	{
+		// Color
+		Drawer::DrawAssetField("Sprite", SpriteAsset, AssetType::SpriteAsset);
 		ImGui::ColorEdit4("Color", glm::value_ptr(Color));
 
-		static std::string label = "None";
-		ImGui::Button(label.c_str(), { 200, 20 });
-		if (ImGui::BeginDragDropTarget())
-		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
-			{
-				Asset* payloadAsset = (Asset*)payload->Data;
-
-				const std::string& pathString = payloadAsset->GetPath().string();
-				label = pathString;
-
-				TextureAsset = *payloadAsset;
-			}
-			ImGui::EndDragDropTarget();
-		}
+		// Emission
+		Drawer::DrawAssetField("Emission Mask", EmissionSpriteAsset, AssetType::SpriteAsset);
+		ImGui::DragFloat("Emission", &Emission, 0.01f);
 	}
 
 	void CameraComponent::DrawGui()
 	{
-		auto& camera = Camera;
-
 		ImGui::Checkbox("Primary", &Primary);
+		ImGui::DragFloat("Zoom", &Zoom);
+		ImGui::ColorEdit4("Background", &Background.r);
+		ImGui::DragInt("Pixels Per Unit", &PixelsPerUnit);
+		ImGui::Checkbox("PixelPerfect", &PixelPerfect);
 
-		const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
-		const char* currentProjectionTypeString = projectionTypeStrings[(int)camera.GetProjectionType()];
+		const char* scalingModeStrings[] = { "Width", "Height", "Larger Side", "Smaller Side" };
+		const char* currentScalingModeString = scalingModeStrings[(int)ScalingMode - 1];
 
-		if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
+		if (ImGui::BeginCombo("Scaling Mode", currentScalingModeString))
 		{
-			for (int i = 0; i < 2; i++)
+			for (int i = 0; i < 4; i++)
 			{
-				bool isSelected = currentProjectionTypeString = projectionTypeStrings[i];
-				if (ImGui::Selectable(projectionTypeStrings[i], isSelected))
+				bool isSelected = currentScalingModeString == scalingModeStrings[i];
+				if (ImGui::Selectable(scalingModeStrings[i], isSelected))
 				{
-					currentProjectionTypeString = projectionTypeStrings[i];
-					camera.SetProjectionType((SceneCamera::ProjectionType)i);
+					currentScalingModeString = scalingModeStrings[i];
+					ScalingMode = ((pxr::ScalingMode)(i + 1)); // +1 to skip ScalingMode::None
 				}
 
 				if (isSelected)
@@ -84,38 +85,27 @@ namespace Holloware
 
 			ImGui::EndCombo();
 		}
+	}
 
-		if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
+	void ScriptComponent::DrawGui()
+	{
+		ImGui::PushID(this);
+
+		if (Drawer::DrawAssetField("Source", ScriptAsset, AssetType::ScriptAsset))
 		{
-			float orthoSize = camera.GetOrthographicSize();
-			if (ImGui::DragFloat("Size", &orthoSize))
-				camera.SetOrthographicSize(orthoSize);
-
-			float orthoNear = camera.GetOrthographicNearClip();
-			if (ImGui::DragFloat("Near Clip", &orthoNear))
-				camera.SetOrthographicNearClip(orthoNear);
-
-			float orthoFar = camera.GetOrthographicFarClip();
-			if (ImGui::DragFloat("Far Clip", &orthoFar))
-				camera.SetOrthographicFarClip(orthoFar);
-
-			ImGui::Checkbox("Fixed Aspect", &FixedAspectRatio);
+			if (ScriptAsset)
+				Properties = ScriptAsset.GetData<ScriptData>()->Properties;
+			else
+				Properties.clear();
 		}
 
+		ImGui::Dummy(ImVec2(0.0f, 20.0f));
 
-		if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
+		for (auto& property : Properties)
 		{
-			float perspectiveFOV = glm::degrees(camera.GetPerspectiveVerticalFOV());
-			if (ImGui::DragFloat("FOV", &perspectiveFOV))
-				camera.SetPerspectiveVerticalFOV(glm::radians(perspectiveFOV));
-
-			float perspectiveNear = camera.GetPerspectiveNearClip();
-			if (ImGui::DragFloat("Near Clip", &perspectiveNear))
-				camera.SetPerspectiveNearClip(perspectiveNear);
-
-			float perspectiveFar = camera.GetPerspectiveFarClip();
-			if (ImGui::DragFloat("Far Clip", &perspectiveFar))
-				camera.SetPerspectiveFarClip(perspectiveFar);
+			property.DrawGui();
 		}
+
+		ImGui::PopID();
 	}
 }

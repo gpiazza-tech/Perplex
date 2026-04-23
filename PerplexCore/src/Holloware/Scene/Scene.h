@@ -18,12 +18,10 @@ namespace Holloware
 	class Scene
 	{
 	public:
-		Scene();
-		~Scene();
-
 		Entity CreateEntity(const std::string& name = std::string(), UUID uuid = UUID());
 		Entity CreateAbstractEntity(const std::string& name = std::string(), UUID uuid = UUID());
 		void DestroyEntity(Entity entity);
+		void CopyEntity(Entity entity);
 		Entity GetEntity(UUID uuid);
 
 		void OnUpdateEditor(Timestep ts, const EditorCamera& camera);

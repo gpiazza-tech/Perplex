@@ -4,16 +4,14 @@
 #include "Components.h"
 #include "EditorCamera.h"
 #include "Entity.h"
+#include "SceneRenderer.h"
 #include <Holloware/Core/Timestep.h>
-#include <Holloware/Renderer/Renderer2D.h>
-#include <Holloware/Renderer/SubTexture2D.h>
 #include <Holloware/Scripting/ScriptInstance.h>
 #include <Holloware/Scripting/ScriptData.h>
 #include <Holloware/Assets/Asset.h>
 #include <Holloware/Core/Core.h>
 #include <Holloware/Core/UUID.h>
 #include <Holloware/Debug/Instrumentor.h>
-#include <Holloware/Renderer/Camera.h>
 
 #include <entt.hpp>
 #include <glm/fwd.hpp>
@@ -23,14 +21,6 @@
 
 namespace Holloware
 {
-	Scene::Scene()
-	{
-	}
-
-	Scene::~Scene()
-	{
-	}
-
 	Entity Scene::CreateEntity(const std::string& name, UUID uuid)
 	{
 		Entity entity = Entity(m_Registry.create(), this);
@@ -67,6 +57,19 @@ namespace Holloware
 		m_Registry.destroy(entity);
 	}
 
+	void Scene::CopyEntity(Entity entity)
+	{
+		Entity newEntity = CreateAbstractEntity(entity.GetTag());
+		if (entity.HasComponent<TransformComponent>())
+			newEntity.AddComponent<TransformComponent>(entity.GetComponent<TransformComponent>());
+		if (entity.HasComponent<SpriteRendererComponent>())
+			newEntity.AddComponent<SpriteRendererComponent>(entity.GetComponent<SpriteRendererComponent>());
+		if (entity.HasComponent<CameraComponent>())
+			newEntity.AddComponent<CameraComponent>(entity.GetComponent<CameraComponent>());
+		if (entity.HasComponent<ScriptComponent>())
+			newEntity.AddComponent<ScriptComponent>(entity.GetComponent<ScriptComponent>());
+	}
+
 	Entity Scene::GetEntity(UUID uuid)
 	{
 		return Entity(m_UUIDMap[uuid], this);
@@ -74,26 +77,16 @@ namespace Holloware
 
 	void Scene::OnUpdateEditor(Timestep ts, const EditorCamera& camera)
 	{
-		Renderer2D::BeginScene(camera);
+		SceneRenderer::BeginScene(camera);
 
 		auto group = m_Registry.group<TransformComponent, SpriteRendererComponent>();
 		for (auto entity : group)
 		{
-			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-
-			if (sprite.TextureAsset)
-			{
-				Ref<Texture2D> texture = sprite.TextureAsset.GetData<Texture2D>();
-				Ref<SubTexture2D> subTexture = CreateRef<SubTexture2D>(texture, glm::vec2(0, 0), glm::vec2(1, 1));
-				Renderer2D::DrawQuad(transform.GetTransform(), subTexture, sprite.Color, (int)entity);
-			}
-			else
-			{
-				Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color, (int)entity);
-			}
+			auto [transform, spriteRenderer] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+			SceneRenderer::RenderSprite(spriteRenderer, transform);
 		}
 
-		Renderer2D::EndScene();
+		SceneRenderer::EndScene();
 	}
 
 	void Scene::OnStartRuntime()
@@ -144,8 +137,8 @@ namespace Holloware
 		}
 
 		// Find Camera
-		Camera* mainCamera = nullptr;
-		glm::mat4* cameraTransform = nullptr;
+		CameraComponent* mainCamera = nullptr;
+		TransformComponent* cameraTransform = nullptr;
 		{
 			HW_PROFILE_SCOPE("Find Camera");
 
@@ -156,8 +149,8 @@ namespace Holloware
 
 				if (camera.Primary)
 				{
-					mainCamera = &camera.Camera;
-					cameraTransform = &transform.GetTransform();
+					mainCamera = &camera;
+					cameraTransform = &transform;
 					break;
 				}
 			}
@@ -167,27 +160,18 @@ namespace Holloware
 		if (mainCamera)
 		{
 			HW_PROFILE_SCOPE("Render Sprites");
-
-			Renderer2D::BeginScene(*mainCamera, *cameraTransform);
+			
+			pxr::Camera camera({ m_ViewportWidth, m_ViewportHeight }, mainCamera->PixelsPerUnit, mainCamera->Zoom, mainCamera->ScalingMode);
+			SceneRenderer::BeginScene(camera, *cameraTransform, mainCamera->Background);
 
 			auto group = m_Registry.group<TransformComponent, SpriteRendererComponent>();
 			for (auto entity : group)
 			{
-				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-
-				if (sprite.TextureAsset)
-				{
-					Ref<Texture2D> texture = sprite.TextureAsset.GetData<Texture2D>();
-					Ref<SubTexture2D> subTexture = CreateRef<SubTexture2D>(texture, glm::vec2(0, 0), glm::vec2(1, 1));
-					Renderer2D::DrawQuad(transform.GetTransform(), subTexture, sprite.Color, (int)entity);
-				}
-				else
-				{
-					Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color, (int)entity);
-				}
+				auto [transform, spriteRenderer] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+				SceneRenderer::RenderSprite(spriteRenderer, transform);
 			}
 
-			Renderer2D::EndScene();
+			SceneRenderer::EndScene();
 		}
 	}
 
@@ -210,16 +194,10 @@ namespace Holloware
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
 	{
+		SceneRenderer::Resize(width, height);
+
 		m_ViewportWidth = width;
 		m_ViewportHeight = height;
-
-		auto view = m_Registry.view<CameraComponent>();
-		for (auto entity : view)
-		{
-			auto& cameraComponent = view.get<CameraComponent>(entity);
-			if (!cameraComponent.FixedAspectRatio)
-				cameraComponent.Camera.SetViewportSize(width, height);
-		}
 	}
 
 	void Scene::OnScriptAssetReimported(Asset asset)

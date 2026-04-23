@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Holloware/Core/Log.h>
 #include <string>
 
 struct TCCState;
@@ -14,6 +15,11 @@ namespace Holloware
 	{
 	public:
 		ScriptInstance() = default;
+		ScriptInstance(const ScriptInstance& other)
+		{
+			m_SceneContext = other.m_SceneContext;
+			m_State = nullptr; // important to prevent errors on destruction
+		}
 		~ScriptInstance();
 
 		bool IsCompiled() { return m_State != nullptr; }

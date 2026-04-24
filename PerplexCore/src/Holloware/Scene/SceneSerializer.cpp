@@ -17,7 +17,7 @@ namespace Holloware
 		for (auto entityHandler : scene->m_Registry.view<entt::entity>())
 		{
 			Entity entity = Entity(entityHandler, scene.get());
-			nlohmann::json& entityJson = sceneJson[entity.GetComponent<TagComponent>().Tag + " - " + std::to_string(entity.GetUUID())];
+			nlohmann::json& entityJson = sceneJson["Entities"][entity.GetComponent<TagComponent>().Tag + " - " + std::to_string(entity.GetUUID())];
 
 			entityJson["ID"] = entity.GetComponent<IDComponent>().ID;
 			entityJson["Tag"] = entity.GetComponent<TagComponent>().Tag;
@@ -31,6 +31,7 @@ namespace Holloware
 			if (entity.HasComponent<ScriptComponent>())
 				entityJson["ScriptComponent"] = entity.GetComponent<ScriptComponent>();
 		}
+		sceneJson["Hierarchy"] = scene->GetHierarchy();
 
 		JsonHelper::WriteToFile(sceneJson, path);
 
@@ -43,7 +44,7 @@ namespace Holloware
 
 		Ref<Scene> scene = CreateRef<Scene>();
 
-		for (auto& entityJson : sceneJson)
+		for (auto& entityJson : sceneJson["Entities"])
 		{
 			Entity entity = scene->CreateAbstractEntity(entityJson["Tag"].get<std::string>(), entityJson["ID"].get<UUID>());
 
@@ -56,6 +57,8 @@ namespace Holloware
 			if (entityJson.contains("ScriptComponent"))
 				entity.AddComponent<ScriptComponent>() = entityJson["ScriptComponent"];
 		}
+
+		scene->m_Hierarchy = sceneJson["Hierarchy"];
 
 		return scene;
 	}

@@ -1,10 +1,9 @@
 #include <pch.h>
 #include "SceneHierarchy.h"
 
+#include "EntityNode.h"
 #include <Holloware/Core/UUID.h>
-#include "Entity.h"
-
-#include <nlohmann/json_fwd.hpp>
+#include <Holloware/Serialization/Json.h>
 
 #include <vector>
 
@@ -71,13 +70,24 @@ namespace Holloware
 		}
 	}
 
-	void to_json(nlohmann::json& j, const SceneHierarchy& property)
+	void to_json(nlohmann::json& j, const SceneHierarchy& hierarchy)
 	{
+		// Convert map to vector, then serialize
+		std::vector<EntityNode> nodes(0);
+		nodes.reserve(hierarchy.m_NodeMap.size());
 
+		for (auto& [id, node] : hierarchy.m_NodeMap)
+			nodes.emplace_back(node);
+
+		j = nodes;
 	}
 
-	void from_json(const nlohmann::json& j, SceneHierarchy& property)
+	void from_json(const nlohmann::json& j, SceneHierarchy& hierarchy)
 	{
+		// Deserialize, then convert vector to map
+		std::vector<EntityNode> nodes = j.get<std::vector<EntityNode>>();
 
+		for (auto& node : nodes)
+			hierarchy.m_NodeMap[node.ID] = node;
 	}
 }

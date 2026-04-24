@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Holloware/Scene/Components.h>
+#include <Holloware/Scene/EntityNode.h>
 
 #include <nlohmann/json.hpp>
 
@@ -21,6 +22,7 @@ namespace Holloware
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ScriptComponent, ScriptAsset, Properties);
 
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EntityData, ID, Tag);
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EntityNode, ID, Index, ParentID, ChildIDs);
 }
 
 namespace glm

@@ -12,6 +12,8 @@
 #include <Holloware/Core/Core.h>
 #include <Holloware/Core/UUID.h>
 #include <Holloware/Debug/Instrumentor.h>
+#include "SceneHierarchy.h"
+#include <rendering/Camera.h>
 
 #include <entt.hpp>
 #include <glm/fwd.hpp>
@@ -34,6 +36,8 @@ namespace Holloware
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
 
+		m_Hierarchy.Add(EntityNode(entity.GetUUID()), 0);
+
 		return entity;
 	}
 
@@ -48,11 +52,15 @@ namespace Holloware
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
 
+		m_Hierarchy.Add(EntityNode(entity.GetUUID()), 0);
+
 		return entity;
 	}
 
 	void Scene::DestroyEntity(Entity entity)
 	{
+		m_Hierarchy.Remove(entity.GetUUID());
+
 		m_UUIDMap.erase(entity.GetUUID());
 		m_Registry.destroy(entity);
 	}
@@ -68,6 +76,8 @@ namespace Holloware
 			newEntity.AddComponent<CameraComponent>(entity.GetComponent<CameraComponent>());
 		if (entity.HasComponent<ScriptComponent>())
 			newEntity.AddComponent<ScriptComponent>(entity.GetComponent<ScriptComponent>());
+
+		m_Hierarchy.Add(EntityNode(entity.GetUUID()), 0);
 	}
 
 	Entity Scene::GetEntity(UUID uuid)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Holloware/Core/Core.h>
+#include <Holloware/Core/Log.h>
 #include <Holloware/Core/HollowareObject.h>
 #include <Holloware/Scene/Scene.h>
 

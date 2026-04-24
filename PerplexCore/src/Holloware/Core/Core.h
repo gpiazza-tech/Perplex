@@ -1,18 +1,10 @@
 #pragma once
 
+#include <Holloware/Core/Log.h>
+
 #include <memory>
 
-#ifdef HW_PLATFORM_WINDOWS
-	#ifdef HW_DYNAMIC_LINK
-		#ifdef HW_BUILD_DLL
-			#define HOLLOWARE_API __declspec(dllexport)
-		#else
-			#define HOLLOWARE_API __declspec(dllimport)
-		#endif // 0
-	#else
-		#define HOLLOWARE_API
-	#endif
-#else
+#ifndef HW_PLATFORM_WINDOWS
 	#error Holloware only supports Windows!
 #endif
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SceneHierarchy.h"
 #include <Holloware/Core/UUID.h>
 
 #include <entt.hpp>
@@ -32,10 +33,14 @@ namespace Holloware
 
 		void OnViewportResize(uint32_t width, uint32_t height);
 		void OnScriptAssetReimported(Asset asset);
+
+		SceneHierarchy& GetHierarchy() { return m_Hierarchy; }
 	private:
 		entt::registry m_Registry;
 		std::unordered_map<UUID, entt::entity> m_UUIDMap;
 		uint32_t m_ViewportWidth = 1, m_ViewportHeight = 1;
+
+		SceneHierarchy m_Hierarchy;
 
 		friend class Entity;
 		friend class SceneHierarchyPanel;

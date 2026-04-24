@@ -1,8 +1,9 @@
 #pragma once
 
 #include "Holloware/Scene/Entity.h"
-
 #include "Holloware/Core/Core.h"
+
+#include <vector>
 
 namespace Holloware
 {
@@ -21,7 +22,7 @@ namespace Holloware
 		Entity GetSelectedEntity() const { return m_SelectionContext[0]; }
 		void SetSelectedEntity(Entity entity);
 	private:
-		void DrawEntityNode(Entity entity);
+		void DrawEntityNode(EntityNode node);
 		void DrawComponents(Entity entity);
 
 		template <typename T>

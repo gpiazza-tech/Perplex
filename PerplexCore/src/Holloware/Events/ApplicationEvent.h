@@ -8,7 +8,7 @@
 
 namespace Holloware
 {
-	class HOLLOWARE_API WindowResizeEvent : public Event
+	class WindowResizeEvent : public Event
 	{
 	public:
 		WindowResizeEvent(unsigned int width, unsigned int height)
@@ -30,7 +30,7 @@ namespace Holloware
 		unsigned int m_Width, m_Height;
 	};
 
-	class HOLLOWARE_API WindowCloseEvent : public Event
+	class WindowCloseEvent : public Event
 	{
 	public:
 		WindowCloseEvent() {}
@@ -39,7 +39,7 @@ namespace Holloware
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	};
 
-	class HOLLOWARE_API AppTickEvent : public Event
+	class AppTickEvent : public Event
 	{
 	public:
 		AppTickEvent() {}
@@ -48,7 +48,7 @@ namespace Holloware
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	};
 
-	class HOLLOWARE_API AppUpdateEvent : public Event
+	class AppUpdateEvent : public Event
 	{
 	public:
 		AppUpdateEvent() {}
@@ -57,7 +57,7 @@ namespace Holloware
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	};
 
-	class HOLLOWARE_API AppRenderEvent : public Event
+	class AppRenderEvent : public Event
 	{
 	public:
 		AppRenderEvent() {}

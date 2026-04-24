@@ -6,7 +6,7 @@
 
 namespace Holloware
 {
-	class HOLLOWARE_API MouseMovedEvent : public Event
+	class MouseMovedEvent : public Event
 	{
 	public:
 		MouseMovedEvent(float x, float y)
@@ -28,7 +28,7 @@ namespace Holloware
 		float m_MouseX, m_MouseY;
 	};
 
-	class HOLLOWARE_API MouseScrolledEvent : public Event
+	class MouseScrolledEvent : public Event
 	{
 	public:
 		MouseScrolledEvent(float xOffset, float yOffset)
@@ -51,7 +51,7 @@ namespace Holloware
 		float m_XOffset, m_YOffset;
 	};
 
-	class HOLLOWARE_API MouseButtonEvent : public Event
+	class MouseButtonEvent : public Event
 	{
 	public:
 		inline int GetMouseButton() const { return m_Button; }
@@ -64,7 +64,7 @@ namespace Holloware
 		int m_Button;
 	};
 
-	class HOLLOWARE_API MouseButtonPressedEvent : public MouseButtonEvent
+	class MouseButtonPressedEvent : public MouseButtonEvent
 	{
 	public:
 		MouseButtonPressedEvent(int button)
@@ -80,7 +80,7 @@ namespace Holloware
 		EVENT_CLASS_TYPE(MouseButtonPressed)
 	};
 
-	class HOLLOWARE_API MouseButtonReleasedEvent : public MouseButtonEvent
+	class MouseButtonReleasedEvent : public MouseButtonEvent
 	{
 	public:
 		MouseButtonReleasedEvent(int button)

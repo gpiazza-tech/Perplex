@@ -6,7 +6,7 @@
 
 namespace Holloware
 {
-	class HOLLOWARE_API KeyEvent : public Event
+	class KeyEvent : public Event
 	{
 	public:
 		inline int GetKeyCode() const { return m_KeyCode; }
@@ -19,7 +19,7 @@ namespace Holloware
 		int m_KeyCode;
 	};
 
-	class HOLLOWARE_API KeyPressedEvent : public KeyEvent
+	class KeyPressedEvent : public KeyEvent
 	{
 	public:
 		KeyPressedEvent(int keycode, int repeatCount)
@@ -39,7 +39,7 @@ namespace Holloware
 		int m_RepeatCount;
 	};
 
-	class HOLLOWARE_API KeyReleasedEvent : public KeyEvent
+	class KeyReleasedEvent : public KeyEvent
 	{
 	public:
 		KeyReleasedEvent(int keycode)
@@ -55,7 +55,7 @@ namespace Holloware
 		EVENT_CLASS_TYPE(KeyReleased)
 	};
 
-	class HOLLOWARE_API KeyTypedEvent : public KeyEvent
+	class KeyTypedEvent : public KeyEvent
 	{
 	public:
 		KeyTypedEvent(int keycode)

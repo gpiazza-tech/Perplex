@@ -2,11 +2,17 @@
 
 #include "Holloware/ImGui/ImGuiUtilities.h"
 
+#include <Holloware/Core/Core.h>
+#include <Holloware/Core/UUID.h>
+#include <Holloware/Scene/Entity.h>
 #include "Holloware/Scene/Components.h"
 #include "Holloware/Scene/Scene.h"
 
 #include <entt.hpp>
 #include <imgui/imgui_internal.h>
+#include <imgui/imgui.h>
+#include <cstdint>
+#include <vector>
 
 namespace Holloware
 {
@@ -15,28 +21,23 @@ namespace Holloware
 	{
 		SetContext(scene);
 	}
+
 	void SceneHierarchyPanel::SetContext(const Ref<Scene>& context)
 	{
 		m_Context = context;
 		m_SelectionContext.clear();
 	}
+
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
 		ImGui::Begin("Scene Hierarchy");
 
-		// Sort before drawing
-		/*m_Context->m_Registry.sort<entt::entity>([](const entt::entity lhs, const entt::entity rhs) {
-			return entt::registry::entity(lhs) < entt::registry::entity(rhs);
-			});*/
+		SceneHierarchy& hierarchy = m_Context->GetHierarchy();
 
-		auto& view = m_Context->m_Registry.view<entt::entity>();
-
-		// TODO: reverse draw order
-		for (auto entityID : m_Context->m_Registry.view<entt::entity>())
-		{
-			Entity entity = Entity(entityID, m_Context.get());
-			DrawEntityNode(entity);
-		}
+		// Draw Nodes
+		const std::vector<UUID>& rootEntities = hierarchy.GetRoot().ChildIDs;
+		for (const auto& entityID : rootEntities)
+			DrawEntityNode(hierarchy.GetNode(entityID));
 
 		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 			m_SelectionContext.clear();
@@ -104,16 +105,25 @@ namespace Holloware
 		m_SelectionContext[0] = entity;
 	}
 
-	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
+	void SceneHierarchyPanel::DrawEntityNode(EntityNode node)
 	{
+		SceneHierarchy& hierarchy = m_Context->GetHierarchy();
+
+		Entity& entity = m_Context->GetEntity(node.ID);
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
+		const std::vector<UUID>& childIDs = node.ChildIDs;
 
 		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
+
+		if (childIDs.empty())
+			flags |= ImGuiTreeNodeFlags_Leaf;
+
 		for (auto& selection : m_SelectionContext)
 			if (selection == entity)
 				flags |= ImGuiTreeNodeFlags_Selected;
 
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
+
 		if (ImGui::IsItemHovered() && (ImGui::IsMouseReleased(0) || ImGui::IsMouseReleased(1))) // selects on both left and right click
 		{
 			SetSelectedEntity(entity);
@@ -123,6 +133,19 @@ namespace Holloware
 		{
 			ImGui::SetDragDropPayload("SCENE_HIERARCHY_ITEM", (const void*)&entity, sizeof(Entity), ImGuiCond_Once);
 			ImGui::EndDragDropSource();
+		}
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("SCENE_HIERARCHY_ITEM"))
+			{
+				Entity payloadEntity = *(Entity*)payload->Data;
+				if (payloadEntity != entity)
+				{
+					hierarchy.SetParent(payloadEntity.GetUUID(), entity.GetUUID());
+				}
+			}
+			ImGui::EndDragDropTarget();
 		}
 		
 		bool deleteEntity = false;
@@ -138,7 +161,10 @@ namespace Holloware
 
 		if (opened)
 		{
-			DrawEntityNode(entity);
+			// Draw child nodes
+			for (auto& childID : childIDs)
+				DrawEntityNode(hierarchy.GetNode(childID));
+
 			ImGui::TreePop();
 		}
 

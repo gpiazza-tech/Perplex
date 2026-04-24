@@ -12,8 +12,6 @@ namespace Holloware
 {
 	bool SceneSerializer::Serialize(const Ref<Scene>& scene, const std::filesystem::path& path)
 	{
-		HW_PROFILE_FUNCTION();
-
 		nlohmann::json sceneJson = nlohmann::json();
 
 		for (auto entityHandler : scene->m_Registry.view<entt::entity>())
@@ -41,8 +39,6 @@ namespace Holloware
 
 	Ref<Scene> SceneSerializer::Deserialize(const std::filesystem::path& path)
 	{
-		HW_PROFILE_FUNCTION();
-
 		nlohmann::json sceneJson = JsonHelper::LoadFromFile(path);
 
 		Ref<Scene> scene = CreateRef<Scene>();

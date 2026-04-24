@@ -90,10 +90,11 @@ namespace Holloware
 		SceneRenderer::BeginScene(camera);
 
 		auto group = m_Registry.group<TransformComponent, SpriteRendererComponent>();
-		for (auto entity : group)
+		for (auto handle : group)
 		{
-			auto [transform, spriteRenderer] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-			SceneRenderer::RenderSprite(spriteRenderer, transform);
+			Entity entity = Entity(handle, this);
+			auto [transform, spriteRenderer] = group.get<TransformComponent, SpriteRendererComponent>(handle);
+			SceneRenderer::RenderSprite(spriteRenderer, entity.GetGlobalTransform());
 		}
 
 		SceneRenderer::EndScene();
@@ -175,10 +176,11 @@ namespace Holloware
 			SceneRenderer::BeginScene(camera, *cameraTransform, mainCamera->Background);
 
 			auto group = m_Registry.group<TransformComponent, SpriteRendererComponent>();
-			for (auto entity : group)
+			for (auto handle : group)
 			{
-				auto [transform, spriteRenderer] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-				SceneRenderer::RenderSprite(spriteRenderer, transform);
+				Entity entity = Entity(handle, this);
+				auto [transform, spriteRenderer] = group.get<TransformComponent, SpriteRendererComponent>(handle);
+				SceneRenderer::RenderSprite(spriteRenderer, entity.GetGlobalTransform());
 			}
 
 			SceneRenderer::EndScene();

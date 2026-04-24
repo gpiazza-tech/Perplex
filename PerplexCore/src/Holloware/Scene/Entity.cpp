@@ -1,12 +1,16 @@
 #include <pch.h>
 #include "Entity.h"
 
+#include "EntityNode.h"
 #include "Scene.h"
+#include "SceneHierarchy.h"
 #include "Components.h"
 #include <Holloware/Core/UUID.h>
 
 #include <imgui.h>
 #include <entt.hpp>
+#include <fwd.hpp>
+
 #include <string>
 
 namespace Holloware
@@ -47,5 +51,22 @@ namespace Holloware
 			}
 			ImGui::EndDragDropTarget();
 		}
+	}
+
+	TransformComponent Entity::GetGlobalTransform()
+	{
+		TransformComponent transform = GetComponent<TransformComponent>();
+		const EntityNode& node = m_Scene->GetHierarchy().GetNode(GetUUID());
+
+		if (node.ParentID == 0)
+			return transform;
+
+		const TransformComponent& parentTransform = m_Scene->GetEntity(node.ParentID).GetGlobalTransform();
+
+		transform.Position += parentTransform.Position;
+		transform.Rotation += parentTransform.Rotation;
+		transform.Scale *= parentTransform.Scale;
+
+		return transform;
 	}
 }

@@ -4,6 +4,9 @@
 #include <Holloware/Core/Log.h>
 #include <Holloware/Core/HollowareObject.h>
 #include <Holloware/Scene/Scene.h>
+#include "Components.h"
+
+#include <glm/fwd.hpp>
 
 #include <entt.hpp>
 #include <cstdint>
@@ -48,6 +51,8 @@ namespace Holloware
 			HW_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 		}
+
+		TransformComponent GetGlobalTransform();
 
 		UUID GetUUID();
 		std::string GetTag();

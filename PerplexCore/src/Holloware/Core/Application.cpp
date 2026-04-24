@@ -9,7 +9,6 @@
 #include "Holloware/Debug/Instrumentor.h"
 #include "Holloware/Events/Event.h"
 #include "Holloware/Events/ApplicationEvent.h"
-#include "Holloware/Renderer/Renderer.h"
 #include "Holloware/Scene/SceneRenderer.h"
 #include "Holloware/ImGui/ImGuiLayer.h"
 #include "Holloware/Assets/AssetManager.h"
@@ -151,7 +150,6 @@ namespace Holloware
 		}
 
 		m_Minimized = false;
-		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
 
 		return false;
 	}

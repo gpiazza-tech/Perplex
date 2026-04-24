@@ -6,8 +6,6 @@ struct GLFWwindow;
 
 namespace Holloware
 {
-	class GraphicsContext;
-
 	class WindowsWindow : public Window
 	{
 	public:
@@ -30,7 +28,6 @@ namespace Holloware
 		virtual void Shutdown();
 	private:
 		GLFWwindow* m_Window;
-		GraphicsContext* m_Context;
 
 		struct WindowData
 		{

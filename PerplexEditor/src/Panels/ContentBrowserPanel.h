@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Holloware/Core/Core.h>
+#include <backends/TextureBuffer.h>
 
 #include <filesystem>
 
@@ -18,8 +19,8 @@ namespace Holloware
 		std::filesystem::path m_AssetsPath;
 		std::filesystem::path m_CurrentDirectory;
 
-		Ref<Texture2D> m_DirectoryIcon;
-		Ref<Texture2D> m_FileIcon;
-		Ref<Texture2D> m_BackArrowIcon;
+		Ref<pxr::TextureBuffer> m_DirectoryIcon;
+		Ref<pxr::TextureBuffer> m_FileIcon;
+		Ref<pxr::TextureBuffer> m_BackArrowIcon;
 	};
 }

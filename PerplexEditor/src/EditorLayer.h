@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Holloware.h>
-#include <Holloware/Renderer/Texture.h>
 
 #include "Panels/Dockspace.h"
 #include "Panels/ContentBrowserPanel.h"
@@ -44,7 +43,7 @@ namespace Holloware
 	private:
 		std::filesystem::path m_AssetsPath;
 
-		Ref<Texture2D> m_PlayIcon, m_StopIcon;
+		Ref<pxr::TextureBuffer> m_PlayIcon, m_StopIcon;
 
 		float m_frameMS;
 		float m_FPS;

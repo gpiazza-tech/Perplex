@@ -1,12 +1,11 @@
 #include <pch.h>
 #include "WindowsWindow.h"
 
+#include <Holloware/Core/Core.h>
+#include <Holloware/Core/Log.h>
 #include "Holloware/Events/MouseEvent.h"
 #include "Holloware/Events/ApplicationEvent.h"
 #include "Holloware/Events/KeyEvent.h"
-#include "Holloware/Renderer/GraphicsContext.h"
-
-#include "Platform/OpenGL/OpenGLContext.h"
 
 #include <GLFW/glfw3.h>
 
@@ -26,22 +25,16 @@ namespace Holloware
 
 	WindowsWindow::WindowsWindow(const WindowProps& props)
 	{
-		HW_PROFILE_FUNCTION();
-
 		Init(props);
 	}
 
 	WindowsWindow::~WindowsWindow()
 	{
-		HW_PROFILE_FUNCTION();
-
 		Shutdown();
 	}
 
 	void WindowsWindow::Init(const WindowProps& props)
 	{
-		HW_PROFILE_FUNCTION();
-
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
@@ -57,9 +50,7 @@ namespace Holloware
 		}
 
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
-		m_Context = new OpenGLContext(m_Window);
-
-		m_Context->Init();
+		glfwMakeContextCurrent(m_Window);
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
@@ -156,23 +147,17 @@ namespace Holloware
 
 	void WindowsWindow::Shutdown()
 	{
-		HW_PROFILE_FUNCTION();
-
 		glfwDestroyWindow(m_Window);
 	}
 
 	void WindowsWindow::OnUpdate()
 	{
-		HW_PROFILE_FUNCTION();
-
 		glfwPollEvents();
-		m_Context->SwapBuffers();
+		glfwSwapBuffers(m_Window);
 	}
 
 	void WindowsWindow::SetVSync(bool enabled)
 	{
-		HW_PROFILE_FUNCTION();
-
 		if (enabled)
 			glfwSwapInterval(1);
 		else

@@ -22,8 +22,8 @@ namespace Holloware
         // Set Asset imported callback
         AssetManager::SetAssetImportedCallback([this](Asset asset) { OnAssetImported(asset); });
 
-        m_PlayIcon = Texture2D::Create(m_AssetsPath / "textures/play_icon.png");
-        m_StopIcon = Texture2D::Create(m_AssetsPath / "textures/pause_icon.png"); 
+        m_PlayIcon = CreateRef<pxr::TextureBuffer>(m_AssetsPath / "textures/play_icon.png");
+        m_StopIcon = CreateRef<pxr::TextureBuffer>(m_AssetsPath / "textures/pause_icon.png");
 
         m_ActiveScene = CreateRef<Scene>();
         m_ActiveScene->CreateAbstractEntity("Placeholder");
@@ -258,8 +258,8 @@ namespace Holloware
 
         float size = ImGui::GetWindowHeight() - 5.0f;
 
-        Ref<Texture2D> icon = (m_SceneState == SceneState::Play) ? m_StopIcon : m_PlayIcon;
-        ImTextureRef iconTextureRef = ImTextureRef(icon->GetRendererID());
+        Ref<pxr::TextureBuffer> icon = (m_SceneState == SceneState::Play) ? m_StopIcon : m_PlayIcon;
+        ImTextureRef iconTextureRef = ImTextureRef(icon->GetID());
 
         ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
         ImGui::SetCursorPosY((ImGui::GetWindowContentRegionMax().y * 0.5f) - (size * 0.5f));

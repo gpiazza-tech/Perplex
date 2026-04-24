@@ -2,11 +2,9 @@
 
 #include "Holloware/Core/Application.h"
 #include "Holloware/Core/Project.h"
-
 #include "Holloware/Assets/Asset.h"
 #include "Holloware/Assets/AssetManager.h"
-
-#include "Holloware/Renderer/Texture.h"
+#include <backends/TextureBuffer.h>
 
 #include <imgui/imgui.h>
 
@@ -15,9 +13,9 @@ namespace Holloware
 	ContentBrowserPanel::ContentBrowserPanel()
 		: m_AssetsPath(Application::Get().GetCurrentProject().GetAssetsPath()), m_CurrentDirectory(m_AssetsPath)
 	{
-		m_DirectoryIcon = Texture2D::Create(m_AssetsPath / "textures/folder_icon.png");
-		m_FileIcon = Texture2D::Create(m_AssetsPath / "textures/file_icon.png");
-		m_BackArrowIcon = Texture2D::Create(m_AssetsPath / "textures/back_arrow.png");
+		m_DirectoryIcon = CreateRef<pxr::TextureBuffer>(m_AssetsPath / "textures/folder_icon.png");
+		m_FileIcon = CreateRef<pxr::TextureBuffer>(m_AssetsPath / "textures/file_icon.png");
+		m_BackArrowIcon = CreateRef<pxr::TextureBuffer>(m_AssetsPath / "textures/back_arrow.png");
 	}
 
 	void ContentBrowserPanel::OnImGuiRender()
@@ -26,7 +24,7 @@ namespace Holloware
 
 		if (m_CurrentDirectory != std::filesystem::path(m_AssetsPath))
 		{
-			ImTextureRef arrowTextureRef = ImTextureRef(m_BackArrowIcon->GetRendererID());
+			ImTextureRef arrowTextureRef = ImTextureRef(m_BackArrowIcon->GetID());
 
 			if (ImGui::ImageButton("back", arrowTextureRef, { 20, 20 }, {0, 1}, {1, 0}))
 			{
@@ -52,8 +50,8 @@ namespace Holloware
 			auto relativePath = std::filesystem::relative(path, m_AssetsPath);
 			std::string filenameString = relativePath.filename().string();
 
-			Ref<Texture2D> icon = directoryEntry.is_directory() ? m_DirectoryIcon : m_FileIcon;
-			ImTextureRef iconTextureRef = ImTextureRef(icon->GetRendererID());
+			Ref<pxr::TextureBuffer> icon = directoryEntry.is_directory() ? m_DirectoryIcon : m_FileIcon;
+			ImTextureRef iconTextureRef = ImTextureRef(icon->GetID());
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 			ImGui::ImageButton(filenameString.c_str(), iconTextureRef, { iconSize, iconSize }, {0, 1}, {1, 0} );

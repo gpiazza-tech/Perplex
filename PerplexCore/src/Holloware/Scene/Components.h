@@ -3,7 +3,6 @@
 #include <Holloware/Core/UUID.h>
 #include <Holloware/Core/HollowareObject.h>
 #include <Holloware/Assets/Asset.h>
-#include <Holloware/Scene/SceneCamera.h>
 #include <Holloware/Scripting/ScriptInstance.h>
 #include <Holloware/Scripting/ScriptData.h>
 #include <rendering/Camera.h>

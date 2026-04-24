@@ -26,7 +26,7 @@ namespace Holloware
 
 	void TagComponent::DrawGui()
 	{
-		char buffer[32];
+		char buffer[32]; 
 		memset(buffer, 0, sizeof(buffer));
 		strcpy_s(buffer, sizeof(buffer), Tag.c_str());
 		if (ImGui::InputText("Tag", buffer, sizeof(buffer)))

@@ -1,15 +1,11 @@
 #include "SceneHierarchyPanel.h"
 
-#include "Holloware/ImGui/ImGuiUtilities.h"
-
 #include <Holloware/Core/Core.h>
 #include <Holloware/Core/UUID.h>
 #include <Holloware/Scene/Entity.h>
 #include "Holloware/Scene/Components.h"
 #include "Holloware/Scene/Scene.h"
 
-#include <entt.hpp>
-#include <imgui/imgui_internal.h>
 #include <imgui/imgui.h>
 #include <cstdint>
 #include <vector>

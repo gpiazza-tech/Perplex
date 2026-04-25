@@ -23,7 +23,7 @@
 
 namespace Holloware
 {
-	Entity Scene::CreateEntity(const std::string& name, UUID uuid)
+	Entity Scene::CreateEntity(const std::string& name, UUID uuid, UUID parent)
 	{
 		Entity entity = Entity(m_Registry.create(), this);
 
@@ -36,12 +36,12 @@ namespace Holloware
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
 
-		m_Hierarchy.Add(EntityNode(entity.GetUUID()), 0);
+		m_Hierarchy.Add(EntityNode(entity.GetUUID()), parent);
 
 		return entity;
 	}
 
-	Entity Scene::CreateAbstractEntity(const std::string& name, UUID uuid)
+	Entity Scene::CreateAbstractEntity(const std::string& name, UUID uuid, UUID parent)
 	{
 		Entity entity = Entity(m_Registry.create(), this);
 
@@ -52,7 +52,7 @@ namespace Holloware
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
 
-		m_Hierarchy.Add(EntityNode(entity.GetUUID()), 0);
+		m_Hierarchy.Add(EntityNode(entity.GetUUID()), parent);
 
 		return entity;
 	}
@@ -65,9 +65,10 @@ namespace Holloware
 		m_Registry.destroy(entity);
 	}
 
-	void Scene::CopyEntity(Entity entity)
+	void Scene::CopyEntity(Entity entity, UUID parent)
 	{
-		Entity newEntity = CreateAbstractEntity(entity.GetTag());
+		// copy main
+		Entity newEntity = CreateAbstractEntity(entity.GetTag(), UUID(), parent);
 		if (entity.HasComponent<TransformComponent>())
 			newEntity.AddComponent<TransformComponent>(entity.GetComponent<TransformComponent>());
 		if (entity.HasComponent<SpriteRendererComponent>())
@@ -77,7 +78,9 @@ namespace Holloware
 		if (entity.HasComponent<ScriptComponent>())
 			newEntity.AddComponent<ScriptComponent>(entity.GetComponent<ScriptComponent>());
 
-		m_Hierarchy.Add(EntityNode(entity.GetUUID()), 0);
+		// copy children
+		for (auto& childID : m_Hierarchy.GetNode(entity.GetUUID()).ChildIDs)
+			CopyEntity(GetEntity(childID), newEntity.GetUUID());
 	}
 
 	Entity Scene::GetEntity(UUID uuid)

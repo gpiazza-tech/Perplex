@@ -18,18 +18,18 @@ namespace Holloware
 		void SetContext(const Ref<Scene>& context);
 
 		void OnImGuiRender();
-
-		Entity GetSelectedEntity() const { return m_SelectionContext[0]; }
-		void SetSelectedEntity(Entity entity);
 	private:
-		void DrawEntityNode(EntityNode node);
+		void DrawEntityNode(const EntityNode& node);
 		void DrawComponents(Entity entity);
 
 		template <typename T>
 		void DrawComponent(Entity entity, const char* name, void (*DrawBody)(T&));
+	
+		void SetSelectedEntity(UUID entity);
 	private:
 		Ref<Scene> m_Context;
-		std::vector<Entity> m_SelectionContext;
-		std::vector<Entity> m_Clipboard;
+		UUID m_HoveredNode = 0;
+		std::vector<UUID> m_SelectedNodes;
+		std::vector<UUID> m_CopiedNodes;
 	};
 }

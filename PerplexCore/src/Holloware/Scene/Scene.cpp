@@ -67,6 +67,8 @@ namespace Holloware
 
 	void Scene::CopyEntity(Entity entity, UUID parent)
 	{
+		std::vector<UUID> children = m_Hierarchy.GetNode(entity.GetUUID()).ChildIDs;
+
 		// copy main
 		Entity newEntity = CreateAbstractEntity(entity.GetTag(), UUID(), parent);
 		if (entity.HasComponent<TransformComponent>())
@@ -79,7 +81,7 @@ namespace Holloware
 			newEntity.AddComponent<ScriptComponent>(entity.GetComponent<ScriptComponent>());
 
 		// copy children
-		for (auto& childID : m_Hierarchy.GetNode(entity.GetUUID()).ChildIDs)
+		for (auto& childID : children)
 			CopyEntity(GetEntity(childID), newEntity.GetUUID());
 	}
 

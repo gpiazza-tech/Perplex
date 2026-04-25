@@ -9,11 +9,12 @@
 #include <imgui/imgui.h>
 #include <cstdint>
 #include <vector>
+#include <Holloware/Scene/EntityNode.h>
 
 namespace Holloware
 {
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
-		: m_SelectionContext(0)
+		: m_SelectedNodes(0)
 	{
 		SetContext(scene);
 	}
@@ -21,7 +22,7 @@ namespace Holloware
 	void SceneHierarchyPanel::SetContext(const Ref<Scene>& context)
 	{
 		m_Context = context;
-		m_SelectionContext.clear();
+		m_SelectedNodes.clear();
 	}
 
 	void SceneHierarchyPanel::OnImGuiRender()
@@ -35,8 +36,9 @@ namespace Holloware
 		for (const auto& entityID : rootEntities)
 			DrawEntityNode(hierarchy.GetNode(entityID));
 
-		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
-			m_SelectionContext.clear();
+		if ((ImGui::IsMouseDown(0) || ImGui::IsMouseDown(1)) && ImGui::IsWindowHovered() && !m_HoveredNode)
+			m_SelectedNodes.clear();
+		m_HoveredNode = 0;
 		
 		// Right-click on blank space
 		if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
@@ -45,8 +47,12 @@ namespace Holloware
 				m_Context->CreateEntity("Entity");
 			if (ImGui::MenuItem("Create Abstract Entity"))
 				m_Context->CreateAbstractEntity("Abstract Entity");
-			if (m_Clipboard.size() > 0 && ImGui::MenuItem("Paste"))
-				m_Context->CopyEntity(m_Clipboard[0]);
+			if (m_CopiedNodes.size() > 0 && ImGui::MenuItem("Paste"))
+			{
+				UUID selectedNode = m_SelectedNodes.empty() ? 0 : m_SelectedNodes[0];
+				for (auto& copiedNode : m_CopiedNodes)
+					m_Context->CopyEntity(m_Context->GetEntity(copiedNode), selectedNode);
+			}
 
 			ImGui::EndPopup();
 		}
@@ -54,9 +60,9 @@ namespace Holloware
 		ImGui::End();
 
 		ImGui::Begin("Properties");
-		if (m_SelectionContext.size() == 1)
+		if (m_SelectedNodes.size() == 1)
 		{
-			Entity& selection = m_SelectionContext[0];
+			Entity& selection = m_Context->GetEntity(m_SelectedNodes[0]);
 
 			DrawComponents(selection);
 
@@ -95,13 +101,13 @@ namespace Holloware
 		ImGui::End();
 	}
 
-	void SceneHierarchyPanel::SetSelectedEntity(Entity entity)
+	void SceneHierarchyPanel::SetSelectedEntity(UUID entity)
 	{
-		m_SelectionContext.resize(1);
-		m_SelectionContext[0] = entity;
+		m_SelectedNodes.resize(1);
+		m_SelectedNodes[0] = entity;
 	}
 
-	void SceneHierarchyPanel::DrawEntityNode(EntityNode node)
+	void SceneHierarchyPanel::DrawEntityNode(const EntityNode& node)
 	{
 		SceneHierarchy& hierarchy = m_Context->GetHierarchy();
 
@@ -114,15 +120,23 @@ namespace Holloware
 		if (childIDs.empty())
 			flags |= ImGuiTreeNodeFlags_Leaf;
 
-		for (auto& selection : m_SelectionContext)
-			if (selection == entity)
+		for (auto& selectedNode : m_SelectedNodes)
+			if (hierarchy.GetNode(selectedNode).ID == node.ID)
 				flags |= ImGuiTreeNodeFlags_Selected;
 
-		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
+		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)node.ID, flags, tag.c_str());
 
-		if (ImGui::IsItemHovered() && (ImGui::IsMouseReleased(0) || ImGui::IsMouseReleased(1))) // selects on both left and right click
+		bool hovered = ImGui::IsItemHovered();
+		if (hovered)
+			m_HoveredNode = node.ID;
+
+		// always selects on left click, selects on right click only when there is no current selection
+		if (hovered && (ImGui::IsMouseReleased(0) || (ImGui::IsMouseReleased(1) && m_SelectedNodes.empty())))
 		{
-			SetSelectedEntity(entity);
+			if (ImGui::GetIO().KeyCtrl)
+				m_SelectedNodes.emplace_back(node.ID);
+			else
+				SetSelectedEntity(node.ID);
 		}
 
 		if (ImGui::BeginDragDropSource())
@@ -150,7 +164,7 @@ namespace Holloware
 			if (ImGui::MenuItem("Delete"))
 				deleteEntity = true;
 			if (ImGui::MenuItem("Copy"))
-				m_Clipboard = m_SelectionContext;
+				m_CopiedNodes = m_SelectedNodes;
 
 			ImGui::EndPopup();
 		}
@@ -167,8 +181,7 @@ namespace Holloware
 		if (deleteEntity)
 		{
 			m_Context->DestroyEntity(entity);
-			if (m_SelectionContext[0] == entity)
-				m_SelectionContext.erase(m_SelectionContext.begin());
+			m_SelectedNodes.clear();
 		}
 	}
 

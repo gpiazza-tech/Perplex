@@ -18,55 +18,55 @@
 
 namespace Holloware
 {
-	void IDComponent::DrawGui()
+	void DrawGui(IDComponent& component)
 	{
-		std::string tempString = std::to_string(ID);
+		std::string tempString = std::to_string(component.ID);
 		ImGui::Text(tempString.c_str());
 	}
 
-	void TagComponent::DrawGui()
+	void DrawGui(TagComponent& component)
 	{
-		char buffer[32]; 
+		char buffer[32];
 		memset(buffer, 0, sizeof(buffer));
-		strcpy_s(buffer, sizeof(buffer), Tag.c_str());
+		strcpy_s(buffer, sizeof(buffer), component.Tag.c_str());
 		if (ImGui::InputText("Tag", buffer, sizeof(buffer)))
 		{
-			Tag = std::string(buffer);
+			component.Tag = std::string(buffer);
 		}
 	}
 
-	void TransformComponent::DrawGui()
+	void DrawGui(TransformComponent& component)
 	{
-		ImGuiUtilities::DrawVec3Control("Position", Position);
+		ImGuiUtilities::DrawVec3Control("Position", component.Position);
 
-		glm::vec3 rotation = glm::degrees(Rotation);
+		glm::vec3 rotation = glm::degrees(component.Rotation);
 		ImGuiUtilities::DrawVec3Control("Rotation", rotation);
-		Rotation = glm::radians(rotation);
+		component.Rotation = glm::radians(rotation);
 
-		ImGuiUtilities::DrawVec3Control("Scale", Scale);
+		ImGuiUtilities::DrawVec3Control("Scale", component.Scale);
 	}
 
-	void SpriteRendererComponent::DrawGui()
+	void DrawGui(SpriteRendererComponent& component)
 	{
 		// Color
-		Drawer::DrawAssetField("Sprite", SpriteAsset, AssetType::SpriteAsset);
-		ImGui::ColorEdit4("Color", glm::value_ptr(Color));
+		Drawer::DrawAssetField("Sprite", component.SpriteAsset, AssetType::SpriteAsset);
+		ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
 
 		// Emission
-		Drawer::DrawAssetField("Emission Mask", EmissionSpriteAsset, AssetType::SpriteAsset);
-		ImGui::DragFloat("Emission", &Emission, 0.01f);
+		Drawer::DrawAssetField("Emission Mask", component.EmissionSpriteAsset, AssetType::SpriteAsset);
+		ImGui::DragFloat("Emission", &component.Emission, 0.01f);
 	}
 
-	void CameraComponent::DrawGui()
+	void DrawGui(CameraComponent& component)
 	{
-		ImGui::Checkbox("Primary", &Primary);
-		ImGui::DragFloat("Zoom", &Zoom);
-		ImGui::ColorEdit4("Background", &Background.r);
-		ImGui::DragInt("Pixels Per Unit", &PixelsPerUnit);
-		ImGui::Checkbox("PixelPerfect", &PixelPerfect);
+		ImGui::Checkbox("Primary", &component.Primary);
+		ImGui::DragFloat("Zoom", &component.Zoom);
+		ImGui::ColorEdit4("Background", &component.Background.r);
+		ImGui::DragInt("Pixels Per Unit", &component.PixelsPerUnit);
+		ImGui::Checkbox("PixelPerfect", &component.PixelPerfect);
 
 		const char* scalingModeStrings[] = { "Width", "Height", "Larger Side", "Smaller Side" };
-		const char* currentScalingModeString = scalingModeStrings[(int)ScalingMode - 1];
+		const char* currentScalingModeString = scalingModeStrings[(int)component.ScalingMode - 1];
 
 		if (ImGui::BeginCombo("Scaling Mode", currentScalingModeString))
 		{
@@ -76,7 +76,7 @@ namespace Holloware
 				if (ImGui::Selectable(scalingModeStrings[i], isSelected))
 				{
 					currentScalingModeString = scalingModeStrings[i];
-					ScalingMode = ((pxr::ScalingMode)(i + 1)); // +1 to skip ScalingMode::None
+					component.ScalingMode = ((pxr::ScalingMode)(i + 1)); // +1 to skip ScalingMode::None
 				}
 
 				if (isSelected)
@@ -87,21 +87,21 @@ namespace Holloware
 		}
 	}
 
-	void ScriptComponent::DrawGui()
+	void DrawGui(ScriptComponent& component)
 	{
-		ImGui::PushID(this);
+		ImGui::PushID(&component);
 
-		if (Drawer::DrawAssetField("Source", ScriptAsset, AssetType::ScriptAsset))
+		if (Drawer::DrawAssetField("Source", component.ScriptAsset, AssetType::ScriptAsset))
 		{
-			if (ScriptAsset)
-				Properties = ScriptAsset.GetData<ScriptData>()->Properties;
+			if (component.ScriptAsset)
+				component.Properties = component.ScriptAsset.GetData<ScriptData>()->Properties;
 			else
-				Properties.clear();
+				component.Properties.clear();
 		}
 
 		ImGui::Dummy(ImVec2(0.0f, 20.0f));
 
-		for (auto& property : Properties)
+		for (auto& property : component.Properties)
 		{
 			property.DrawGui();
 		}

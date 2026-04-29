@@ -12,6 +12,8 @@
 #include <glm/ext/matrix_common.hpp>
 #include <glm/ext/matrix_transform.hpp>
 
+#include <entt.hpp>
+
 #include <filesystem>
 #include <string>
 #include <vector>
@@ -26,17 +28,15 @@ namespace Holloware
 		std::string Tag = "";
 	};
 
-	struct IDComponent : public HollowareObject
+	struct IDComponent
 	{
 		UUID ID;
 
 		IDComponent() = default;
 		IDComponent(const IDComponent&) = default;
-
-		void DrawGui() override;
 	};
 
-	struct TagComponent : public HollowareObject
+	struct TagComponent
 	{
 		std::string Tag;
 
@@ -44,11 +44,9 @@ namespace Holloware
 		TagComponent(const TagComponent&) = default;
 		TagComponent(const std::string& tag)
 			: Tag(tag) { }
-
-		void DrawGui() override;
 	};
 
-	struct TransformComponent : public HollowareObject
+	struct TransformComponent
 	{
 		glm::vec3 Position = { 0.0f, 0.0f, 0.0f };
 		glm::vec3 Rotation = { 0.0f, 0.0f, 0.0f };
@@ -69,11 +67,9 @@ namespace Holloware
 				* rotation
 				* glm::scale(glm::mat4(1.0f), Scale);
 		}
-
-		void DrawGui() override;
 	};
 
-	struct SpriteRendererComponent : public HollowareObject
+	struct SpriteRendererComponent
 	{
 		Asset SpriteAsset = Asset();
 		glm::vec4 Color = glm::vec4(1.0f);
@@ -85,11 +81,9 @@ namespace Holloware
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
 		SpriteRendererComponent(const glm::vec4& color)
 			: Color(color) {}
-
-		void DrawGui() override;
 	};
 
-	struct CameraComponent : public HollowareObject
+	struct CameraComponent
 	{
 		bool Primary = true;
 		float Zoom = 10.0f;
@@ -100,13 +94,11 @@ namespace Holloware
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
-
-		void DrawGui() override;
 	};
 
 	class ScriptProperty;
 
-	struct ScriptComponent : public HollowareObject
+	struct ScriptComponent
 	{
 		Asset ScriptAsset;
 		ScriptInstance Instance;
@@ -135,7 +127,5 @@ namespace Holloware
 				}
 			}
 		}
-
-		void DrawGui() override;
 	};
 }

@@ -5,6 +5,7 @@
 #include <Holloware/Scene/Entity.h>
 #include "Holloware/Scene/Components.h"
 #include "Holloware/Scene/Scene.h"
+#include "../Drawers/CoreComponentsDrawer.h"
 
 #include <imgui/imgui.h>
 #include <cstdint>
@@ -189,34 +190,34 @@ namespace Holloware
 	{
 		if (entity.HasComponent<IDComponent>())
 		{
-			auto& id = entity.GetComponent<IDComponent>();
-			id.DrawGui();
+			auto& idComponent = entity.GetComponent<IDComponent>();
+			DrawGui(idComponent);
 		}
 
 		if (entity.HasComponent<TagComponent>())
 		{
 			auto& tagComponent = entity.GetComponent<TagComponent>();
-			tagComponent.DrawGui();
+			DrawGui(tagComponent);
 		}
 
-		DrawComponent<TransformComponent>(entity, "Transform", [](TransformComponent& c)
+		DrawComponent<TransformComponent>(entity, "Transform", [](TransformComponent& component)
 			{
-				c.DrawGui();
+				DrawGui(component);
 			});
 
-		DrawComponent<CameraComponent>(entity, "Camera", [](CameraComponent& c)
+		DrawComponent<CameraComponent>(entity, "Camera", [](CameraComponent& component)
 			{
-				c.DrawGui();
+				DrawGui(component);
 			});
 
-		DrawComponent<SpriteRendererComponent>(entity, "Sprite Renderer", [](SpriteRendererComponent& c)
+		DrawComponent<SpriteRendererComponent>(entity, "Sprite Renderer", [](SpriteRendererComponent& component)
 			{
-				c.DrawGui();
+				DrawGui(component);
 			});
 
-		DrawComponent<ScriptComponent>(entity, "Script", [](ScriptComponent& c)
+		DrawComponent<ScriptComponent>(entity, "Script", [](ScriptComponent& component)
 			{
-				c.DrawGui();
+				DrawGui(component);
 			});
 	}
 

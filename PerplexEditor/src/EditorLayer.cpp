@@ -39,7 +39,7 @@ namespace Holloware
     {
         HW_PROFILE_FUNCTION();
 
-        m_frameMS = ts.GetMilliseconds();
+        m_FrameMS = ts.GetMilliseconds();
 
         // Resizing
         if (m_ViewportSize != *((glm::vec2*)&m_ViewportPanelSize))
@@ -219,8 +219,8 @@ namespace Holloware
         {
             if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
             {
-                const wchar_t* path = (const wchar_t*)payload->Data;
-                HW_CORE_INFO(std::filesystem::path(path).string().c_str());
+                Asset payloadAsset = *(Asset*)payload->Data;
+                UI_Viewport_OnAssetDrop(payloadAsset);
             }
             ImGui::EndDragDropTarget();
         }
@@ -238,10 +238,15 @@ namespace Holloware
         ImGui::PopStyleVar();
     }
 
+    void EditorLayer::UI_Viewport_OnAssetDrop(Asset asset)
+    {
+        HW_CORE_INFO(asset.GetName().string());
+    }
+
     void EditorLayer::UI_Stats()
     {
         ImGui::Begin("Stats");
-        ImGui::Text("FPS: %.3f", 1000.0f / m_frameMS);
+        ImGui::Text("FPS: %.3f", 1000.0f / m_FrameMS);
 
         ImGui::End();
     }

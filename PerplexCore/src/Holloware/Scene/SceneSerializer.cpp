@@ -18,18 +18,7 @@ namespace Holloware
 		{
 			Entity entity = Entity(entityHandler, scene.get());
 			nlohmann::json& entityJson = sceneJson["Entities"][entity.GetComponent<TagComponent>().Tag + " - " + std::to_string(entity.GetUUID())];
-
-			entityJson["ID"] = entity.GetComponent<IDComponent>().ID;
-			entityJson["Tag"] = entity.GetComponent<TagComponent>().Tag;
-
-			if (entity.HasComponent<TransformComponent>())
-				entityJson["TransformComponent"] = entity.GetComponent<TransformComponent>();
-			if (entity.HasComponent<SpriteRendererComponent>())
-				entityJson["SpriteRendererComponent"] = entity.GetComponent<SpriteRendererComponent>();
-			if (entity.HasComponent<CameraComponent>())
-				entityJson["CameraComponent"] = entity.GetComponent<CameraComponent>();
-			if (entity.HasComponent<ScriptComponent>())
-				entityJson["ScriptComponent"] = entity.GetComponent<ScriptComponent>();
+			SerializeEntity(entityJson, entity);
 		}
 		sceneJson["Hierarchy"] = scene->GetHierarchy();
 
@@ -47,15 +36,7 @@ namespace Holloware
 		for (auto& entityJson : sceneJson["Entities"])
 		{
 			Entity entity = scene->CreateAbstractEntity(entityJson["Tag"].get<std::string>(), entityJson["ID"].get<UUID>());
-
-			if (entityJson.contains("TransformComponent"))
-				entity.AddComponent<TransformComponent>() = entityJson["TransformComponent"];
-			if (entityJson.contains("SpriteRendererComponent"))
-				entity.AddComponent<SpriteRendererComponent>() = entityJson["SpriteRendererComponent"];
-			if (entityJson.contains("CameraComponent"))
-				entity.AddComponent<CameraComponent>() = entityJson["CameraComponent"];
-			if (entityJson.contains("ScriptComponent"))
-				entity.AddComponent<ScriptComponent>() = entityJson["ScriptComponent"];
+			DeserializeEntity(entityJson, entity);
 		}
 
 		scene->m_Hierarchy = sceneJson["Hierarchy"];
@@ -63,5 +44,30 @@ namespace Holloware
 		return scene;
 	}
 
+	void SceneSerializer::SerializeEntity(nlohmann::json& json, Entity& entity)
+	{
+		json["ID"] = entity.GetComponent<IDComponent>().ID;
+		json["Tag"] = entity.GetComponent<TagComponent>().Tag;
 
+		if (entity.HasComponent<TransformComponent>())
+			json["TransformComponent"] = entity.GetComponent<TransformComponent>();
+		if (entity.HasComponent<SpriteRendererComponent>())
+			json["SpriteRendererComponent"] = entity.GetComponent<SpriteRendererComponent>();
+		if (entity.HasComponent<CameraComponent>())
+			json["CameraComponent"] = entity.GetComponent<CameraComponent>();
+		if (entity.HasComponent<ScriptComponent>())
+			json["ScriptComponent"] = entity.GetComponent<ScriptComponent>();
+	}
+
+	void SceneSerializer::DeserializeEntity(const nlohmann::json& json, Entity& entity)
+	{
+		if (json.contains("TransformComponent"))
+			entity.AddComponent<TransformComponent>() = json["TransformComponent"];
+		if (json.contains("SpriteRendererComponent"))
+			entity.AddComponent<SpriteRendererComponent>() = json["SpriteRendererComponent"];
+		if (json.contains("CameraComponent"))
+			entity.AddComponent<CameraComponent>() = json["CameraComponent"];
+		if (json.contains("ScriptComponent"))
+			entity.AddComponent<ScriptComponent>() = json["ScriptComponent"];
+	}
 }

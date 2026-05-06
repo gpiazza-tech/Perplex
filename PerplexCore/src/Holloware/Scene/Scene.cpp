@@ -204,7 +204,8 @@ namespace Holloware
 				auto& sc = view.get<ScriptComponent>(e);
 				TagComponent& tag = entity.GetComponent<TagComponent>();
 
-				if (sc.Instance.IsCompiled()) sc.Instance.TryCallStop();
+				if (sc.Instance.IsCompiled()) 
+					sc.Instance.TryCallStop();
 			}
 		}
 	}

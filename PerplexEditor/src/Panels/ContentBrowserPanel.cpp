@@ -1,5 +1,7 @@
 #include "ContentBrowserPanel.h"
 
+#include <Holloware/Scene/Entity.h>
+#include <Holloware/Scene/SceneSerializer.h>
 #include "Holloware/Core/Application.h"
 #include "Holloware/Core/Project.h"
 #include "Holloware/Assets/Asset.h"
@@ -7,6 +9,8 @@
 #include <backends/TextureBuffer.h>
 
 #include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
+#include <nlohmann/json.hpp>
 
 namespace Holloware
 {
@@ -21,6 +25,19 @@ namespace Holloware
 	void ContentBrowserPanel::OnImGuiRender()
 	{
 		ImGui::Begin("Content");
+
+		// Drop item on window
+		if (ImGui::BeginDragDropTargetCustom(ImGui::GetCurrentWindow()->InnerRect, ImGui::GetCurrentWindow()->ID))
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("SCENE_HIERARCHY_ITEM"))
+			{
+				Entity payloadEntity = *(Entity*)payload->Data;
+				nlohmann::json json{};
+				SceneSerializer::SerializeEntity(json["Entity"], payloadEntity);
+				HW_CORE_INFO(json.dump(4));
+			}
+			ImGui::EndDragDropTarget();
+		}
 
 		if (m_CurrentDirectory != std::filesystem::path(m_AssetsPath))
 		{

@@ -127,9 +127,4 @@ namespace Holloware
 			ImGui::EndDragDropTarget();
 		}
 	}
-
-	void ImGuiUtilities::AssetInput(const char* label, Asset& asset)
-	{
-		// TODO: when implemented, ScriptComponentDrawer should use this
-	}
 }

@@ -5,6 +5,7 @@
 #include <Holloware/Assets/Asset.h>
 #include <Holloware/Scene/Components.h>
 #include <Holloware/ImGui/ImGuiUtilities.h>
+#include <Holloware/ImGui/Drawer.h>
 #include <Holloware/Serialization/Json.h>
 
 #include <nlohmann/json.hpp>
@@ -97,7 +98,8 @@ namespace Holloware
 			ImGuiUtilities::EntityInput(m_Name.c_str(), std::any_cast<EntityData&>(m_Value));
 			break;
 		case HollowareTypes::Asset:
-			ImGuiUtilities::AssetInput(m_Name.c_str(), std::any_cast<Asset&>(m_Value));
+			HW_CORE_ERROR("HollowareType::Asset not implemented in ScriptProperty!");
+			// Drawer::AssetInput(m_Name.c_str(), std::any_cast<Asset&>(m_Value));
 			break;
 		default:
 			break;

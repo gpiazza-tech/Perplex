@@ -14,6 +14,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <filesystem>
 
 namespace Holloware
 {

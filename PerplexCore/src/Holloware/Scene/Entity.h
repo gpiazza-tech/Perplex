@@ -65,7 +65,6 @@ namespace Holloware
 		operator entt::entity() const { return m_EntityHandle; }
 
 		bool operator==(const Entity& other) const;
-
 		bool operator!=(const Entity& other) const;
 	private:
 		entt::entity m_EntityHandle{ entt::null };

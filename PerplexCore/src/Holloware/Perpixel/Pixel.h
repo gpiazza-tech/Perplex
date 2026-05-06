@@ -1,0 +1,15 @@
+#pragma once
+
+#include <glm/fwd.hpp>
+#include <glm/glm.hpp>
+
+namespace Holloware
+{
+	struct Pixel
+	{
+		glm::vec2 Position{ 0.0f, 0.0f };
+		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
+		float Emission = 0.0f;
+		float Lifetime = 0.0f; // Seconds
+	};
+}

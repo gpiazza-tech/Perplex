@@ -119,4 +119,33 @@ namespace Holloware
 
 		return changed;
 	}
+
+	bool Drawer::DrawOptions(const char* label, int& current, Option options[], size_t optionCount)
+	{
+		Option* currentOption{};
+
+		// find current
+		for (size_t i{}; i < optionCount; i++)
+		{
+			if (current == options[i].Value)
+				currentOption = options + i;
+		}
+
+		if (ImGui::BeginCombo(label, currentOption->Label))
+		{
+			for (size_t i{}; i < optionCount; i++)
+			{
+				bool isSelected = current == options[i].Value;
+				if (ImGui::Selectable(options[i].Label, isSelected))
+					current = options[i].Value;
+
+				if (isSelected)
+					ImGui::SetItemDefaultFocus();
+			}
+
+			ImGui::EndCombo();
+		}
+
+		return current != currentOption->Value;
+	}
 }

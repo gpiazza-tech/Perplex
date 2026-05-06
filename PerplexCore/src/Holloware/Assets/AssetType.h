@@ -9,6 +9,7 @@ namespace Holloware
 		Asset = 0,
 		SpriteAsset,
 		ScriptAsset,
-		SceneAsset
+		SceneAsset,
+		PrefabAsset
 	};
 }

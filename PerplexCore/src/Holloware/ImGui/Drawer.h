@@ -3,6 +3,7 @@
 #include <glm/fwd.hpp>
 
 #include <cstdint>
+#include <array>
 
 namespace Holloware
 {
@@ -11,6 +12,8 @@ namespace Holloware
 
 	enum class AssetType : uint8_t;
 	class Asset;
+
+	struct Option { const char* Label; int Value; };
 
 	class Drawer
 	{
@@ -23,5 +26,7 @@ namespace Holloware
 		static void Draw(HollowareObject* value);
 
 		static bool DrawAssetField(const char* label, Asset& asset, AssetType type);
+
+		static bool DrawOptions(const char* label, int& current, Option options[], size_t optionCount);
 	};
 }

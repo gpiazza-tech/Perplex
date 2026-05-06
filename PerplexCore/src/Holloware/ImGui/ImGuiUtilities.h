@@ -22,6 +22,5 @@ namespace Holloware
 		static void DrawAnyDoubleControl(const char* label, std::any& val);
 		static void DrawAnyBoolControl(const char* label, std::any& val);
 		static void EntityInput(const char* label, EntityData& entity);
-		static void AssetInput(const char* label, Asset& asset);
 	};
 }

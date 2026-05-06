@@ -10,4 +10,5 @@ namespace Holloware
 	void DrawGui(SpriteRendererComponent& component);
 	void DrawGui(CameraComponent& component);
 	void DrawGui(ScriptComponent& component);
+	void DrawGui(PerpixelRendererComponent& component);
 }

@@ -5,6 +5,8 @@
 #include <Holloware/Assets/Asset.h>
 #include <Holloware/Scripting/ScriptInstance.h>
 #include <Holloware/Scripting/ScriptData.h>
+#include <Holloware/Perpixel/PerpixelSpawnShape.h>
+#include <Holloware/Perpixel/Pixel.h>
 #include <rendering/Camera.h>
 
 #include <glm/glm.hpp>
@@ -106,13 +108,11 @@ namespace Holloware
 
 		ScriptComponent()
 			: ScriptAsset(Asset()), Instance(ScriptInstance()), Properties(std::vector<ScriptProperty>())
-		{
-		}
+		{ }
 		ScriptComponent(const ScriptComponent&) = default;
 		ScriptComponent(const std::filesystem::path& filepath)
 			: ScriptAsset(Asset(filepath)), Instance(ScriptInstance()), Properties(ScriptAsset.GetData<ScriptData>()->Properties)
-		{
-		}
+		{ }
 
 		void SyncProperties()
 		{
@@ -127,5 +127,11 @@ namespace Holloware
 				}
 			}
 		}
+	};
+
+	struct PerpixelRendererComponent
+	{
+		PerpixelShape Shape{};
+		std::vector<Pixel> Pixels{};
 	};
 }

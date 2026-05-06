@@ -3,8 +3,8 @@
 #include <Holloware/Core/Log.h>
 #include "Holloware/Assets/Asset.h"
 #include "Holloware/Assets/AssetManager.h"
-#include "Holloware/ImGui/ImGuiUtilities.h"
-#include "Holloware/ImGui/Drawer.h"
+#include <Holloware/ImGui/Drawer.h>
+#include <Holloware/ImGui/ImGuiUtilities.h>
 #include <Holloware/Assets/AssetType.h>
 #include <Holloware/Scripting/ScriptData.h>
 #include <rendering/Camera.h>
@@ -63,28 +63,15 @@ namespace Holloware
 		ImGui::DragFloat("Zoom", &component.Zoom);
 		ImGui::ColorEdit4("Background", &component.Background.r);
 		ImGui::DragInt("Pixels Per Unit", &component.PixelsPerUnit);
-		ImGui::Checkbox("PixelPerfect", &component.PixelPerfect);
+		ImGui::Checkbox("Pixel Perfect", &component.PixelPerfect);
 
-		const char* scalingModeStrings[] = { "Width", "Height", "Larger Side", "Smaller Side" };
-		const char* currentScalingModeString = scalingModeStrings[(int)component.ScalingMode - 1];
-
-		if (ImGui::BeginCombo("Scaling Mode", currentScalingModeString))
-		{
-			for (int i = 0; i < 4; i++)
-			{
-				bool isSelected = currentScalingModeString == scalingModeStrings[i];
-				if (ImGui::Selectable(scalingModeStrings[i], isSelected))
-				{
-					currentScalingModeString = scalingModeStrings[i];
-					component.ScalingMode = ((pxr::ScalingMode)(i + 1)); // +1 to skip ScalingMode::None
-				}
-
-				if (isSelected)
-					ImGui::SetItemDefaultFocus();
-			}
-
-			ImGui::EndCombo();
-		}
+		Option scalingModeOptions[] = {
+			{ "Width", (int)pxr::ScalingMode::Width },
+			{ "Height", (int)pxr::ScalingMode::Height },
+			{ "Larger Side", (int)pxr::ScalingMode::LargerSide },
+			{ "Smaller Side", (int)pxr::ScalingMode::SmallerSide }
+		};
+		if (Drawer::DrawOptions("Scaling Mode", (int&)component.PixelPerfect, scalingModeOptions, 4));
 	}
 
 	void DrawGui(ScriptComponent& component)
@@ -107,5 +94,31 @@ namespace Holloware
 		}
 
 		ImGui::PopID();
+	}
+
+	void DrawGui(PerpixelRendererComponent& component)
+	{
+		Option shapeTypeOptions[] = {
+			{ "Sprite", (int)PerpixelShapeType::Sprite },
+			{ "Rect", (int)PerpixelShapeType::Rect },
+			{ "Circle", (int)PerpixelShapeType::Circle }
+		};
+		if (Drawer::DrawOptions("Scaling Mode", (int&)component.Shape, shapeTypeOptions, 4));
+
+		// Value
+		switch (component.Shape.Type)
+		{
+		case PerpixelShapeType::Circle:
+			ImGui::DragFloat("Radius", &component.Shape.Info.CircleRadius, 0.1f);
+			break;
+		case PerpixelShapeType::Rect:
+			ImGui::DragFloat2("Radius", &component.Shape.Info.RectSize.x, 0.1f);
+			break;
+		case PerpixelShapeType::Sprite:
+			Drawer::DrawAssetField("Sprite", component.Shape.Info.SpriteAsset, AssetType::SpriteAsset);
+			break;
+		default:
+			break;
+		}
 	}
 }

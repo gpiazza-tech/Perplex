@@ -7,6 +7,7 @@
 #include "Panels/SceneHierarchyPanel.h"
 
 #include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
 
 namespace Holloware
 {
@@ -36,31 +37,34 @@ namespace Holloware
 		void UI_Popups();
 
 		void UI_Viewport();
+		void UI_Viewport_OnAssetDrop(Asset asset);
 		void UI_Stats();
 		void UI_Toolbar();
 
 		void OnAssetImported(Asset asset);
 	private:
-		std::filesystem::path m_AssetsPath;
+		std::filesystem::path m_AssetsPath{};
 
-		Ref<pxr::TextureBuffer> m_PlayIcon, m_StopIcon;
+		Ref<pxr::TextureBuffer> m_PlayIcon{};
+		Ref<pxr::TextureBuffer> m_StopIcon{};
 
-		float m_frameMS;
-		float m_FPS;
+		float m_FrameMS = 0.0f;
+		float m_FPS = 0.0f;
 
-		Ref<Scene> m_ActiveScene;
+		Ref<Scene> m_ActiveScene{};
 
-		bool m_ViewportFocused, m_ViewportHovered;
+		bool m_ViewportFocused = false;
+		bool m_ViewportHovered = false;
 		ImVec2 m_ViewportPanelSize = ImVec2(1.0f, 1.0f);
 		glm::vec2 m_ViewportSize = glm::vec2(1.0f, 1.0f);
 		glm::vec2 m_ViewportBounds[2];
 
-		EditorCamera m_EditorCamera;
+		EditorCamera m_EditorCamera{};
 		
 		// Panels
-		Dockspace m_Dockspace;
-		SceneHierarchyPanel m_SceneHierarchyPanel;
-		ContentBrowserPanel m_ContentBrowserPanel;
+		Dockspace m_Dockspace{};
+		SceneHierarchyPanel m_SceneHierarchyPanel{};
+		ContentBrowserPanel m_ContentBrowserPanel{};
 
 		enum class SceneState
 		{

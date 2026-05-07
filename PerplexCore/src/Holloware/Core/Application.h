@@ -30,7 +30,7 @@ namespace Holloware
 
 		static inline Application& Get() { return *s_Instance; }
 		inline Window& GetWindow() { return *m_Window; }
-		inline Project& GetCurrentProject() { return *m_Project; }
+		inline const Project& GetCurrentProject() { return *m_Project; }
 
 		void Close();
 

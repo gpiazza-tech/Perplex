@@ -9,7 +9,6 @@
 #include <Holloware/Scene/Scene.h>
 #include <Holloware/Scene/Entity.h>
 #include <Holloware/Scene/Components.h>
-#include <Holloware/Utilities/Resource.h>
 
 #include <libtcc.h>
 #include <glm/glm.hpp>
@@ -60,14 +59,16 @@ namespace Holloware
 		// Setup the script's environment.
 		tcc_set_error_func(m_State, nullptr, [](void* opaque, const char* msg) { HW_CORE_ERROR("C Script Error: {0}", msg); });
 
+		const Project& project = Application::Get().GetCurrentProject();
+
 		// Include core tcc libs and scripts
-		tcc_set_lib_path(m_State, Resource("scripting/tcc/lib").string().c_str());
-		tcc_add_library_path(m_State, Resource("scripting/tcc/win32/lib").string().c_str());
-		tcc_add_include_path(m_State, Resource("scripting/tcc/include").string().c_str());
-		tcc_add_include_path(m_State, Resource("scripting/tcc/win32/include").string().c_str());
+		tcc_set_lib_path(m_State, project.EngineRes("scripting/tcc/lib").string().c_str());
+		tcc_add_library_path(m_State, project.EngineRes("scripting/tcc/win32/lib").string().c_str());
+		tcc_add_include_path(m_State, project.EngineRes("scripting/tcc/include").string().c_str());
+		tcc_add_include_path(m_State, project.EngineRes("scripting/tcc/win32/include").string().c_str());
 
 		// Include perplex scripts
-		tcc_add_include_path(m_State, Resource("scripting/include").string().c_str());
+		tcc_add_include_path(m_State, project.EngineRes("scripting/include").string().c_str());
 
 		tcc_set_output_type(m_State, TCC_OUTPUT_MEMORY);
 

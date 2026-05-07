@@ -165,13 +165,6 @@ project "PerplexCore"
         "/utf-8"
     }
 
-    postbuildcommands 
-    {
-      -- copy PerplexCore/res folder into output directory
-      "{COPYDIR} %{path.getabsolute('PerplexCore/res')} %{cfg.targetdir}/res"
-    }
-    defines 'PX_RES_PATH="%{cfg.targetdir}/res"'
-
     filter "system:windows"
         systemversion "latest"
 

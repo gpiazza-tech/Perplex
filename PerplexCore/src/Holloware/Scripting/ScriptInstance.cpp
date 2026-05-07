@@ -9,6 +9,7 @@
 #include <Holloware/Scene/Scene.h>
 #include <Holloware/Scene/Entity.h>
 #include <Holloware/Scene/Components.h>
+#include <Holloware/Utilities/Resource.h>
 
 #include <libtcc.h>
 #include <glm/glm.hpp>
@@ -38,6 +39,12 @@ namespace Holloware
 	static void console_error(const char* msg) { HW_ERROR(msg); }
 	static float degrees(float rad) { return glm::degrees(rad); }
 	static float radians(float deg) { return glm::radians(deg); }
+	static void try_call(Scene* scene, UUID uuid, const char* funcName)
+	{
+		Entity& entity = scene->GetEntity(uuid);
+		if (entity.HasComponent<ScriptComponent>())
+			entity.GetComponent<ScriptComponent>().Instance.TryCall(funcName);
+	}
 
 	bool ScriptInstance::Compile(const std::string& src, Entity entity)
 	{
@@ -53,14 +60,14 @@ namespace Holloware
 		// Setup the script's environment.
 		tcc_set_error_func(m_State, nullptr, [](void* opaque, const char* msg) { HW_CORE_ERROR("C Script Error: {0}", msg); });
 
-		// TODO: these shouldn't be absolute paths
-		tcc_set_lib_path(m_State, "C:\\dev\\Perplex\\PerplexCore\\vendor\\tcc\\lib");
-		tcc_add_library_path(m_State, "C:\\dev\\Perplex\\PerplexCore\\vendor\\tcc\\win32\\lib");
+		// Include core tcc libs and scripts
+		tcc_set_lib_path(m_State, Resource("scripting/tcc/lib").string().c_str());
+		tcc_add_library_path(m_State, Resource("scripting/tcc/win32/lib").string().c_str());
+		tcc_add_include_path(m_State, Resource("scripting/tcc/include").string().c_str());
+		tcc_add_include_path(m_State, Resource("scripting/tcc/win32/include").string().c_str());
 
-		tcc_add_include_path(m_State, "C:\\dev\\Perplex\\PerplexCore\\vendor\\tcc\\include");
-		tcc_add_include_path(m_State, "C:\\dev\\Perplex\\PerplexCore\\vendor\\tcc\\win32\\include");
-		std::string projectIncludePath = (Application::Get().GetCurrentProject().GetProjectPath() / "engine/tcc/include").string();
-		tcc_add_include_path(m_State, projectIncludePath.c_str());
+		// Include perplex scripts
+		tcc_add_include_path(m_State, Resource("scripting/include").string().c_str());
 
 		tcc_set_output_type(m_State, TCC_OUTPUT_MEMORY);
 
@@ -93,6 +100,8 @@ namespace Holloware
 		tcc_add_symbol(m_State, "key_pressed", Input::IsKeyPressed);
 		tcc_add_symbol(m_State, "degrees", degrees);
 		tcc_add_symbol(m_State, "radians", radians);
+
+		tcc_add_symbol(m_State, "try_call", try_call);
 
 		// Compile
 		if (tcc_compile_string(m_State, src.c_str()) == -1)

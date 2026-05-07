@@ -7,7 +7,6 @@
 #include <Holloware/Scripting/ScriptData.h>
 #include <Holloware/Perpixel/PerpixelInstance.h>
 #include <Holloware/Perpixel/PerpixelSpawnShape.h>
-#include <Holloware/Perpixel/Pixel.h>
 #include <rendering/Camera.h>
 
 #include <glm/glm.hpp>

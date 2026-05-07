@@ -2,6 +2,7 @@
 
 #include <string>
 #include <utility>
+#include <optional>
 
 struct TCCState;
 
@@ -28,19 +29,20 @@ namespace Holloware
 		bool Compile(const std::string& src, Entity entity);
 
 		template<typename ReturnType, typename... Args>
-		ReturnType TryCall(const char* funcName, Args&&... funcArgs)
+		std::optional<ReturnType> TryCall(const char* funcName, Args&&... funcArgs)
 		{
 			if (m_State == nullptr)
-				return ReturnType{};
+				return std::nullopt;
 
 			using FuncPtrType = ReturnType(*)(Args...);
 
 			FuncPtrType funcPtr = reinterpret_cast<FuncPtrType>(GetCSymbol(m_State, funcName));
 			if (funcPtr != nullptr)
-				return funcPtr(std::forward<Args>(funcArgs)...);
+				return std::optional<ReturnType>{ funcPtr(std::forward<Args>(funcArgs)...) };
 
-			return ReturnType{};
+			return std::nullopt;
 		}
+
 		template<typename... Args>
 		void TryCall(const char* funcName, Args&&... funcArgs)
 		{

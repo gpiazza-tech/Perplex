@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Pixel.h"
+#include <perplex_pixel.h>
 
 #include <vector>
 
@@ -14,7 +14,7 @@ namespace Holloware
 		void ResetPixels() { m_Pixels = m_SpawnPixels; }
 		void SetSpawnShape(const PerpixelShape& shape);
 	private:
-		std::vector<Pixel> m_SpawnPixels{};
-		std::vector<Pixel> m_Pixels{};
+		std::vector<pixel> m_SpawnPixels{};
+		std::vector<pixel> m_Pixels{};
 	};
 }

@@ -126,6 +126,8 @@ project "PerplexCore"
         "%{prj.name}/src/**.cpp",
         "%{prj.name}/vendor/stb_image/**.h",
         "%{prj.name}/vendor/stb_image/**.cpp",
+        "%{prj.name}/res/scripting/include/**.h",
+        "%{prj.name}/res/scripting/include/**.cpp",
     }
 
     includedirs
@@ -133,6 +135,7 @@ project "PerplexCore"
         "PerplexRenderer/include",
         "PerplexRenderer/src",
         "%{prj.name}/src",
+        "%{prj.name}/res/scripting/include",
         "%{prj.name}/vendor/spdlog/include",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.Glad}",
@@ -161,6 +164,13 @@ project "PerplexCore"
     {
         "/utf-8"
     }
+
+    postbuildcommands 
+    {
+      -- copy PerplexCore/res folder into output directory
+      "{COPYDIR} %{path.getabsolute('PerplexCore/res')} %{cfg.targetdir}/res"
+    }
+    defines 'PX_RES_PATH="%{cfg.targetdir}/res"'
 
     filter "system:windows"
         systemversion "latest"
@@ -210,6 +220,7 @@ project "PerplexEditor"
         "PerplexRenderer/src",
         "PerplexCore/vendor/spdlog/include",
         "PerplexCore/src",
+        "PerplexCore/res/scripting/include",
         "PerplexCore/vendor",
         "%{IncludeDir.glm}",
         "%{IncludeDir.entt}",

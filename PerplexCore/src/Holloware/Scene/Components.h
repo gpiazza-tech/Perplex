@@ -5,6 +5,7 @@
 #include <Holloware/Assets/Asset.h>
 #include <Holloware/Scripting/ScriptInstance.h>
 #include <Holloware/Scripting/ScriptData.h>
+#include <Holloware/Perpixel/PerpixelInstance.h>
 #include <Holloware/Perpixel/PerpixelSpawnShape.h>
 #include <Holloware/Perpixel/Pixel.h>
 #include <rendering/Camera.h>
@@ -132,6 +133,6 @@ namespace Holloware
 	struct PerpixelRendererComponent
 	{
 		PerpixelShape Shape{};
-		std::vector<Pixel> Pixels{};
+		PerpixelInstance Instance{};
 	};
 }

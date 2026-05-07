@@ -18,6 +18,8 @@
 
 namespace Holloware
 {
+	void* GetCSymbol(TCCState* state, const char* name) { return tcc_get_symbol(state, name); }
+
 	ScriptInstance::~ScriptInstance()
 	{
 		if (m_State != nullptr)
@@ -106,11 +108,6 @@ namespace Holloware
 			m_State = nullptr;
 			return false;
 		}
-
-		// Bind callbacks
-		m_Start = reinterpret_cast<int(*)()>(tcc_get_symbol(m_State, "start"));
-		m_Update = reinterpret_cast<int(*)(float ts)>(tcc_get_symbol(m_State, "update"));
-		m_Stop = reinterpret_cast<int(*)()>(tcc_get_symbol(m_State, "stop"));
 
 		return true;
 	}

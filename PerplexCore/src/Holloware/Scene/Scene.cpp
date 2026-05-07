@@ -131,7 +131,7 @@ namespace Holloware
 				auto& sc = view.get<ScriptComponent>(e);
 				TagComponent& tag = entity.GetComponent<TagComponent>();
 
-				if (sc.Instance.IsCompiled()) sc.Instance.TryCallStart();
+				sc.Instance.TryCall("start");
 			}
 		}
 	}
@@ -148,7 +148,7 @@ namespace Holloware
 				auto& sc = view.get<ScriptComponent>(e);
 				TagComponent& tag = entity.GetComponent<TagComponent>();
 
-				if (sc.Instance.IsCompiled()) sc.Instance.TryCallUpdate(ts.GetSeconds());
+				sc.Instance.TryCall("update", ts.GetSeconds());
 			}
 		}
 
@@ -204,8 +204,7 @@ namespace Holloware
 				auto& sc = view.get<ScriptComponent>(e);
 				TagComponent& tag = entity.GetComponent<TagComponent>();
 
-				if (sc.Instance.IsCompiled()) 
-					sc.Instance.TryCallStop();
+				sc.Instance.TryCall("stop");
 			}
 		}
 	}

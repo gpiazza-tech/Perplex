@@ -7,6 +7,7 @@
 #include "Entity.h"
 #include <Holloware/Assets/Asset.h>
 #include <pxr/pxr.h>
+#include <perplex_math.h>
 
 #include <glm.hpp>
 
@@ -115,6 +116,14 @@ namespace Holloware
 		else
 		{
 			pxr::Renderer::DrawQuad(tc.Position, tc.Scale, src.Color, src.Emission);
+		}
+	}
+
+	void SceneRenderer::RenderPerpixel(const PerpixelRendererComponent& src, const TransformComponent& tc)
+	{
+		for (auto& pxl : src.Instance.GetPixels())
+		{
+			pxr::Renderer::DrawPixel(tc.Position + vector3(pxl.Position.x, pxl.Position.y, 0.0f), pxl.Color, pxl.Emission, true);
 		}
 	}
 

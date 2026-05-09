@@ -14,6 +14,7 @@
 #include <Holloware/Debug/Instrumentor.h>
 #include "SceneHierarchy.h"
 #include <rendering/Camera.h>
+#include <Holloware/Components/Component.h>
 
 #include <entt.hpp>
 #include <glm/fwd.hpp>
@@ -94,12 +95,21 @@ namespace Holloware
 	{
 		SceneRenderer::BeginScene(camera);
 
-		auto group = m_Registry.group<TransformComponent, SpriteRendererComponent>();
-		for (auto handle : group)
+		auto sprites = m_Registry.group<TransformComponent, SpriteRendererComponent>();
+		for (auto handle : sprites)
 		{
 			Entity entity = Entity(handle, this);
-			auto [transform, spriteRenderer] = group.get<TransformComponent, SpriteRendererComponent>(handle);
+			auto [transform, spriteRenderer] = sprites.get<TransformComponent, SpriteRendererComponent>(handle);
 			SceneRenderer::RenderSprite(spriteRenderer, entity.GetGlobalTransform());
+		}
+
+		auto perpixels = m_Registry.group<PerpixelRendererComponent>();
+		for (auto handle : perpixels)
+		{
+			Entity entity = Entity(handle, this);
+			auto& perpixelRenderer = perpixels.get<PerpixelRendererComponent>(handle);
+			if (entity.HasComponent<TransformComponent>())
+				SceneRenderer::RenderPerpixel(perpixelRenderer, entity.GetGlobalTransform());
 		}
 
 		SceneRenderer::EndScene();
@@ -161,7 +171,7 @@ namespace Holloware
 			auto view = m_Registry.view<TransformComponent, CameraComponent>();
 			for (auto entity : view)
 			{
-				auto& [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+				auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
 
 				if (camera.Primary)
 				{
@@ -186,6 +196,16 @@ namespace Holloware
 				Entity entity = Entity(handle, this);
 				auto [transform, spriteRenderer] = group.get<TransformComponent, SpriteRendererComponent>(handle);
 				SceneRenderer::RenderSprite(spriteRenderer, entity.GetGlobalTransform());
+			}
+
+			// Perpixel Renderers
+			auto perpixels = m_Registry.group<PerpixelRendererComponent>();
+			for (auto handle : perpixels)
+			{
+				Entity entity = Entity(handle, this);
+				auto& perpixelRenderer = perpixels.get<PerpixelRendererComponent>(handle);
+				if (entity.HasComponent<TransformComponent>())
+					SceneRenderer::RenderPerpixel(perpixelRenderer, entity.GetGlobalTransform());
 			}
 
 			SceneRenderer::EndScene();

@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 namespace Holloware
 {
@@ -15,6 +16,7 @@ namespace Holloware
 	class Entity;
 	class EditorCamera;
 	class Timestep;
+	class Component;
 
 	class Scene
 	{
@@ -29,7 +31,7 @@ namespace Holloware
 
 		void OnStartRuntime();
 		void OnUpdateRuntime(Timestep ts);
-		void Scene::OnStopRuntime();
+		void OnStopRuntime();
 
 		void OnViewportResize(uint32_t width, uint32_t height);
 		void OnScriptAssetReimported(Asset asset);
@@ -37,7 +39,10 @@ namespace Holloware
 		SceneHierarchy& GetHierarchy() { return m_Hierarchy; }
 	private:
 		entt::registry m_Registry;
+
 		std::unordered_map<UUID, entt::entity> m_UUIDMap;
+		std::unordered_map<entt::entity, std::vector<Component>> m_ComponentsMap;
+
 		uint32_t m_ViewportWidth = 1, m_ViewportHeight = 1;
 
 		SceneHierarchy m_Hierarchy;

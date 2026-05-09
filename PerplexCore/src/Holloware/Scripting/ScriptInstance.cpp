@@ -40,7 +40,7 @@ namespace Holloware
 	static float radians(float deg) { return glm::radians(deg); }
 	static void try_call(Scene* scene, UUID uuid, const char* funcName)
 	{
-		Entity& entity = scene->GetEntity(uuid);
+		Entity entity = scene->GetEntity(uuid);
 		if (entity.HasComponent<ScriptComponent>())
 			entity.GetComponent<ScriptComponent>().Instance.TryCall(funcName);
 	}

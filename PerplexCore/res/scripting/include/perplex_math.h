@@ -1,6 +1,7 @@
 #pragma once
 
-#ifdef cplusplus
+#ifdef __cplusplus
+#include <glm/fwd.hpp>
 #include <glm/glm.hpp>
 using vector2 = glm::vec2;
 using vector3 = glm::vec3;

@@ -1,18 +1,22 @@
 #pragma once
 
+#include "Components.h"
 #include <Holloware/Core/Core.h>
 #include <Holloware/Core/Log.h>
 #include <Holloware/Core/HollowareObject.h>
 #include <Holloware/Scene/Scene.h>
-#include "Components.h"
+#include <Holloware/Components/Component.h>
 
 #include <glm/fwd.hpp>
 
 #include <entt.hpp>
 #include <cstdint>
 #include <string>
+#include <utility>
+#include <vector>
+#include <memory>
 
-namespace Holloware
+namespace Holloware 
 {
 	class UUID;
 
@@ -25,10 +29,11 @@ namespace Holloware
 		Entity(const Entity& other) = default;
 
 		template<typename T, typename ...Args>
-		T& AddComponent(Args && ...args)
+		T& AddComponent(Args&& ...args)
 		{
 			HW_CORE_ASSERT(!HasComponent<T>(), "Entity already has component!");
 			T& component = m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+			m_Scene->m_ComponentsMap[m_EntityHandle].push_back(Component(m_Scene->m_Registry.get<T>(m_EntityHandle)));
 			return component;
 		}
 
@@ -49,7 +54,14 @@ namespace Holloware
 		void RemoveComponent()
 		{
 			HW_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
+			std::vector<Component>& components = m_Scene->m_ComponentsMap[m_EntityHandle];
+			// std::remove(components.begin(), components.end(), Component(m_Scene->m_Registry.get<T>(m_EntityHandle)));
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
+		}
+
+		const std::vector<Component>& const GetComponents()
+		{
+			return m_Scene->m_ComponentsMap[m_EntityHandle];
 		}
 
 		TransformComponent GetGlobalTransform();

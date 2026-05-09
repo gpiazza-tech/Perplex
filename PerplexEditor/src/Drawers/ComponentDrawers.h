@@ -1,11 +1,11 @@
-#include "Holloware/Scene/Components.h"
+#pragma once
 
-#include <Holloware/Core/Log.h>
-#include "Holloware/Assets/Asset.h"
-#include "Holloware/Assets/AssetManager.h"
-#include <Holloware/ImGui/Drawer.h>
+#include <Holloware/Scene/Components.h>
+#include <Holloware/Components/Component.h>
 #include <Holloware/ImGui/ImGuiUtilities.h>
+#include <Holloware/ImGui/Drawer.h>
 #include <Holloware/Assets/AssetType.h>
+#include <Holloware/Perpixel/PerpixelSpawnShape.h>
 #include <Holloware/Scripting/ScriptData.h>
 #include <rendering/Camera.h>
 
@@ -13,18 +13,19 @@
 #include <glm/fwd.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <string.h>
 #include <string>
 
 namespace Holloware
 {
-	void DrawGui(IDComponent& component)
+	template<>
+	void DrawComponent(IDComponent& component)
 	{
 		std::string tempString = std::to_string(component.ID);
 		ImGui::Text(tempString.c_str());
 	}
 
-	void DrawGui(TagComponent& component)
+	template<>
+	void DrawComponent(TagComponent& component)
 	{
 		char buffer[32];
 		memset(buffer, 0, sizeof(buffer));
@@ -35,7 +36,8 @@ namespace Holloware
 		}
 	}
 
-	void DrawGui(TransformComponent& component)
+	template<>
+	void DrawComponent(TransformComponent& component)
 	{
 		ImGuiUtilities::DrawVec3Control("Position", component.Position);
 
@@ -46,7 +48,8 @@ namespace Holloware
 		ImGuiUtilities::DrawVec3Control("Scale", component.Scale);
 	}
 
-	void DrawGui(SpriteRendererComponent& component)
+	template<>
+	void DrawComponent(SpriteRendererComponent& component)
 	{
 		// Color
 		Drawer::DrawAssetField("Sprite", component.SpriteAsset, AssetType::SpriteAsset);
@@ -57,7 +60,8 @@ namespace Holloware
 		ImGui::DragFloat("Emission", &component.Emission, 0.01f);
 	}
 
-	void DrawGui(CameraComponent& component)
+	template<>
+	void DrawComponent(CameraComponent& component)
 	{
 		ImGui::Checkbox("Primary", &component.Primary);
 		ImGui::DragFloat("Zoom", &component.Zoom);
@@ -74,7 +78,8 @@ namespace Holloware
 		if (Drawer::DrawOptions("Scaling Mode", (int&)component.PixelPerfect, scalingModeOptions, 4));
 	}
 
-	void DrawGui(ScriptComponent& component)
+	template<>
+	void DrawComponent(ScriptComponent& component)
 	{
 		ImGui::PushID(&component);
 
@@ -96,7 +101,8 @@ namespace Holloware
 		ImGui::PopID();
 	}
 
-	void DrawGui(PerpixelRendererComponent& component)
+	template<>
+	void DrawComponent(PerpixelRendererComponent& component)
 	{
 		Option shapeTypeOptions[] = {
 			{ "Sprite", (int)PerpixelShapeType::Sprite },

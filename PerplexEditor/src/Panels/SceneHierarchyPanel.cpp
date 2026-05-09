@@ -3,14 +3,18 @@
 #include <Holloware/Core/Core.h>
 #include <Holloware/Core/UUID.h>
 #include <Holloware/Scene/Entity.h>
-#include "Holloware/Scene/Components.h"
-#include "Holloware/Scene/Scene.h"
+#include <Holloware/Scene/Components.h>
+#include <Holloware/Scene/Scene.h>
 #include "../Drawers/CoreComponentsDrawer.h"
+#include <Holloware/Scene/SceneHierarchy.h>
+#include <Holloware/Scene/EntityNode.h>
+
+#include "../Drawers/ComponentDrawers.h"
 
 #include <imgui/imgui.h>
 #include <cstdint>
 #include <vector>
-#include <Holloware/Scene/EntityNode.h>
+#include <string>
 
 namespace Holloware
 {
@@ -50,7 +54,7 @@ namespace Holloware
 				m_Context->CreateAbstractEntity("Abstract Entity");
 			if (m_CopiedNodes.size() > 0 && ImGui::MenuItem("Paste"))
 			{
-				UUID selectedNode = m_SelectedNodes.empty() ? 0 : m_SelectedNodes[0];
+				UUID selectedNode = m_SelectedNodes.empty() ? UUID{ 0 } : m_SelectedNodes[0];
 				for (auto& copiedNode : m_CopiedNodes)
 					m_Context->CopyEntity(m_Context->GetEntity(copiedNode), selectedNode);
 			}
@@ -63,7 +67,7 @@ namespace Holloware
 		ImGui::Begin("Properties");
 		if (m_SelectedNodes.size() == 1)
 		{
-			Entity& selection = m_Context->GetEntity(m_SelectedNodes[0]);
+			Entity selection = m_Context->GetEntity(m_SelectedNodes[0]);
 
 			DrawComponents(selection);
 
@@ -96,6 +100,12 @@ namespace Holloware
 					ImGui::CloseCurrentPopup();
 				}
 
+				if (!selection.HasComponent<PerpixelRendererComponent>() && ImGui::MenuItem("Perpixel Renderer"))
+				{
+					selection.AddComponent<PerpixelRendererComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+
 				ImGui::EndPopup();
 			}
 		}
@@ -112,7 +122,7 @@ namespace Holloware
 	{
 		SceneHierarchy& hierarchy = m_Context->GetHierarchy();
 
-		Entity& entity = m_Context->GetEntity(node.ID);
+		Entity entity = m_Context->GetEntity(node.ID);
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 		const std::vector<UUID>& childIDs = node.ChildIDs;
 
@@ -219,6 +229,14 @@ namespace Holloware
 			{
 				DrawGui(component);
 			});
+
+		DrawComponent<PerpixelRendererComponent>(entity, "Perpixel Renderer", [](PerpixelRendererComponent& component)
+			{
+				DrawGui(component);
+			});
+
+		for (auto& component : entity.GetComponents())
+			component.Draw();
 	}
 
 	template <typename T>

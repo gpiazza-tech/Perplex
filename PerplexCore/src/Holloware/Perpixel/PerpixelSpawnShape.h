@@ -24,7 +24,7 @@ namespace Holloware
 
 	struct PerpixelShape
 	{
-		PerpixelShapeType Type{ PerpixelShapeType::None };
+		PerpixelShapeType Type{ PerpixelShapeType::Sprite };
 		PerpixelShapeInfo Info{};
 	};
 

@@ -21,6 +21,7 @@ namespace Holloware
 		static uint32_t GetMainFramebufferTexture();
 
 		static void RenderSprite(const SpriteRendererComponent& src, const TransformComponent& tc);
+		static void RenderPerpixel(const PerpixelRendererComponent& src, const TransformComponent& tc);
 
 		static void Resize(int width, int height);
 	};

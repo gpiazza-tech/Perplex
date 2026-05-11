@@ -8,6 +8,7 @@
 namespace Holloware
 {
 	class Scene;
+	class Component;
 
 	class SceneHierarchyPanel
 	{
@@ -22,8 +23,8 @@ namespace Holloware
 		void DrawEntityNode(const EntityNode& node);
 		void DrawComponents(Entity entity);
 
-		template <typename T>
-		void DrawComponent(Entity entity, const char* name, void (*DrawBody)(T&));
+		enum class DrawComponentStatus { None = 0, Removed };
+		DrawComponentStatus DrawComponent(Entity entity, Component& component);
 	
 		void SetSelectedEntity(UUID entity);
 	private:

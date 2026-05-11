@@ -1,15 +1,14 @@
 #include "SceneHierarchyPanel.h"
 
+#include <Holloware/Components/Component.h>
 #include <Holloware/Core/Core.h>
 #include <Holloware/Core/UUID.h>
 #include <Holloware/Scene/Entity.h>
 #include <Holloware/Scene/Components.h>
 #include <Holloware/Scene/Scene.h>
-#include "../Drawers/CoreComponentsDrawer.h"
 #include <Holloware/Scene/SceneHierarchy.h>
 #include <Holloware/Scene/EntityNode.h>
-
-#include "../Drawers/ComponentDrawers.h"
+#include "../Drawers/CoreComponentsDrawer.h"
 
 #include <imgui/imgui.h>
 #include <cstdint>
@@ -198,72 +197,52 @@ namespace Holloware
 
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
 	{
-		if (entity.HasComponent<IDComponent>())
+		using DrawComponentStatus = SceneHierarchyPanel::DrawComponentStatus;
+
+		std::vector<Component>& components = entity.GetComponents();
+		for (size_t i{}; i < components.size();)
 		{
-			auto& idComponent = entity.GetComponent<IDComponent>();
-			DrawGui(idComponent);
+			Component& component = components.at(i);
+
+			if (component == Component(IDComponent{}) || component == Component(TagComponent{}))
+			{
+				component.Draw();
+				i++;
+			}
+			else
+			{
+				DrawComponentStatus status = DrawComponent(entity, component);
+				if (status == DrawComponentStatus::Removed)
+					component.Remove();
+				else
+					i++;
+			}
 		}
-
-		if (entity.HasComponent<TagComponent>())
-		{
-			auto& tagComponent = entity.GetComponent<TagComponent>();
-			DrawGui(tagComponent);
-		}
-
-		DrawComponent<TransformComponent>(entity, "Transform", [](TransformComponent& component)
-			{
-				DrawGui(component);
-			});
-
-		DrawComponent<CameraComponent>(entity, "Camera", [](CameraComponent& component)
-			{
-				DrawGui(component);
-			});
-
-		DrawComponent<SpriteRendererComponent>(entity, "Sprite Renderer", [](SpriteRendererComponent& component)
-			{
-				DrawGui(component);
-			});
-
-		DrawComponent<ScriptComponent>(entity, "Script", [](ScriptComponent& component)
-			{
-				DrawGui(component);
-			});
-
-		DrawComponent<PerpixelRendererComponent>(entity, "Perpixel Renderer", [](PerpixelRendererComponent& component)
-			{
-				DrawGui(component);
-			});
-
-		for (auto& component : entity.GetComponents())
-			component.Draw();
 	}
 
-	template <typename T>
-	void SceneHierarchyPanel::DrawComponent(Entity entity, const char* name, void (*DrawBody)(T&))
+	SceneHierarchyPanel::DrawComponentStatus SceneHierarchyPanel::DrawComponent(Entity entity, Component& component)
 	{
-		if (entity.HasComponent<T>())
+		std::string componentLabel = component.Label();
+		bool open = ImGui::TreeNodeEx(componentLabel.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowOverlap, componentLabel.c_str());
+		bool removeComponent = false;
+
+		if (ImGui::BeginPopupContextItem())
 		{
-			bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowOverlap, name);
-			bool removeComponent = false;
+			if (ImGui::MenuItem("Remove"))
+				removeComponent = true;
 
-			if (ImGui::BeginPopupContextItem())
-			{
-				if (ImGui::MenuItem("Remove"))
-					removeComponent = true;
-
-				ImGui::EndPopup();
-			}
-
-			if (open)
-			{
-				auto& c = entity.GetComponent<T>();
-				DrawBody(c);
-				ImGui::TreePop();
-			}
-
-			if (removeComponent)
-				entity.RemoveComponent<T>();
+			ImGui::EndPopup();
 		}
+
+		if (open)
+		{
+			component.Draw();
+			ImGui::TreePop();
+		}
+
+		if (removeComponent)
+			return SceneHierarchyPanel::DrawComponentStatus::Removed;
+
+		return SceneHierarchyPanel::DrawComponentStatus::None;
 	}
 }

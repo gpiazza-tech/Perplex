@@ -6,6 +6,8 @@
 #include <Holloware/Core/HollowareObject.h>
 #include <Holloware/Scene/Scene.h>
 #include <Holloware/Components/Component.h>
+#include <Holloware/Components/ComponentLabelers.h>
+#include <Holloware/Components/ComponentDrawers.h>
 
 #include <glm/fwd.hpp>
 
@@ -15,6 +17,10 @@
 #include <utility>
 #include <vector>
 #include <memory>
+#include <algorithm>
+#include <deque>
+#include <forward_list>
+#include <list>
 
 namespace Holloware 
 {
@@ -28,12 +34,30 @@ namespace Holloware
 		Entity(entt::entity handle, Scene* scene);
 		Entity(const Entity& other) = default;
 
+		template<typename T>
+		void RemoveComponent()
+		{
+			HW_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
+
+			// Remove actual component
+			m_Scene->m_Registry.remove<T>(m_EntityHandle);
+
+			// Remove polymorphic component
+			std::vector<Component>& components = m_Scene->m_ComponentsMap[m_EntityHandle];
+			std::erase(components, Component(T{}));
+		}
+
 		template<typename T, typename ...Args>
 		T& AddComponent(Args&& ...args)
 		{
 			HW_CORE_ASSERT(!HasComponent<T>(), "Entity already has component!");
+
+			// Add actual component
 			T& component = m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
-			m_Scene->m_ComponentsMap[m_EntityHandle].push_back(Component(m_Scene->m_Registry.get<T>(m_EntityHandle)));
+
+			// Add polymorphic component
+			auto componentRemover = [*this]() mutable -> void { RemoveComponent<T>(); };
+			m_Scene->m_ComponentsMap[m_EntityHandle].push_back(Component(component, componentRemover));
 			return component;
 		}
 
@@ -50,16 +74,12 @@ namespace Holloware
 			return m_Scene->m_Registry.any_of<T>(m_EntityHandle);
 		}
 
-		template<typename T>
-		void RemoveComponent()
+		std::vector<Component>& GetComponents()
 		{
-			HW_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
-			std::vector<Component>& components = m_Scene->m_ComponentsMap[m_EntityHandle];
-			// std::remove(components.begin(), components.end(), Component(m_Scene->m_Registry.get<T>(m_EntityHandle)));
-			m_Scene->m_Registry.remove<T>(m_EntityHandle);
+			return m_Scene->m_ComponentsMap[m_EntityHandle];
 		}
 
-		const std::vector<Component>& const GetComponents()
+		const std::vector<Component>& GetComponents() const
 		{
 			return m_Scene->m_ComponentsMap[m_EntityHandle];
 		}

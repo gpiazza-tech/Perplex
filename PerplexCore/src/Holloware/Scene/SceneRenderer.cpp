@@ -1,6 +1,7 @@
 #include <pch.h>
 #include "SceneRenderer.h"
 
+#include <Holloware/Debug/Instrumentor.h>
 #include <Holloware/Scene/EditorCamera.h>
 #include <Holloware/Core/Core.h>
 #include "Components.h"
@@ -26,6 +27,8 @@ namespace Holloware
 
 	void SceneRenderer::Init(int width, int height, int pixelsPerUnit)
 	{
+		HW_PROFILE_FUNCTION();
+
 		pxr::Renderer::Init(pixelsPerUnit);
 		s_Framebuffer = new pxr::Framebuffer(width, height, true);
 
@@ -41,6 +44,8 @@ namespace Holloware
 
 	void SceneRenderer::Shutdown()
 	{
+		HW_PROFILE_FUNCTION();
+
 		delete s_Framebuffer;
 		s_BloomRenderer.Destroy();
 		s_Tonemapper.Destroy();
@@ -50,6 +55,8 @@ namespace Holloware
 
 	void SceneRenderer::BeginScene(const EditorCamera& editorCamera)
 	{
+		HW_PROFILE_FUNCTION();
+
 		s_Framebuffer->Bind();
 		s_Camera = editorCamera;
 
@@ -59,6 +66,8 @@ namespace Holloware
 
 	void SceneRenderer::BeginScene(const pxr::Camera& camera, const TransformComponent& cameraTransform, const glm::vec4& background)
 	{
+		HW_PROFILE_FUNCTION();
+
 		s_Framebuffer->Bind();
 		s_Camera = camera;
 
@@ -71,6 +80,8 @@ namespace Holloware
 
 	void SceneRenderer::EndScene()
 	{
+		HW_PROFILE_FUNCTION();
+
 		// Draw Scene
 		pxr::Renderer::EndBatch();
 		pxr::Renderer::Flush();
@@ -103,6 +114,8 @@ namespace Holloware
 
 	void SceneRenderer::RenderSprite(const SpriteRendererComponent& src, const TransformComponent& tc)
 	{
+		HW_PROFILE_FUNCTION();
+
 		if (src.SpriteAsset)
 		{
 			Ref<const pxr::Sprite> sprite = src.SpriteAsset.GetData<pxr::Sprite>();
@@ -121,6 +134,8 @@ namespace Holloware
 
 	void SceneRenderer::RenderPerpixel(const PerpixelRendererComponent& src, const TransformComponent& tc)
 	{
+		HW_PROFILE_FUNCTION();
+
 		for (auto& pxl : src.Instance.GetPixels())
 		{
 			pxr::Renderer::DrawPixel(tc.Position + vector3(pxl.Position.x, pxl.Position.y, 0.0f), pxl.Color, pxl.Emission, true);
@@ -149,6 +164,8 @@ namespace Holloware
 
 	void SceneRenderer::DrawToScreen()
 	{
+		HW_PROFILE_FUNCTION();
+
 		s_Framebuffer->DrawToScreen();
 	}
 }

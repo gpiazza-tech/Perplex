@@ -6,11 +6,11 @@
 #include <Holloware/Scene/Components.h>
 #include <Holloware/ImGui/ImGuiUtilities.h>
 #include <Holloware/ImGui/Drawer.h>
-#include <Holloware/Serialization/Json.h>
+#include <Holloware/Serialization/JsonHelper.h>
 
+#include <nlohmann/json_fwd.hpp>
 #include <nlohmann/json.hpp>
 #include <glm/fwd.hpp>
-#include <nlohmann/json_fwd.hpp>
 
 #include <any>
 #include <string>

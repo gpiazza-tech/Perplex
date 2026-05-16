@@ -20,7 +20,6 @@ IncludeDir["glm"] = "PerplexCore/vendor/glm"
 IncludeDir["stb_image"] = "PerplexCore/vendor/stb_image"
 IncludeDir["entt"] = "PerplexCore/vendor/entt/include"
 IncludeDir["nlohmann_json"] = "PerplexCore/vendor/nlohmann_json/include"
-IncludeDir["tcc"] = "PerplexCore/vendor/tcc/win32/libtcc"
 IncludeDir["efsw"] = "PerplexCore/vendor/efsw/include"
 
 group "Dependencies"
@@ -139,7 +138,6 @@ project "PerplexCore"
         "%{IncludeDir.stb_image}",
         "%{IncludeDir.entt}",
         "%{IncludeDir.nlohmann_json}",
-        "%{IncludeDir.tcc}",
         "%{IncludeDir.efsw}",
     }
 
@@ -212,7 +210,6 @@ project "PerplexEditor"
         "%{IncludeDir.glm}",
         "%{IncludeDir.entt}",
         "%{IncludeDir.nlohmann_json}",
-        "%{IncludeDir.tcc}",
     }
 
     links
@@ -278,7 +275,6 @@ project "PerplexRuntime"
         "%{IncludeDir.glm}",
         "%{IncludeDir.entt}",
         "%{IncludeDir.nlohmann_json}",
-        "%{IncludeDir.tcc}",
     }
     
     links

@@ -37,7 +37,7 @@ namespace Holloware
 		// Create window
 		m_Window = std::unique_ptr<Window>(Window::Create(WindowProps(name)));
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
-		m_Window->SetVSync(false);
+		m_Window->SetVSync(true);
 
 		// Initialize renderers
 		// Renderer::Init();

@@ -2,7 +2,7 @@
 #include "PrefabAssetImporter.h"
 
 #include <Holloware/Core/Core.h>
-#include <Holloware/Serialization/Json.h>
+#include <Holloware/Serialization/JsonHelper.h>
 
 #include <nlohmann/json.hpp>
 

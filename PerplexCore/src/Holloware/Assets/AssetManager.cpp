@@ -15,7 +15,7 @@
 #include "Holloware/Core/Project.h"
 #include "Holloware/Core/UUID.h"
 
-#include "Holloware/Serialization/Json.h"
+#include "Holloware/Serialization/JsonHelper.h"
 
 #include <efsw/efsw.hpp>
 

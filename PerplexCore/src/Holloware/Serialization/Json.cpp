@@ -1,31 +1,33 @@
 #include <pch.h>
 #include "Json.h"
 
-#include <Holloware/Core/Log.h>
-
 #include <nlohmann/json_fwd.hpp>
+#include <nlohmann/json.hpp>
 
-#include <filesystem>
-#include <fstream>
+#include <array>
+#include <cstddef>
+
+using JsonBytes = std::array<std::byte, 16>;
 
 namespace Holloware
 {
-	void JsonHelper::WriteToFile(const nlohmann::json& json, const std::filesystem::path& path)
+	static nlohmann::json& BytesToJson(JsonBytes bytes) { return reinterpret_cast<nlohmann::json&>(bytes); }
+	static JsonBytes& JsonToBytes(nlohmann::json bytes) { return reinterpret_cast<JsonBytes&>(bytes); }
+
+	Json::Json()
+		: m_JsonBytes(JsonToBytes(nlohmann::json{}))
 	{
-		std::ofstream output(path.string());
-		output << json.dump(1);
-		output.close();
+		
 	}
 
-	nlohmann::json JsonHelper::LoadFromFile(const std::filesystem::path& path)
+	Json::~Json()
 	{
-		std::ifstream jsonFile(path.string());
-		if (!jsonFile)
-			HW_CORE_ERROR("file {0} does not exist!", path.string());
 
-		nlohmann::json json = nlohmann::json::parse(jsonFile);
-		jsonFile.close();
+	}
 
-		return json;
+	template<typename T>
+	T Json::TryGet(const char* name)
+	{
+		return T{};
 	}
 }

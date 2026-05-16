@@ -5,7 +5,7 @@
 #include "Holloware/Scripting/Interpreter.h"
 #include "Holloware/Scripting/ScriptData.h"
 #include "Holloware/Scripting/ScriptProperty.h"
-#include "Holloware/Serialization/Json.h"
+#include "Holloware/Serialization/JsonHelper.h"
 
 #include <nlohmann/json_fwd.hpp>
 #include <nlohmann/json.hpp>

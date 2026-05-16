@@ -54,7 +54,7 @@ namespace Holloware
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
-		
+
 		// Set GLFW Callbacks
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
 		{
@@ -64,6 +64,16 @@ namespace Holloware
 
 			WindowResizeEvent event(width, height);
 			data.EventCallback(event);
+		});
+
+		glfwSetWindowRefreshCallback(m_Window, [](GLFWwindow* window)
+		{
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+
+			WindowRefreshEvent event{};
+			data.EventCallback(event);
+
+			glfwSwapBuffers(window);
 		});
 
 		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)

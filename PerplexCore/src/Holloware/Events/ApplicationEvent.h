@@ -30,6 +30,22 @@ namespace Holloware
 		unsigned int m_Width, m_Height;
 	};
 
+	class WindowRefreshEvent : public Event
+	{
+	public:
+		WindowRefreshEvent() { }
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "WindowRefreshEvent";
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(WindowRefresh)
+		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+	};
+
 	class WindowCloseEvent : public Event
 	{
 	public:

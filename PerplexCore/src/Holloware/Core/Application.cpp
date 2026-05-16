@@ -80,12 +80,39 @@ namespace Holloware
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
+		dispatcher.Dispatch<WindowRefreshEvent>(BIND_EVENT_FN(OnWindowRefresh));
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
 		{
 			(*--it)->OnEvent(e);
 			if (e.Handled())
 				break;
+		}
+	}
+
+	void Application::Update()
+	{
+		float time = (float)glfwGetTime(); // Platform::GetTime
+		Timestep timestep = time - m_LastFrameTime;
+		m_LastFrameTime = time;
+
+		if (!m_Minimized)
+		{
+			{
+				HW_PROFILE_SCOPE("LayerStack OnUpdate");
+
+				for (Layer* layer : m_LayerStack)
+					layer->OnUpdate(timestep);
+			}
+
+			m_ImGuiLayer->Begin();
+			{
+				HW_PROFILE_SCOPE("LayerStack OnImGuiRender");
+
+				for (Layer* layer : m_LayerStack)
+					layer->OnImGuiRender();
+			}
+			m_ImGuiLayer->End();
 		}
 	}
 
@@ -97,31 +124,7 @@ namespace Holloware
 		{
 			HW_PROFILE_SCOPE("Run Loop");
 
-			float time = (float)glfwGetTime(); // Platform::GetTime
-			Timestep timestep = time - m_LastFrameTime;
-			m_LastFrameTime = time;
-
-			Input::OnUpdate(timestep);
-
-			if (!m_Minimized)
-			{
-				{
-					HW_PROFILE_SCOPE("LayerStack OnUpdate");
-
-					for (Layer* layer : m_LayerStack)
-						layer->OnUpdate(timestep);
-				}
-
-				m_ImGuiLayer->Begin();
-				{
-					HW_PROFILE_SCOPE("LayerStack OnImGuiRender");
-
-					for (Layer* layer : m_LayerStack)
-						layer->OnImGuiRender();
-				}
-				m_ImGuiLayer->End();
-			}
-
+			Update();
 			m_Window->OnUpdate();
 		}
 	}
@@ -150,7 +153,12 @@ namespace Holloware
 		}
 
 		m_Minimized = false;
+		return false;
+	}
 
+	bool Application::OnWindowRefresh(WindowRefreshEvent& e)
+	{
+		Update();
 		return false;
 	}
 }

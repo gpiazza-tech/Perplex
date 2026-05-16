@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Holloware/Core/LayerStack.h"
+#include <Holloware/Core/LayerStack.h>
+#include <Holloware/Events/ApplicationEvent.h>
 
 #include <memory>
 #include <string>
@@ -21,6 +22,7 @@ namespace Holloware
 		Application(const std::string& name = "Holloware App");
 		virtual ~Application();
 
+		void Update();
 		void Run();
 
 		void OnEvent(Event& e);
@@ -38,6 +40,7 @@ namespace Holloware
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
+		bool OnWindowRefresh(WindowRefreshEvent& e);
 	private:
 		std::unique_ptr<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer = nullptr;

@@ -21,6 +21,8 @@ namespace Holloware
 		void OnEvent(Event& e) override;
 	private:
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
+		bool OnWindowResize(WindowResizeEvent& e);
+		bool OnWindowRefresh(WindowRefreshEvent& e);
 
 		void OnScenePlay();
 		void OnSceneStop();

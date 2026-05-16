@@ -1,5 +1,7 @@
 #include "RuntimeLayer.h"
 
+#include <Holloware/Core/Window.h>
+
 #include <imgui/imgui.h>
 
 namespace Holloware
@@ -26,8 +28,8 @@ namespace Holloware
         m_ActiveScene = sceneAsset.GetData<Scene>();
         OnScenePlay();
 
-        // TODO: resize should be window level event
-        m_ActiveScene->OnViewportResize(1280, 720);
+        Window& window = Application::Get().GetWindow();
+        m_ActiveScene->OnViewportResize(window.GetWidth(), window.GetHeight());
     }
 
     void RuntimeLayer::OnDetach()
@@ -47,11 +49,26 @@ namespace Holloware
     {
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<MouseButtonPressedEvent>(HW_BIND_EVENT_FN(RuntimeLayer::OnMouseButtonPressed));
+        dispatcher.Dispatch<WindowResizeEvent>(HW_BIND_EVENT_FN(RuntimeLayer::OnWindowResize));
+        dispatcher.Dispatch<WindowRefreshEvent>(HW_BIND_EVENT_FN(RuntimeLayer::OnWindowRefresh));
     }
 
     bool RuntimeLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
     {
         return false;
+    }
+
+    bool RuntimeLayer::OnWindowResize(WindowResizeEvent& e)
+    {
+        m_ActiveScene->OnViewportResize(e.GetWidth(), e.GetHeight());
+
+        return true;
+    }
+
+    bool RuntimeLayer::OnWindowRefresh(WindowRefreshEvent& e)
+    {
+        SceneRenderer::DrawToScreen();
+        return true;
     }
 
     void RuntimeLayer::OnScenePlay()

@@ -40,7 +40,7 @@ namespace Holloware
 		bool OnWindowResize(WindowResizeEvent& e);
 	private:
 		std::unique_ptr<Window> m_Window;
-		ImGuiLayer* m_ImGuiLayer;
+		ImGuiLayer* m_ImGuiLayer = nullptr;
 
 		bool m_Running = true;
 		bool m_Minimized = false;

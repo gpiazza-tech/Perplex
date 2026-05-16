@@ -56,8 +56,9 @@ namespace Holloware
 			T& component = m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
 
 			// Add polymorphic component
+			auto componentGetter = [*this]() mutable -> T& { return GetComponent<T>(); };
 			auto componentRemover = [*this]() mutable -> void { RemoveComponent<T>(); };
-			m_Scene->m_ComponentsMap[m_EntityHandle].push_back(Component(component, componentRemover));
+			m_Scene->m_ComponentsMap[m_EntityHandle].push_back(Component(component, componentGetter, componentRemover));
 			return component;
 		}
 

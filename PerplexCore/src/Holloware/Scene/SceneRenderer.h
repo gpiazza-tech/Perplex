@@ -19,6 +19,7 @@ namespace Holloware
 		static void EndScene();
 
 		static uint32_t GetMainFramebufferTexture();
+		static void DrawToScreen();
 
 		static void RenderSprite(const SpriteRendererComponent& src, const TransformComponent& tc);
 		static void RenderPerpixel(const PerpixelRendererComponent& src, const TransformComponent& tc);

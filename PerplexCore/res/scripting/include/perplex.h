@@ -41,10 +41,6 @@ typedef void* Scene;
 __declspec(dllimport) Scene scene;
 __declspec(dllimport) Entity entity;
 
-__declspec(dllimport) struct Vec3 position;
-__declspec(dllimport) struct Vec3 rotation;
-__declspec(dllimport) struct Vec3 scale;
-
 __declspec(dllimport) void console_trace(char* msg);
 __declspec(dllimport) void console_info(char* msg);
 __declspec(dllimport) void console_warn(char* msg);
@@ -62,5 +58,9 @@ __declspec(dllimport) void try_call(Scene s, Entity e, char* funcName);
 #define get_position(e) (*get_position_ptr(scene, e))
 #define get_rotation(e) (*get_rotation_ptr(scene, e))
 #define get_scale(e) (*get_scale_ptr(scene, e))
+
+#define position (*get_position_ptr(scene, entity))
+#define rotation (*get_rotation_ptr(scene, entity))
+#define scale (*get_scale_ptr(scene, entity))
 
 #define call(entity, funcName) (try_call(scene, entity, funcName))

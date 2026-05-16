@@ -15,34 +15,36 @@ namespace Holloware
 
 		virtual std::unique_ptr<ComponentConcept> Clone() const = 0;
 
-		virtual std::string Label() const = 0;
+		virtual std::string Label() = 0;
 		virtual void Draw() = 0;
 		virtual void Serialize() = 0;
 
 		virtual void Remove() = 0;
-		virtual bool EqualsType(const ComponentConcept& other) const = 0;
+		virtual bool EqualsType(ComponentConcept& other) = 0;
 	};
 
-	template <typename ComponentT, typename RemoveStrategy>
+	template <typename ComponentT, typename GetStrategy, typename RemoveStrategy>
 	class ComponentRefModel : public ComponentConcept
 	{
 	public:
-		ComponentRefModel(ComponentT& component, RemoveStrategy removeStrategy) 
-			: m_Component(component), m_RemoveStrategy(removeStrategy) {}
+		ComponentRefModel(ComponentT& tag, GetStrategy getter, RemoveStrategy remover)
+			: m_Getter(getter), m_Remover(remover) {}
 
 		std::unique_ptr<ComponentConcept> Clone() const override
 		{
 			return std::make_unique<ComponentRefModel>(*this);
 		}
 
-		std::string Label() const override
+		std::string Label() override
 		{
-			return Holloware::Label(m_Component);
+			ComponentT& component = m_Getter();
+			return Holloware::Label(component);
 		}
 
 		void Draw() override
 		{
-			Holloware::Draw(m_Component);
+			ComponentT& component = m_Getter();
+			Holloware::Draw(component);
 		}
 
 		void Serialize() override
@@ -51,18 +53,16 @@ namespace Holloware
 
 		void Remove() override
 		{
-			m_RemoveStrategy();
+			m_Remover();
 		}
 
-		bool EqualsType(const ComponentConcept& other) const override
+		bool EqualsType(ComponentConcept& other) override
 		{
 			return other.Label() == Label();
 		}
 	private:
-
-
-		ComponentT& m_Component;
-		RemoveStrategy m_RemoveStrategy;
+		GetStrategy m_Getter;
+		RemoveStrategy m_Remover;
 	};
 
 	class Component
@@ -71,14 +71,21 @@ namespace Holloware
 		template<typename ComponentT>
 		explicit Component(ComponentT tag)
 		{
+			using EmptyGetStrategy = ComponentT&(*)();
 			using EmptyRemoveStrategy = void(*)();
-			m_Pimpl = std::make_unique<ComponentRefModel<ComponentT, EmptyRemoveStrategy>>(tag, EmptyRemoveStrategy{});
+			EmptyGetStrategy emptyGetStrategy = []() -> ComponentT&
+				{
+					ComponentT c{};
+					return c;
+				};
+			EmptyRemoveStrategy emptyRemoveStrategy = []() {};
+			m_Pimpl = std::make_unique<ComponentRefModel<ComponentT, EmptyGetStrategy, EmptyRemoveStrategy>>(tag, emptyGetStrategy, emptyRemoveStrategy);
 		}
 
-		template<typename ComponentT, typename RemoveStrategy>
-		explicit Component(ComponentT& component, RemoveStrategy removeStrategy)
+		template<typename ComponentT, typename GetStrategy, typename RemoveStrategy>
+		explicit Component(ComponentT& component, GetStrategy getter, RemoveStrategy remover)
 		{
-			m_Pimpl = std::make_unique<ComponentRefModel<ComponentT, RemoveStrategy>>(component, removeStrategy);
+			m_Pimpl = std::make_unique<ComponentRefModel<ComponentT, GetStrategy, RemoveStrategy>>(component, getter, remover);
 		}
 
 		Component(const Component& other) : m_Pimpl(other.m_Pimpl->Clone()) {}
@@ -93,7 +100,7 @@ namespace Holloware
 		Component(Component&&) = default;
 		Component& operator= (Component&&) = default;
 
-		void Draw() const { m_Pimpl->Draw(); }
+		void Draw() { m_Pimpl->Draw(); }
 		std::string Label() const { return m_Pimpl->Label(); }
 		void Serialize() const { m_Pimpl->Serialize(); }
 

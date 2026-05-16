@@ -62,12 +62,12 @@ namespace Holloware
 	void SceneSerializer::DeserializeEntity(const nlohmann::json& json, Entity& entity)
 	{
 		if (json.contains("TransformComponent"))
-			entity.AddComponent<TransformComponent>() = json["TransformComponent"];
+			entity.AddComponent<TransformComponent>(json["TransformComponent"]);
 		if (json.contains("SpriteRendererComponent"))
-			entity.AddComponent<SpriteRendererComponent>() = json["SpriteRendererComponent"];
+			entity.AddComponent<SpriteRendererComponent>(json["SpriteRendererComponent"]);
 		if (json.contains("CameraComponent"))
-			entity.AddComponent<CameraComponent>() = json["CameraComponent"];
+			entity.AddComponent<CameraComponent>(json["CameraComponent"]);
 		if (json.contains("ScriptComponent"))
-			entity.AddComponent<ScriptComponent>() = json["ScriptComponent"];
+			entity.AddComponent<ScriptComponent>(json["ScriptComponent"]);
 	}
 }

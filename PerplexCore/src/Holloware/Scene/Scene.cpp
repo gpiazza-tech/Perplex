@@ -28,11 +28,11 @@ namespace Holloware
 	{
 		Entity entity = Entity(m_Registry.create(), this);
 
-		entity.AddComponent<TransformComponent>();
-
 		IDComponent& idc = entity.AddComponent<IDComponent>();
 		idc.ID = uuid;
 		m_UUIDMap[uuid] = (entt::entity)entity;
+
+		entity.AddComponent<TransformComponent>();
 
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;

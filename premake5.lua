@@ -81,12 +81,6 @@ project "PerplexRenderer"
         "/utf-8"
     }
 
-    postbuildcommands 
-    {
-      -- copy res folder into output directory
-      "{COPYDIR} %{path.getabsolute('res')} %{cfg.targetdir}/res"
-    }
-
     filter "system:windows"
         systemversion "latest"
         defines "PXR_PLATFORM_WINDOWS"
@@ -279,14 +273,14 @@ project "PerplexRuntime"
         "PerplexRenderer/src",
         "PerplexCore/vendor/spdlog/include",
         "PerplexCore/src",
+        "PerplexCore/res/scripting/include",
         "PerplexCore/vendor",
         "%{IncludeDir.glm}",
         "%{IncludeDir.entt}",
         "%{IncludeDir.nlohmann_json}",
         "%{IncludeDir.tcc}",
-        "%{IncludeDir.efsw}",
     }
-
+    
     links
     {
         "PerplexCore"

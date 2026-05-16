@@ -146,4 +146,9 @@ namespace Holloware
 	{
 		return s_Framebuffer->GetTextureID();
 	}
+
+	void SceneRenderer::DrawToScreen()
+	{
+		s_Framebuffer->DrawToScreen();
+	}
 }

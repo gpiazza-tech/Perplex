@@ -84,10 +84,6 @@ namespace Holloware
 		tcc_add_symbol(m_State, "scene", &m_SceneContext);
 		tcc_add_symbol(m_State, "entity", &entity.GetComponent<IDComponent>().ID);
 
-		tcc_add_symbol(m_State, "position", &entity.GetComponent<TransformComponent>().Position);
-		tcc_add_symbol(m_State, "rotation", &entity.GetComponent<TransformComponent>().Rotation);
-		tcc_add_symbol(m_State, "scale", &entity.GetComponent<TransformComponent>().Scale);
-
 		// Bind host functions
 		tcc_add_symbol(m_State, "get_position_ptr", get_position_ptr);
 		tcc_add_symbol(m_State, "get_rotation_ptr", get_rotation_ptr);

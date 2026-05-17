@@ -14,7 +14,6 @@ IncludeDir = {}
 IncludeDir["glew"] = "PerplexRenderer/vendor/glew/include"
 IncludeDir["spdlog"] = "PerplexCore/vendor/spdlog/include"
 IncludeDir["GLFW"] = "PerplexCore/vendor/GLFW/include"
-IncludeDir["Glad"] = "PerplexCore/vendor/Glad/include"
 IncludeDir["ImGui"] = "PerplexCore/vendor/imgui"
 IncludeDir["glm"] = "PerplexCore/vendor/glm"
 IncludeDir["stb_image"] = "PerplexCore/vendor/stb_image"
@@ -25,7 +24,6 @@ IncludeDir["efsw"] = "PerplexCore/vendor/efsw/include"
 group "Dependencies"
     include "PerplexRenderer/vendor/glew"
     include "PerplexCore/vendor/GLFW"
-    include "PerplexCore/vendor/Glad"
     include "PerplexCore/vendor/imgui"
     include "PerplexCore/vendor/efsw"
     include "PerplexCore/vendor/tcc"
@@ -131,7 +129,6 @@ project "PerplexCore"
         "%{prj.name}/res/scripting/include",
         "%{prj.name}/vendor/spdlog/include",
         "%{IncludeDir.GLFW}",
-        "%{IncludeDir.Glad}",
         "%{IncludeDir.ImGui}",
         "%{IncludeDir.glm}",
         "%{IncludeDir.glm}/glm",
@@ -145,7 +142,6 @@ project "PerplexCore"
     {
         "PerplexRenderer",
         "GLFW",
-        "Glad",
         "ImGui",
         "opengl32.lib",
         "efsw",
@@ -214,9 +210,7 @@ project "PerplexEditor"
 
     links
     {
-        "PerplexCore",
-        "efsw",
-        "tcc"
+        "PerplexCore"
     }
 
     buildoptions

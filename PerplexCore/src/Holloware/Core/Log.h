@@ -1,6 +1,7 @@
 #pragma once
 
-#include "spdlog/spdlog.h"
+#define SPDLOG_USE_STD_FORMAT
+#include <spdlog/spdlog.h>
 #include <spdlog/logger.h>
 
 #include <memory>

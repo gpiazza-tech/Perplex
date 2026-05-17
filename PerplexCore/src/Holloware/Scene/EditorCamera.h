@@ -22,7 +22,7 @@ namespace Holloware
 		inline bool OnMouseScrolled(MouseScrolledEvent& e);
 		void OnResize(float width, float height);
 
-		const glm::mat4& GetViewProjection() const;
+		glm::mat4 GetViewProjection() const;
 	private:
 		void CalculateView();
 	private:

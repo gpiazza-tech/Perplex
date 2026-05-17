@@ -17,8 +17,6 @@
 
 #include "Holloware/Serialization/JsonHelper.h"
 
-#include <efsw/efsw.hpp>
-
 #include <filesystem>
 #include <unordered_map>
 #include <functional>
@@ -133,11 +131,12 @@ namespace Holloware
 
 	const std::filesystem::path& AssetManager::GetPath(Asset asset)
 	{
+		static const std::filesystem::path empty{};
+
 		if (s_PathMap.find(asset) != s_PathMap.end())
-		{
 			return s_PathMap[asset];
-		}
-		return std::filesystem::path();
+		
+		return empty;
 	}
 
 	Ref<void> AssetManager::GetData(Asset asset)

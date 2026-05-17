@@ -11,7 +11,7 @@ namespace Holloware
 {
 	class Entity;
 	class Asset;
-	class EntityData;
+	struct EntityData;
 
 	class ImGuiUtilities 
 	{

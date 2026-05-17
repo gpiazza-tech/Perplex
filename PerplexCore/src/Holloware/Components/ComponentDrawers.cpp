@@ -73,7 +73,7 @@ namespace Holloware
 			{ "Larger Side", (int)pxr::ScalingMode::LargerSide },
 			{ "Smaller Side", (int)pxr::ScalingMode::SmallerSide }
 		};
-		if (Drawer::DrawOptions("Scaling Mode", (int&)component.PixelPerfect, scalingModeOptions, 4));
+		Drawer::DrawOptions("Scaling Mode", (int&)component.PixelPerfect, scalingModeOptions, 4);
 	}
 
 	void Draw(ScriptComponent& component)

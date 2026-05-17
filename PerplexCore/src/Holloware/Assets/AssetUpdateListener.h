@@ -3,7 +3,7 @@
 #include "Holloware/Core/Log.h"
 #include "Holloware/Assets/AssetManager.h"
 
-#include <efsw/efsw.hpp>
+#include <../vendor/efsw/include/efsw/efsw.hpp>
 
 #include <string>
 

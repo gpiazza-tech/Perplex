@@ -19,7 +19,6 @@ IncludeDir["glm"] = "PerplexCore/vendor/glm"
 IncludeDir["stb_image"] = "PerplexCore/vendor/stb_image"
 IncludeDir["entt"] = "PerplexCore/vendor/entt/include"
 IncludeDir["nlohmann_json"] = "PerplexCore/vendor/nlohmann_json/include"
-IncludeDir["efsw"] = "PerplexCore/vendor/efsw/include"
 
 group "Dependencies"
     include "PerplexRenderer/vendor/glew"
@@ -75,12 +74,13 @@ project "PerplexRenderer"
 
     buildoptions
     {
-        "/utf-8"
+        "/execution-charset:utf-8"
     }
 
     filter "system:windows"
         systemversion "latest"
         defines "PXR_PLATFORM_WINDOWS"
+        fatalwarnings { "All" }
     
     filter "configurations:Debug"
         defines "PXR_DEBUG"
@@ -135,7 +135,6 @@ project "PerplexCore"
         "%{IncludeDir.stb_image}",
         "%{IncludeDir.entt}",
         "%{IncludeDir.nlohmann_json}",
-        "%{IncludeDir.efsw}",
     }
 
     links
@@ -150,11 +149,12 @@ project "PerplexCore"
 
     buildoptions
     {
-        "/utf-8"
+        "/execution-charset:utf-8"
     }
 
     filter "system:windows"
         systemversion "latest"
+        fatalwarnings { "All" }
 
         defines
         {
@@ -215,11 +215,12 @@ project "PerplexEditor"
 
     buildoptions
     {
-        "/utf-8"
+        "/execution-charset:utf-8"
     }
 
     filter "system:windows"
         systemversion "latest"
+        fatalwarnings { "All" }
 
         defines
         {
@@ -276,13 +277,16 @@ project "PerplexRuntime"
         "PerplexCore"
     }
 
+    fatalwarnings { "All" }
+
     buildoptions
     {
-        "/utf-8"
+        "/execution-charset:utf-8"
     }
 
     filter "system:windows"
         systemversion "latest"
+        fatalwarnings { "All" }
 
         defines
         {

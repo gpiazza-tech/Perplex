@@ -75,8 +75,8 @@ namespace Holloware
 			using EmptyRemoveStrategy = void(*)();
 			EmptyGetStrategy emptyGetStrategy = []() -> ComponentT&
 				{
-					ComponentT c{};
-					return c;
+					static ComponentT emtpy{};
+					return emtpy;
 				};
 			EmptyRemoveStrategy emptyRemoveStrategy = []() {};
 			m_Pimpl = std::make_unique<ComponentRefModel<ComponentT, EmptyGetStrategy, EmptyRemoveStrategy>>(tag, emptyGetStrategy, emptyRemoveStrategy);

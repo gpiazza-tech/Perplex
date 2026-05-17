@@ -18,11 +18,11 @@ namespace Holloware
 	{
 	}
 
-	static int find_first_break(const std::string str, int start)
+	static size_t find_first_break(const std::string str, size_t start)
 	{
-		int spaceIndex = (int)str.find_first_of(' ', start);
-		int scIndex = (int)str.find_first_of(';', start);
-		int returnIndex = (int)str.find_first_of('\n', start);
+		size_t spaceIndex = str.find_first_of(' ', start);
+		size_t scIndex = str.find_first_of(';', start);
+		size_t returnIndex = str.find_first_of('\n', start);
 
 		if (spaceIndex == -1) spaceIndex = INT32_MAX;
 		if (scIndex == -1) scIndex = INT32_MAX;
@@ -32,17 +32,17 @@ namespace Holloware
 		return (spaceIndex < scIndex && spaceIndex < returnIndex) ? spaceIndex : (scIndex < returnIndex) ? scIndex : returnIndex;
 	}
 
-	static int find_first_not_break(const std::string str, int start)
+	static size_t find_first_not_break(const std::string str, size_t start)
 	{
-		int spaceIndex = (int)str.find_first_not_of(' ', start);
-		int scIndex = (int)str.find_first_not_of(';', start);
-		int returnIndex = (int)str.find_first_not_of('\n', start);
+		size_t spaceIndex = str.find_first_not_of(' ', start);
+		size_t scIndex = str.find_first_not_of(';', start);
+		size_t returnIndex = str.find_first_not_of('\n', start);
 
 		// return the smallest value
 		return (spaceIndex < scIndex && spaceIndex < returnIndex) ? spaceIndex : (scIndex < returnIndex) ? scIndex : returnIndex;
 	}
 
-	static std::string cutstr(const std::string str, int start, int end)
+	static std::string cutstr(const std::string str, size_t start, size_t end)
 	{
 		return str.substr(0, start) + str.substr(end, str.length() - 1);
 	}
@@ -56,7 +56,7 @@ namespace Holloware
 
 		while (propertyIndex != std::string::npos)
 		{
-			int i = propertyIndex + 9;
+			size_t i = propertyIndex + 9;
 			size_t endIndex = sub.find_first_of(';', i);
 
 			i = sub.find_first_not_of(' ', i);

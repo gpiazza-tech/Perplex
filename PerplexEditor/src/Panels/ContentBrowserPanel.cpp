@@ -1,18 +1,18 @@
 #include "ContentBrowserPanel.h"
 
-#include <Holloware/Scene/Entity.h>
-#include <Holloware/Scene/SceneSerializer.h>
-#include "Holloware/Core/Application.h"
-#include "Holloware/Core/Project.h"
-#include "Holloware/Assets/Asset.h"
-#include "Holloware/Assets/AssetManager.h"
+#include <Perplex/Scene/Entity.h>
+#include <Perplex/Scene/SceneSerializer.h>
+#include <Perplex/Core/Application.h>
+#include <Perplex/Core/Project.h>
+#include <Perplex/Assets/Asset.h>
+#include <Perplex/Assets/AssetManager.h>
 #include <backends/TextureBuffer.h>
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 #include <nlohmann/json.hpp>
 
-namespace Holloware
+namespace Perplex
 {
 	ContentBrowserPanel::ContentBrowserPanel()
 		: m_AssetsPath(Application::Get().GetCurrentProject().GetAssetsPath()), m_CurrentDirectory(m_AssetsPath)

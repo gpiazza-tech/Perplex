@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Holloware.h>
+#include <Perplex.h>
 
 #include "Panels/Dockspace.h"
 #include "Panels/ContentBrowserPanel.h"
@@ -9,7 +9,7 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
-namespace Holloware
+namespace Perplex
 {
 	class EditorLayer : public Layer
 	{

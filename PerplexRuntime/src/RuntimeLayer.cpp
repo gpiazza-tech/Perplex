@@ -1,10 +1,10 @@
 #include "RuntimeLayer.h"
 
-#include <Holloware/Core/Window.h>
+#include <Perplex/Core/Window.h>
 
 #include <imgui/imgui.h>
 
-namespace Holloware
+namespace Perplex
 {
     namespace fs = std::filesystem;
 

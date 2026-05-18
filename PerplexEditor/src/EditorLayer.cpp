@@ -1,6 +1,6 @@
 #include "EditorLayer.h"
 
-namespace Holloware
+namespace Perplex
 {
     namespace fs = std::filesystem;
 

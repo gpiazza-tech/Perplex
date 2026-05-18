@@ -1,11 +1,11 @@
 #pragma once
 
-#include <Holloware/Core/Core.h>
+#include <Perplex/Core/Core.h>
 #include <backends/TextureBuffer.h>
 
 #include <filesystem>
 
-namespace Holloware
+namespace Perplex
 {
 	class Texture2D;
 

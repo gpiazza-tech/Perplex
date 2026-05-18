@@ -1,0 +1,62 @@
+#pragma once
+
+#include <Perplex/Core/LayerStack.h>
+#include <Perplex/Events/ApplicationEvent.h>
+
+#include <memory>
+#include <string>
+
+namespace Perplex
+{
+	class Window;
+	class Event;
+	class WindowCloseEvent;
+	class WindowResizeEvent;
+	class ImGuiLayer;
+	class Project;
+	class Layer;
+
+	class Application
+	{
+	public:
+		Application(const std::string& name = "Perplex App");
+		virtual ~Application();
+
+		void Update();
+		void Run();
+
+		void OnEvent(Event& e);
+
+		void PushLayer(Layer* layer);
+		void PushOverlay(Layer* overlay);
+
+		static inline Application& Get() { return *s_Instance; }
+		inline Window& GetWindow() { return *m_Window; }
+		inline const Project& GetCurrentProject() { return *m_Project; }
+
+		void Close();
+
+		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
+	private:
+		bool OnWindowClose(WindowCloseEvent& e);
+		bool OnWindowResize(WindowResizeEvent& e);
+		bool OnWindowRefresh(WindowRefreshEvent& e);
+	private:
+		std::unique_ptr<Window> m_Window;
+		ImGuiLayer* m_ImGuiLayer = nullptr;
+
+		bool m_Running = true;
+		bool m_Minimized = false;
+
+		LayerStack m_LayerStack;
+		float m_LastFrameTime = 0.0f;
+
+		Project* m_Project;
+	private:
+		static Application* s_Instance;
+	};
+
+	// To be defined in CLIENT
+	Application* CreateApplication();
+}
+

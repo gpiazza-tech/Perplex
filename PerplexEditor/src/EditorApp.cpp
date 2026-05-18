@@ -1,25 +1,25 @@
-#include <Holloware.h>
-#include <Holloware/Core/EntryPoint.h>
+#include <Perplex.h>
+#include <Perplex/Core/EntryPoint.h>
 
 #include "EditorLayer.h"
 
-namespace Holloware
+namespace Perplex
 {
-	class HollowareEditor : public Application
+	class PerplexEditor : public Application
 	{
 	public:
-		HollowareEditor()
-			: Application("Holloware Editor")
+		PerplexEditor()
+			: Application("Perplex Editor")
 		{
 			PushLayer(new EditorLayer());
 		}
-		~HollowareEditor()
+		~PerplexEditor()
 		{
 		}
 	};
 
 	Application* CreateApplication() 
 	{
-		return new HollowareEditor();
+		return new PerplexEditor();
 	}
 }

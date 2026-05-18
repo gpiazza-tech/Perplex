@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Holloware/Core/Window.h"
+#include <Perplex/Core/Window.h>
 
 struct GLFWwindow;
 
-namespace Holloware
+namespace Perplex
 {
 	class WindowsWindow : public Window
 	{

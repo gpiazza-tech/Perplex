@@ -1,25 +1,25 @@
-#include <Holloware.h>
-#include <Holloware/Core/EntryPoint.h>
+#include <Perplex.h>
+#include <Perplex/Core/EntryPoint.h>
 
 #include "RuntimeLayer.h"
 
-namespace Holloware
+namespace Perplex
 {
-	class HollowareEditor : public Application
+	class PerplexRuntime : public Application
 	{
 	public:
-		HollowareEditor()
-			: Application("Holloware Editor")
+		PerplexRuntime()
+			: Application("Perplex Runtime")
 		{
 			PushLayer(new RuntimeLayer());
 		}
-		~HollowareEditor()
+		~PerplexRuntime()
 		{
 		}
 	};
 
 	Application* CreateApplication()
 	{
-		return new HollowareEditor();
+		return new PerplexRuntime();
 	}
 }

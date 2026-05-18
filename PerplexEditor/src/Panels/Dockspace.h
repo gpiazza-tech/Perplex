@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Holloware
+namespace Perplex
 {
 	class Dockspace
 	{

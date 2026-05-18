@@ -1,13 +1,13 @@
 #include <pch.h>
-#include "Holloware/Core/Input.h"
+#include <Perplex/Core/Input.h>
 
-#include "Holloware/Core/Window.h"
-#include "Holloware/Core/Application.h"
-#include "Holloware/Core/Timestep.h"
+#include <Perplex/Core/Window.h>
+#include <Perplex/Core/Application.h>
+#include <Perplex/Core/Timestep.h>
 
 #include <GLFW/glfw3.h>
 
-namespace Holloware
+namespace Perplex
 {
 	float Input::s_MousePosX = 0;
 	float Input::s_MousePosY = 0;

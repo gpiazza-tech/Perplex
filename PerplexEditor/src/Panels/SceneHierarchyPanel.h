@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Holloware/Scene/Entity.h"
-#include "Holloware/Core/Core.h"
+#include <Perplex/Scene/Entity.h>
+#include <Perplex/Core/Core.h>
 
 #include <vector>
 
-namespace Holloware
+namespace Perplex
 {
 	class Scene;
 	class Component;

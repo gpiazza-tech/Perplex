@@ -1,15 +1,15 @@
 #include <pch.h>
 #include "WindowsWindow.h"
 
-#include <Holloware/Core/Core.h>
-#include <Holloware/Core/Log.h>
-#include "Holloware/Events/MouseEvent.h"
-#include "Holloware/Events/ApplicationEvent.h"
-#include "Holloware/Events/KeyEvent.h"
+#include <Perplex/Core/Core.h>
+#include <Perplex/Core/Log.h>
+#include <Perplex/Events/MouseEvent.h>
+#include <Perplex/Events/ApplicationEvent.h>
+#include <Perplex/Events/KeyEvent.h>
 
 #include <GLFW/glfw3.h>
 
-namespace Holloware
+namespace Perplex
 {
 	static bool s_GLFWInitialized = false;
 

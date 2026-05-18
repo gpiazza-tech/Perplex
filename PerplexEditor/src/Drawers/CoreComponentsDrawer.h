@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Holloware/Scene/Components.h>
+#include <Perplex/Scene/Components.h>
 
-namespace Holloware
+namespace Perplex
 {
 	void DrawGui(IDComponent& component);
 	void DrawGui(TagComponent& component);

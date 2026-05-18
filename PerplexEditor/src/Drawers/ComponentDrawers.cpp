@@ -1,12 +1,12 @@
-#include "Holloware/Scene/Components.h"
+#include <Perplex/Scene/Components.h>
 
-#include <Holloware/Core/Log.h>
-#include "Holloware/Assets/Asset.h"
-#include "Holloware/Assets/AssetManager.h"
-#include <Holloware/ImGui/Drawer.h>
-#include <Holloware/ImGui/ImGuiUtilities.h>
-#include <Holloware/Assets/AssetType.h>
-#include <Holloware/Scripting/ScriptData.h>
+#include <Perplex/Core/Log.h>
+#include <Perplex/Assets/Asset.h>
+#include <Perplex/Assets/AssetManager.h>
+#include <Perplex/ImGui/Drawer.h>
+#include <Perplex/ImGui/ImGuiUtilities.h>
+#include <Perplex/Assets/AssetType.h>
+#include <Perplex/Scripting/ScriptData.h>
 #include <rendering/Camera.h>
 
 #include <imgui/imgui.h>
@@ -16,7 +16,7 @@
 #include <string.h>
 #include <string>
 
-namespace Holloware
+namespace Perplex
 {
 	void Draw(IDComponent& component)
 	{

@@ -1,11 +1,11 @@
 #pragma once
 
-#include <Holloware.h>
+#include <Perplex.h>
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
-namespace Holloware
+namespace Perplex
 {
 	class RuntimeLayer : public Layer
 	{

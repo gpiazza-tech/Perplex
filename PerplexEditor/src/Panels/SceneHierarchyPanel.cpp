@@ -1,13 +1,13 @@
 #include "SceneHierarchyPanel.h"
 
-#include <Holloware/Components/Component.h>
-#include <Holloware/Core/Core.h>
-#include <Holloware/Core/UUID.h>
-#include <Holloware/Scene/Entity.h>
-#include <Holloware/Scene/Components.h>
-#include <Holloware/Scene/Scene.h>
-#include <Holloware/Scene/SceneHierarchy.h>
-#include <Holloware/Scene/EntityNode.h>
+#include <Perplex/Components/Component.h>
+#include <Perplex/Core/Core.h>
+#include <Perplex/Core/UUID.h>
+#include <Perplex/Scene/Entity.h>
+#include <Perplex/Scene/Components.h>
+#include <Perplex/Scene/Scene.h>
+#include <Perplex/Scene/SceneHierarchy.h>
+#include <Perplex/Scene/EntityNode.h>
 #include "../Drawers/CoreComponentsDrawer.h"
 
 #include <imgui/imgui.h>
@@ -15,7 +15,7 @@
 #include <vector>
 #include <string>
 
-namespace Holloware
+namespace Perplex
 {
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
 		: m_SelectedNodes(0)

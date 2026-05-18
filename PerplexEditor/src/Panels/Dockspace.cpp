@@ -1,9 +1,9 @@
 #include "Dockspace.h"
 
-#include <Holloware.h>
+#include <Perplex.h>
 #include <imgui/imgui.h>
 
-namespace Holloware
+namespace Perplex
 {
 	void Dockspace::Begin()
 	{

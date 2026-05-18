@@ -35,12 +35,12 @@
 #include <nlohmann/json.hpp>
 
 // Engine
-#include <Holloware/Core/Input.h>
-#include <Holloware/Core/KeyCodes.h>
-#include <Holloware/Core/MouseButtonCodes.h>
+#include <Perplex/Core/Input.h>
+#include <Perplex/Core/KeyCodes.h>
+#include <Perplex/Core/MouseButtonCodes.h>
 
-#include <Holloware/Core/Log.h>
-#include <Holloware/Debug/Instrumentor.h>
+#include <Perplex/Core/Log.h>
+#include <Perplex/Debug/Instrumentor.h>
 
 #ifdef HW_PLATFORM_WINDOWS
 	#include <Windows.h>

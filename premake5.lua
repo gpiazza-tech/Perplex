@@ -16,7 +16,6 @@ IncludeDir["spdlog"] = "PerplexCore/vendor/spdlog/include"
 IncludeDir["GLFW"] = "PerplexCore/vendor/GLFW/include"
 IncludeDir["ImGui"] = "PerplexCore/vendor/imgui"
 IncludeDir["glm"] = "PerplexCore/vendor/glm"
-IncludeDir["stb_image"] = "PerplexCore/vendor/stb_image"
 IncludeDir["entt"] = "PerplexCore/vendor/entt/include"
 IncludeDir["nlohmann_json"] = "PerplexCore/vendor/nlohmann_json/include"
 
@@ -46,19 +45,17 @@ project "PerplexRenderer"
     {
         "%{prj.name}/src/**.h",
         "%{prj.name}/src/**.cpp",
-        "%{prj.name}/vendor/stb_image/**.h",
-        "%{prj.name}/vendor/stb_image/**.cpp",
     }
 
     includedirs
     {
         "%{prj.name}/src",
         "%{prj.name}/include",
+        "%{prj.name}/vendor/stb_image/include",
         "%{IncludeDir.spdlog}",
         "%{IncludeDir.glew}",
         "%{IncludeDir.glm}",
         "%{IncludeDir.glm}/glm",
-        "%{IncludeDir.stb_image}",
     }
 
     defines
@@ -108,15 +105,13 @@ project "PerplexCore"
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
-    pchheader "pch.h"
+    pchheader "Perplex/pch.h"
     pchsource "PerplexCore/src/pch.cpp"
 
     files
     {
-        "%{prj.name}/src/**.h",
+        "%{prj.name}/include/**.h",
         "%{prj.name}/src/**.cpp",
-        "%{prj.name}/vendor/stb_image/**.h",
-        "%{prj.name}/vendor/stb_image/**.cpp",
         "%{prj.name}/res/scripting/include/**.h",
         "%{prj.name}/res/scripting/include/**.cpp",
     }
@@ -125,14 +120,13 @@ project "PerplexCore"
     {
         "PerplexRenderer/include",
         "PerplexRenderer/src",
-        "%{prj.name}/src",
+        "%{prj.name}/include",
         "%{prj.name}/res/scripting/include",
         "%{prj.name}/vendor/spdlog/include",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.ImGui}",
         "%{IncludeDir.glm}",
         "%{IncludeDir.glm}/glm",
-        "%{IncludeDir.stb_image}",
         "%{IncludeDir.entt}",
         "%{IncludeDir.nlohmann_json}",
     }
@@ -142,7 +136,6 @@ project "PerplexCore"
         "PerplexRenderer",
         "GLFW",
         "ImGui",
-        "opengl32.lib",
         "efsw",
         "tcc"
     }
@@ -197,10 +190,11 @@ project "PerplexEditor"
 
     includedirs
     {
+        "%{prj.name}/src",
         "PerplexRenderer/include",
         "PerplexRenderer/src",
         "PerplexCore/vendor/spdlog/include",
-        "PerplexCore/src",
+        "PerplexCore/include",
         "PerplexCore/res/scripting/include",
         "PerplexCore/vendor",
         "%{IncludeDir.glm}",
@@ -261,10 +255,11 @@ project "PerplexRuntime"
 
     includedirs
     {
+        "%{prj.name}/src",
         "PerplexRenderer/include",
         "PerplexRenderer/src",
         "PerplexCore/vendor/spdlog/include",
-        "PerplexCore/src",
+        "PerplexCore/include",
         "PerplexCore/res/scripting/include",
         "PerplexCore/vendor",
         "%{IncludeDir.glm}",

@@ -1,3 +1,4 @@
+#include <pch.h>
 #include <Perplex/Scene/Components.h>
 
 #include <Perplex/Core/Log.h>

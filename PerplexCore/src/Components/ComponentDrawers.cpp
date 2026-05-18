@@ -1,6 +1,7 @@
-#include <pch.h>
-#include <Perplex/Scene/Components.h>
+#include <Perplex/pch.h>
+#include <Perplex/Components/ComponentDrawers.h>
 
+#include <Perplex/Scene/Components.h>
 #include <Perplex/Core/Log.h>
 #include <Perplex/Assets/Asset.h>
 #include <Perplex/Assets/AssetManager.h>
@@ -10,7 +11,7 @@
 #include <Perplex/Scripting/ScriptData.h>
 #include <rendering/Camera.h>
 
-#include <imgui/imgui.h>
+#include <imgui.h>
 #include <glm/fwd.hpp>
 #include <glm/gtc/type_ptr.hpp>
 

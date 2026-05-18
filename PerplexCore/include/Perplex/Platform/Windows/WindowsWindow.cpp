@@ -1,5 +1,5 @@
-#include <Perplex/pch.h>
-#include <Perplex/Platform/Windows/WindowsWindow.h>
+#include <pch.h>
+#include <Platform/Windows/WindowsWindow.h>
 
 #include <Perplex/Core/Core.h>
 #include <Perplex/Core/Log.h>

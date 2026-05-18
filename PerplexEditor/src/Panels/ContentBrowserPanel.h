@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Perplex/Core/Core.h>
-#include <backends/TextureBuffer.h>
+#include <Perplex/Perplex.h>
+#include <pxr/pxr.h>
 
 #include <filesystem>
 

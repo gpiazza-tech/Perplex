@@ -1,13 +1,8 @@
 #include <pch.h>
 #include "ContentBrowserPanel.h"
 
-#include <Perplex/Scene/Entity.h>
-#include <Perplex/Scene/SceneSerializer.h>
-#include <Perplex/Core/Application.h>
-#include <Perplex/Core/Project.h>
-#include <Perplex/Assets/Asset.h>
-#include <Perplex/Assets/AssetManager.h>
-#include <backends/TextureBuffer.h>
+#include <Perplex/Perplex.h>
+#include <pxr/pxr.h>
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>

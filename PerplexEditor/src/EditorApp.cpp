@@ -1,4 +1,6 @@
 #include <pch.h>
+
+#include <Perplex/Perplex.h>
 #include <Perplex/Core/EntryPoint.h>
 
 #include "EditorLayer.h"

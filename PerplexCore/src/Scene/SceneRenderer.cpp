@@ -8,7 +8,7 @@
 #include <Perplex/Core/Core.h>
 #include <Perplex/Assets/Asset.h>
 #include <pxr/pxr.h>
-#include <perplex_math.h>
+#include <c/perplex_math.h>
 
 #include <glm/glm.hpp>
 

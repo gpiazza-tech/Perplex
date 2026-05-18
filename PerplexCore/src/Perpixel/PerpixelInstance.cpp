@@ -2,7 +2,7 @@
 #include <Perplex/Perpixel/PerpixelInstance.h>
 
 #include <Perplex/Perpixel/PerpixelSpawnShape.h>
-#include <perplex_pixel.h>
+#include <c/perplex_pixel.h>
 
 #include <vector>
 

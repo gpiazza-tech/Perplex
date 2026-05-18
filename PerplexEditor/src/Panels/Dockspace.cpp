@@ -1,7 +1,7 @@
 #include <pch.h>
 #include "Dockspace.h"
 
-#include <Perplex.h>
+#include <Perplex/Perplex.h>
 #include <imgui/imgui.h>
 
 namespace Perplex

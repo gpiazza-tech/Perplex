@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Perplex.h>
+#include <Perplex/Perplex.h>
 
 #include "Panels/Dockspace.h"
 #include "Panels/ContentBrowserPanel.h"

@@ -1,6 +1,15 @@
 #include <pch.h>
 #include "EditorLayer.h"
 
+#include <glm/fwd.hpp>
+
+#include <imgui/imgui.h>
+
+#include <string.h>
+#include <cstdint>
+#include <filesystem>
+#include <string>
+
 namespace Perplex
 {
     namespace fs = std::filesystem;

@@ -1,15 +1,7 @@
 #include <pch.h>
 #include "SceneHierarchyPanel.h"
 
-#include <Perplex/Components/Component.h>
-#include <Perplex/Core/Core.h>
-#include <Perplex/Core/UUID.h>
-#include <Perplex/Scene/Entity.h>
-#include <Perplex/Scene/Components.h>
-#include <Perplex/Scene/Scene.h>
-#include <Perplex/Scene/SceneHierarchy.h>
-#include <Perplex/Scene/EntityNode.h>
-#include "../Drawers/CoreComponentsDrawer.h"
+#include <Perplex/Perplex.h>
 
 #include <imgui/imgui.h>
 #include <cstdint>

@@ -207,6 +207,9 @@ project "PerplexEditor"
         "/execution-charset:utf-8"
     }
 
+    pchheader "pch.h"
+    pchsource "PerplexEditor/src/pch.cpp"
+
     filter "system:windows"
         systemversion "latest"
         fatalwarnings { "All" }
@@ -241,6 +244,9 @@ project "PerplexRuntime"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+    pchheader "pch.h"
+    pchsource "PerplexRuntime/src/pch.cpp"
 
     files
     {

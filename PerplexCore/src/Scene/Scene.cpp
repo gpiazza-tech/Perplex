@@ -14,8 +14,7 @@
 #include <Perplex/Core/UUID.h>
 #include <Perplex/Debug/Instrumentor.h>
 #include <Perplex/Components/Component.h>
-
-#include <rendering/Camera.h>
+#include <pxr/pxr.h>
 
 #include <entt.hpp>
 #include <glm/fwd.hpp>

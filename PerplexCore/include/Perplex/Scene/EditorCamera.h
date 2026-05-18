@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Perplex/Core/Timestep.h>
-#include <rendering/Camera.h>
+#include <pxr/pxr.h>
 
 #include <glm/fwd.hpp>
 

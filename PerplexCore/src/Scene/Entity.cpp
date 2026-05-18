@@ -9,7 +9,7 @@
 
 #include <imgui.h>
 #include <entt.hpp>
-#include <fwd.hpp>
+#include <glm/fwd.hpp>
 #include <nlohmann/json.hpp>
 
 #include <string>

@@ -38,24 +38,22 @@ project "PerplexRenderer"
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
-    pchheader "pch.h"
-    pchsource "%{prj.name}/src/pch.cpp"
+    pchheader "pxr/pch.h"
+    pchsource "PerplexRenderer/src/pch.cpp"
 
     files
     {
-        "%{prj.name}/src/**.h",
+        "%{prj.name}/include/**.h",
         "%{prj.name}/src/**.cpp",
     }
 
     includedirs
     {
-        "%{prj.name}/src",
         "%{prj.name}/include",
         "%{prj.name}/vendor/stb_image/include",
         "%{IncludeDir.spdlog}",
         "%{IncludeDir.glew}",
         "%{IncludeDir.glm}",
-        "%{IncludeDir.glm}/glm",
     }
 
     defines
@@ -119,14 +117,12 @@ project "PerplexCore"
     includedirs
     {
         "PerplexRenderer/include",
-        "PerplexRenderer/src",
         "%{prj.name}/include",
         "%{prj.name}/res/scripting/include",
         "%{prj.name}/vendor/spdlog/include",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.ImGui}",
         "%{IncludeDir.glm}",
-        "%{IncludeDir.glm}/glm",
         "%{IncludeDir.entt}",
         "%{IncludeDir.nlohmann_json}",
     }
@@ -192,7 +188,6 @@ project "PerplexEditor"
     {
         "%{prj.name}/src",
         "PerplexRenderer/include",
-        "PerplexRenderer/src",
         "PerplexCore/vendor/spdlog/include",
         "PerplexCore/include",
         "PerplexCore/res/scripting/include",
@@ -257,7 +252,6 @@ project "PerplexRuntime"
     {
         "%{prj.name}/src",
         "PerplexRenderer/include",
-        "PerplexRenderer/src",
         "PerplexCore/vendor/spdlog/include",
         "PerplexCore/include",
         "PerplexCore/res/scripting/include",

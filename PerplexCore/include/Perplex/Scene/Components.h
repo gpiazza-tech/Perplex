@@ -6,7 +6,7 @@
 #include <Perplex/Scripting/ScriptData.h>
 #include <Perplex/Perpixel/PerpixelInstance.h>
 #include <Perplex/Perpixel/PerpixelSpawnShape.h>
-#include <rendering/Camera.h>
+#include <pxr/pxr.h>
 
 #include <glm/glm.hpp>
 #include <glm/fwd.hpp>

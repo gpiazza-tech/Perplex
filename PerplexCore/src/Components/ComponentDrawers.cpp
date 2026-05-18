@@ -9,7 +9,7 @@
 #include <Perplex/ImGui/ImGuiUtilities.h>
 #include <Perplex/Assets/AssetType.h>
 #include <Perplex/Scripting/ScriptData.h>
-#include <rendering/Camera.h>
+#include <pxr/pxr.h>
 
 #include <imgui.h>
 #include <glm/fwd.hpp>

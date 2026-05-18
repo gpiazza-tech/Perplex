@@ -10,7 +10,7 @@
 #include <pxr/pxr.h>
 #include <perplex_math.h>
 
-#include <glm.hpp>
+#include <glm/glm.hpp>
 
 namespace Perplex
 {

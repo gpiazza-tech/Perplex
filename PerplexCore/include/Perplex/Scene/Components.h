@@ -112,20 +112,6 @@ namespace Perplex
 		ScriptComponent(const std::filesystem::path& filepath)
 			: ScriptAsset(Asset(filepath)), Instance(ScriptInstance()), Properties(ScriptAsset.GetData<ScriptData>()->Properties)
 		{ }
-
-		void SyncProperties()
-		{
-			std::vector<ScriptProperty> oldProperties = Properties;
-			Properties = ScriptAsset.GetData<ScriptData>()->Properties;
-
-			for (auto& oldProperty : oldProperties)
-			{
-				for (auto& newProperty : Properties)
-				{
-					newProperty.TrySync(oldProperty);
-				}
-			}
-		}
 	};
 
 	struct PerpixelRendererComponent

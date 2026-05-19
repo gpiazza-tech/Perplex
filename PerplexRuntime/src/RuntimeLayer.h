@@ -30,6 +30,9 @@ namespace Perplex
 		void OnAssetImported(Asset asset);
 	private:
 		std::filesystem::path m_AssetsPath{};
+
+		Interpreter m_Interpreter{};
+		SceneRenderer m_SceneRenderer{ 1, 1, 16 };
 		Ref<Scene> m_ActiveScene{};
 	};
 }

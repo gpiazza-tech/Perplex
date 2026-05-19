@@ -30,7 +30,7 @@ namespace Perplex
         OnScenePlay();
 
         Window& window = Application::Get().GetWindow();
-        m_ActiveScene->OnViewportResize(window.GetWidth(), window.GetHeight());
+        m_SceneRenderer.Resize(window.GetWidth(), window.GetHeight());
     }
 
     void RuntimeLayer::OnDetach()
@@ -42,8 +42,9 @@ namespace Perplex
     {
         HW_PROFILE_FUNCTION();
 
-        m_ActiveScene->OnUpdateRuntime(ts);
-        SceneRenderer::DrawToScreen();
+        m_Interpreter.Update(m_ActiveScene, ts);
+        m_SceneRenderer.Render(m_ActiveScene);
+        m_SceneRenderer.DrawToScreen();
     }
 
     void RuntimeLayer::OnEvent(Event& e)
@@ -61,34 +62,30 @@ namespace Perplex
 
     bool RuntimeLayer::OnWindowResize(WindowResizeEvent& e)
     {
-        m_ActiveScene->OnViewportResize(e.GetWidth(), e.GetHeight());
+        m_SceneRenderer.Resize(e.GetWidth(), e.GetHeight());
 
         return true;
     }
 
     bool RuntimeLayer::OnWindowRefresh(WindowRefreshEvent& e)
     {
-        SceneRenderer::DrawToScreen();
+        m_SceneRenderer.DrawToScreen();
         return true;
     }
 
     void RuntimeLayer::OnScenePlay()
     {
-        Interpreter::Begin();
-        m_ActiveScene->OnStartRuntime();
+        m_Interpreter.Start(m_ActiveScene);
     }
 
     void RuntimeLayer::OnSceneStop()
     {
-        m_ActiveScene->OnStopRuntime();
-        Interpreter::End();
+        m_Interpreter.Stop(m_ActiveScene);
     }
 
     void RuntimeLayer::OnAssetImported(Asset asset)
     {
         if (asset.GetPath().extension() == ".c")
-        {
-            m_ActiveScene->OnScriptAssetReimported(asset);
-        }
+            m_Interpreter.OnScriptAssetReimported(m_ActiveScene, asset);
     }
 }

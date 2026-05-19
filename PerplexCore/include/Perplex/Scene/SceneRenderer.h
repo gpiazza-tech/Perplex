@@ -7,23 +7,37 @@ namespace Perplex
 {
 	class Entity;
 	class EditorCamera;
+	class Scene;
 
 	class SceneRenderer
 	{
 	public:
-		static void Init(int width, int height, int pixelsPerUnit);
-		static void Shutdown();
+		SceneRenderer(int width, int height, int pixelsPerUnit);
 
-		static void BeginScene(const EditorCamera& editorCamera);
-		static void BeginScene(const pxr::Camera& camera, const TransformComponent& cameraTransform, const glm::vec4& background);
-		static void EndScene();
+		void BeginScene(const EditorCamera& editorCamera);
+		void BeginScene(const pxr::Camera& camera, const TransformComponent& cameraTransform, const glm::vec4& background);
+		void EndScene();
 
-		static uint32_t GetMainFramebufferTexture();
-		static void DrawToScreen();
+		void RenderEditor(Ref<Scene> scene, const EditorCamera& camera);
+		void Render(Ref<Scene> scene);
 
-		static void RenderSprite(const SpriteRendererComponent& src, const TransformComponent& tc);
-		static void RenderPerpixel(const PerpixelRendererComponent& src, const TransformComponent& tc);
+		uint32_t GetMainFramebufferTexture();
+		void DrawToScreen();
 
-		static void Resize(int width, int height);
+		void RenderSprite(const SpriteRendererComponent& src, const TransformComponent& tc);
+		void RenderPerpixel(const PerpixelRendererComponent& src, const TransformComponent& tc);
+
+		void Resize(int width, int height);
+	private:
+		int m_Width{ 1 };
+		int m_Height{ 1 };
+
+		pxr::Framebuffer m_Framebuffer;
+
+		pxr::BloomRenderer m_BloomRenderer{};
+		pxr::Tonemapper m_Tonemapper{};
+		pxr::Pixelator m_Pixelator{};
+
+		pxr::Camera m_Camera;
 	};
 }

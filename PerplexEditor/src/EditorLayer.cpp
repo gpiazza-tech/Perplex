@@ -61,11 +61,12 @@ namespace Perplex
         if (m_SceneState == SceneState::Edit)
         {
             if (m_ViewportFocused) { m_EditorCamera.OnUpdate(ts); }
-            m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+            m_SceneRenderer.RenderEditor(m_ActiveScene, m_EditorCamera);
         }
         else if (m_SceneState == SceneState::Play)
         {
-            m_ActiveScene->OnUpdateRuntime(ts);
+            m_Interpreter.Update(m_ActiveScene, ts);
+            m_SceneRenderer.Render(m_ActiveScene);
         }
 
         /* Entity Selection
@@ -222,7 +223,7 @@ namespace Perplex
         m_ViewportHovered = ImGui::IsWindowHovered();
         Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
 
-        uint32_t textureID = SceneRenderer::GetMainFramebufferTexture();
+        uint32_t textureID = m_SceneRenderer.GetMainFramebufferTexture();
         ImGui::Image(textureID, { m_ViewportSize.x, m_ViewportSize.y }, ImVec2(0, 1), ImVec2(1, 0));
 
         if (ImGui::BeginDragDropTarget())
@@ -302,16 +303,14 @@ namespace Perplex
     {
         m_SceneState = SceneState::Play;
 
-        Interpreter::Begin();
-        m_ActiveScene->OnStartRuntime();
+        m_Interpreter.Start(m_ActiveScene);
     }
 
     void EditorLayer::OnSceneStop()
     {
         m_SceneState = SceneState::Edit;
 
-        m_ActiveScene->OnStopRuntime();
-        Interpreter::End();
+        m_Interpreter.Stop(m_ActiveScene);
     }
 
     void EditorLayer::OnResize()
@@ -319,15 +318,12 @@ namespace Perplex
         m_ViewportSize = { m_ViewportPanelSize.x, m_ViewportPanelSize.y };
 
         m_EditorCamera.OnResize(m_ViewportPanelSize.x, m_ViewportPanelSize.y);
-
-        m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+        m_SceneRenderer.Resize((int)m_ViewportSize.x, (int)m_ViewportSize.y);
     }
 
     void EditorLayer::OnAssetImported(Asset asset)
     {
         if (asset.GetPath().extension() == ".c")
-        {
-            m_ActiveScene->OnScriptAssetReimported(asset);
-        }
+            m_Interpreter.OnScriptAssetReimported(m_ActiveScene, asset);
     }
 }

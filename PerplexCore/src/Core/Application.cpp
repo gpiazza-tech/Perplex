@@ -46,7 +46,7 @@ namespace Perplex
 		// Initialize renderers
 		// Renderer::Init();
 		// Renderer2D::Init();
-		SceneRenderer::Init(m_Window.get()->GetWidth(), m_Window.get()->GetHeight(), 16);
+		pxr::Renderer::Init(16);
 		
 		// Initialize Asset Manager
 		AssetManager::Init();

@@ -2,7 +2,7 @@
 #include <Perplex/Assets/ScriptAssetImporter.h>
 
 #include <Perplex/Core/Core.h>
-#include <Perplex/Scripting/Interpreter.h>
+#include <Perplex/Scripting/CPreprocessor.h>
 #include <Perplex/Scripting/ScriptData.h>
 #include <Perplex/Scripting/ScriptProperty.h>
 #include <Perplex/Serialization/JsonHelper.h>
@@ -28,8 +28,8 @@ namespace Perplex
 		std::ostringstream oss;
 		oss << ifs.rdbuf();
 
-		data["source"] = Interpreter::TrimProperties(oss.str());
-		data["properties"] = Interpreter::FindProperties(oss.str());
+		data["source"] = TrimProperties(oss.str());
+		data["properties"] = FindProperties(oss.str());
 
 		return data;
 	}

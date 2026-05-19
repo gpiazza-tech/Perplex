@@ -12,10 +12,7 @@
 
 namespace Perplex
 {
-	class Asset;
 	class Entity;
-	class EditorCamera;
-	class Timestep;
 	class Component;
 
 	class Scene
@@ -27,16 +24,10 @@ namespace Perplex
 		void CopyEntity(Entity entity, UUID parent = 0);
 		Entity GetEntity(UUID uuid);
 
-		void OnUpdateEditor(Timestep ts, const EditorCamera& camera);
-
-		void OnStartRuntime();
-		void OnUpdateRuntime(Timestep ts);
-		void OnStopRuntime();
-
-		void OnViewportResize(uint32_t width, uint32_t height);
-		void OnScriptAssetReimported(Asset asset);
-
 		SceneHierarchy& GetHierarchy() { return m_Hierarchy; }
+
+		template<typename T>
+		auto View() { return m_Registry.view<T>(); }
 	private:
 		entt::registry m_Registry;
 

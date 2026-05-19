@@ -51,6 +51,8 @@ namespace Perplex
 		float m_FrameMS = 0.0f;
 		float m_FPS = 0.0f;
 
+		Interpreter m_Interpreter{};
+		SceneRenderer m_SceneRenderer{ 1, 1, 16 };
 		Ref<Scene> m_ActiveScene{};
 
 		bool m_ViewportFocused = false;

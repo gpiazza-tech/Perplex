@@ -1,124 +1,107 @@
 #include <Perplex/pch.h>
 #include <Perplex/Scripting/Interpreter.h>
 
-#include <Perplex/Scripting/ScriptProperty.h>
-
-#include <string>
-#include <vector>
+#include <Perplex/Scene/Scene.h>
+#include <Perplex/Scene/Entity.h>
+#include <Perplex/Scene/Components.h>
+#include <Perplex/Assets/Asset.h>
+#include <Perplex/Core/Core.h>
+#include <Perplex/Core/Timestep.h>
+#include <Perplex/Core/UUID.h>
+#include <Perplex/Scripting/ScriptData.h>
 
 namespace Perplex
 {
-	namespace fs = std::filesystem;
-
-	void Interpreter::Begin()
+	static void SyncProperties(ScriptComponent& scriptComponent)
 	{
-	}
+		std::vector<ScriptProperty> oldProperties = scriptComponent.Properties;
+		scriptComponent.Properties = scriptComponent.ScriptAsset.GetData<ScriptData>()->Properties;
 
-	void Interpreter::End()
-	{
-	}
-
-	static size_t find_first_break(const std::string str, size_t start)
-	{
-		size_t spaceIndex = str.find_first_of(' ', start);
-		size_t scIndex = str.find_first_of(';', start);
-		size_t returnIndex = str.find_first_of('\n', start);
-
-		if (spaceIndex == -1) spaceIndex = INT32_MAX;
-		if (scIndex == -1) scIndex = INT32_MAX;
-		if (returnIndex == -1) returnIndex = INT32_MAX;
-
-		// return the smallest value
-		return (spaceIndex < scIndex && spaceIndex < returnIndex) ? spaceIndex : (scIndex < returnIndex) ? scIndex : returnIndex;
-	}
-
-	static size_t find_first_not_break(const std::string str, size_t start)
-	{
-		size_t spaceIndex = str.find_first_not_of(' ', start);
-		size_t scIndex = str.find_first_not_of(';', start);
-		size_t returnIndex = str.find_first_not_of('\n', start);
-
-		// return the smallest value
-		return (spaceIndex < scIndex && spaceIndex < returnIndex) ? spaceIndex : (scIndex < returnIndex) ? scIndex : returnIndex;
-	}
-
-	static std::string cutstr(const std::string str, size_t start, size_t end)
-	{
-		return str.substr(0, start) + str.substr(end, str.length() - 1);
-	}
-
-	std::vector<ScriptProperty> Interpreter::FindProperties(const std::string& src)
-	{
-		std::vector<ScriptProperty> properties = std::vector<ScriptProperty>();
-
-		std::string sub = src;
-		size_t propertyIndex = src.find("PROPERTY ");
-
-		while (propertyIndex != std::string::npos)
+		for (auto& oldProperty : oldProperties)
 		{
-			size_t i = propertyIndex + 9;
-			size_t endIndex = sub.find_first_of(';', i);
-
-			i = sub.find_first_not_of(' ', i);
-
-			if (sub.find("struct") == i)
+			for (auto& newProperty : scriptComponent.Properties)
 			{
-				i += 6;
+				newProperty.TrySync(oldProperty);
 			}
-
-			i = sub.find_first_not_of(' ', i);
-
-			std::string type = sub.substr(i, sub.find_first_of(' ', i) - i);
-
-			i = find_first_break(sub, i);
-			i = sub.find_first_not_of(' ', i);
-
-			std::string name = sub.substr(i, find_first_break(sub, i) - i);
-
-			i = find_first_break(sub, i);
-			i = sub.find_first_not_of(' ', i);
-
-			std::string defaultLabel = "";
-			if (sub[i] == '=')
-			{
-				i = sub.find_first_not_of(' ', i + 1); // + 1 to skip the '=' which i is on now
-				defaultLabel = sub.substr(i, endIndex - i);
-			}
-
-			ScriptProperty property = ScriptProperty(name, type, defaultLabel);
-			properties.push_back(property);
-			propertyIndex = src.find("PROPERTY ", i);
 		}
-
-		return properties;
 	}
 
-	std::string Interpreter::TrimProperties(const std::string& src)
+	void Interpreter::Start(Ref<Scene> scene)
 	{
-		std::string sub = src;
-		size_t propertyIndex = src.find("PROPERTY ");
-
-		while (propertyIndex != std::string::npos)
+		// Compile Scripts
 		{
-			size_t i = propertyIndex + 9;
-			size_t endIndex = sub.find_first_of(';', i);
-
-			size_t equalsIndex = sub.find_first_of('=', i);
-
-			if (equalsIndex > endIndex)
+			auto view = scene->View<ScriptComponent>();
+			for (auto e : view)
 			{
-				i = endIndex + 1;
-			}
+				Entity entity{ e, scene.get() };
 
-			else
-			{
-				sub = cutstr(sub, equalsIndex, endIndex);
-				i = equalsIndex;
-			}
+				auto& sc = view.get<ScriptComponent>(e);
+				TagComponent& tag = entity.GetComponent<TagComponent>();
 
-			propertyIndex = src.find("PROPERTY ", i);
+				Ref<ScriptData> scriptData = sc.ScriptAsset.GetData<ScriptData>();
+				if (scriptData) sc.Instance.Compile(scriptData->Source, entity);
+			}
 		}
+		// Call Start
+		{
+			auto view = scene->View<ScriptComponent>();
+			for (auto e : view)
+			{
+				Entity entity{ e, scene.get() };
 
-		return sub;
+				auto& sc = view.get<ScriptComponent>(e);
+				TagComponent& tag = entity.GetComponent<TagComponent>();
+
+				sc.Instance.TryCall("start");
+			}
+		}
+	}
+
+	void Interpreter::Update(Ref<Scene> scene, Timestep ts)
+	{
+		// Call Update
+		{
+			auto view = scene->View<ScriptComponent>();
+			for (auto e : view)
+			{
+				Entity entity{ e, scene.get() };
+
+				auto& sc = view.get<ScriptComponent>(e);
+				TagComponent& tag = entity.GetComponent<TagComponent>();
+
+				sc.Instance.TryCall("update", ts.GetSeconds());
+			}
+		}
+	}
+
+	void Interpreter::Stop(Ref<Scene> scene)
+	{
+		// Call Stop
+		{
+			auto view = scene->View<ScriptComponent>();
+			for (auto e : view)
+			{
+				Entity entity{ e, scene.get() };
+
+				auto& sc = view.get<ScriptComponent>(e);
+				TagComponent& tag = entity.GetComponent<TagComponent>();
+
+				sc.Instance.TryCall("stop");
+			}
+		}
+	}
+
+	void Interpreter::OnScriptAssetReimported(Ref<Scene> scene, Asset asset)
+	{
+		auto view = scene->View<ScriptComponent>();
+		for (auto e : view)
+		{
+			auto& sc = view.get<ScriptComponent>(e);
+
+			if ((UUID)sc.ScriptAsset == (UUID)asset)
+			{
+				SyncProperties(sc);
+			}
+		}
 	}
 }

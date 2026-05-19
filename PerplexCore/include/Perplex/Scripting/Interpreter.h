@@ -1,20 +1,20 @@
 #pragma once
 
-#include <string>
-#include <vector>
+#include <Perplex/Core/Core.h>
+#include <Perplex/Core/Timestep.h>
+#include <Perplex/Assets/Asset.h>
 
 namespace Perplex
 {
-	class Entity;
-	class ScriptProperty;
+	class Scene;
 
 	class Interpreter
 	{
 	public:
-		static void Begin();
-		static void End();
+		void Start(Ref<Scene> scene);
+		void Update(Ref<Scene> scene, Timestep ts);
+		void Stop(Ref<Scene> scene);
 
-		static std::vector<ScriptProperty> FindProperties(const std::string& src);
-		static std::string TrimProperties(const std::string& src);
+		void OnScriptAssetReimported(Ref<Scene> scene, Asset asset);
 	};
 }

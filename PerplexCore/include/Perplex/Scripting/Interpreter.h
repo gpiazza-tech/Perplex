@@ -7,6 +7,7 @@
 namespace Perplex
 {
 	class Scene;
+	class Simulator;
 
 	class Interpreter
 	{

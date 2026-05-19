@@ -42,6 +42,7 @@ namespace Perplex
 				if (scriptData) sc.Instance.Compile(scriptData->Source, entity);
 			}
 		}
+
 		// Call Start
 		{
 			auto view = scene->View<ScriptComponent>();

@@ -11,6 +11,13 @@ namespace Perplex
 	class Entity;
 	class Scene;
 	class ScriptProperty;
+	class Simulator;
+
+	struct ExternalFunction
+	{
+		std::string Name;
+		void* Ptr;
+	};
 
 	class ScriptInstance
 	{
@@ -46,8 +53,13 @@ namespace Perplex
 				funcPtr(std::forward<Args>(funcArgs)...);
 			return;
 		}
+
+		void AddFunction(const ExternalFunction& function);
 	private:
 		CUnit m_Unit{};
+		Simulator* m_SimulatorContext = nullptr;
 		Scene* m_SceneContext = nullptr;
+
+		std::vector<ExternalFunction> m_ExternalFunctions = std::vector<ExternalFunction>();
 	};
 }

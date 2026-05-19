@@ -304,8 +304,8 @@ namespace Perplex
     {
         m_SceneState = SceneState::Play;
 
-        m_Interpreter.Start(m_ActiveScene);
         m_Simulator.Start(m_ActiveScene);
+        m_Interpreter.Start(m_ActiveScene);
     }
 
     void EditorLayer::OnSceneStop()

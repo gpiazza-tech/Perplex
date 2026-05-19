@@ -27,13 +27,18 @@ struct Vec3 vec3_create(float x, float y, float z)
 	return vec3;
 }
 
-struct Vec3 vec2_create(float x, float y)
+struct Vec2
 {
-	struct Vec3 vec3;
-	vec3.x = x;
-	vec3.y = y;
-	vec3.z = 0.0f;
-	return vec3;
+	float x;
+	float y;
+};
+
+struct Vec2 vec2_create(float x, float y)
+{
+	struct Vec2 vec2;
+	vec2.x = x;
+	vec2.y = y;
+	return vec2;
 }
 
 typedef void* Scene;
@@ -64,3 +69,6 @@ __declspec(dllimport) void try_call(Scene s, Entity e, char* funcName);
 #define scale (*get_scale_ptr(scene, entity))
 
 #define call(entity, funcName) (try_call(scene, entity, funcName))
+
+// __declspec(dllimport) void _set_velocity(Scene s, Entity e, struct Vec2 velocity);
+// void set_velocity(struct Vec2 velocity) { _set_velocity(scene, entity, velocity); }

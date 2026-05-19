@@ -10,6 +10,7 @@
 #include <Perplex/Scene/Scene.h>
 #include <Perplex/Scene/Entity.h>
 #include <Perplex/Scene/Components.h>
+#include <Perplex/Physics/Simulator.h>
 
 #include <glm/glm.hpp>
 #include <glm/fwd.hpp>
@@ -72,8 +73,16 @@ namespace Perplex
 
 		m_Unit.AddSymbol("try_call", try_call);
 
+		for (auto& externalFunctions : m_ExternalFunctions)
+			m_Unit.AddSymbol(externalFunctions.Name.c_str(), externalFunctions.Ptr);
+
 		m_Unit.Compile(src.c_str());
 
 		return m_Unit.IsCompiled();
+	}
+
+	void ScriptInstance::AddFunction(const ExternalFunction& function)
+	{
+		m_ExternalFunctions.emplace_back(function);
 	}
 }

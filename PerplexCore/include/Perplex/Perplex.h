@@ -30,4 +30,6 @@
 
 #include <Perplex/Scripting/Interpreter.h>
 
+#include <Perplex/Physics/Simulator.h>
+
 #include <Perplex/Debug/Instrumentor.h>

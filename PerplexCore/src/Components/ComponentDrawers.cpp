@@ -127,4 +127,15 @@ namespace Perplex
 		if (ImGui::Button("Reset Pixels"))
 			component.Instance.ResetPixels();
 	}
+
+	void Draw(BoxColliderComponent& component)
+	{
+		ImGui::DragFloat2("Scale", &component.Scale.x, 0.01f);
+	}
+
+	void Draw(PhysicsBodyComponent& component)
+	{
+		ImGui::DragFloat("Density", &component.Density, 0.01f);
+		ImGui::DragFloat("Friction", &component.Friction, 0.01f);
+	}
 }

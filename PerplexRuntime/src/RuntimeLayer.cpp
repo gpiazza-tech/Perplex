@@ -43,6 +43,7 @@ namespace Perplex
         HW_PROFILE_FUNCTION();
 
         m_Interpreter.Update(m_ActiveScene, ts);
+        m_Simulator.Update(m_ActiveScene, ts);
         m_SceneRenderer.Render(m_ActiveScene);
         m_SceneRenderer.DrawToScreen();
     }
@@ -76,11 +77,13 @@ namespace Perplex
     void RuntimeLayer::OnScenePlay()
     {
         m_Interpreter.Start(m_ActiveScene);
+        m_Simulator.Start(m_ActiveScene);
     }
 
     void RuntimeLayer::OnSceneStop()
     {
         m_Interpreter.Stop(m_ActiveScene);
+        m_Simulator.Stop(m_ActiveScene);
     }
 
     void RuntimeLayer::OnAssetImported(Asset asset)

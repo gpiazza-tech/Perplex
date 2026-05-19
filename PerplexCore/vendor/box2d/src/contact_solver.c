@@ -1120,7 +1120,7 @@ typedef struct b2BodyStateW
 // This is a load and 8x8 transpose
 static b2BodyStateW b2GatherBodies( const b2BodyState* B2_RESTRICT states, int* B2_RESTRICT indices )
 {
-	_Static_assert( sizeof( b2BodyState ) == 32, "b2BodyState not 32 bytes" );
+	static_assert( sizeof( b2BodyState ) == 32, "b2BodyState not 32 bytes" );
 	B2_ASSERT( ( (uintptr_t)states & 0x1F ) == 0 );
 
 	// zero means null
@@ -1176,7 +1176,7 @@ static b2BodyStateW b2GatherBodies( const b2BodyState* B2_RESTRICT states, int* 
 // This writes everything back to the solver bodies but only the velocities change
 static void b2ScatterBodies( b2BodyState* B2_RESTRICT states, int* B2_RESTRICT indices, const b2BodyStateW* B2_RESTRICT simdBody )
 {
-	_Static_assert( sizeof( b2BodyState ) == 32, "b2BodyState not 32 bytes" );
+	static_assert( sizeof( b2BodyState ) == 32, "b2BodyState not 32 bytes" );
 	B2_ASSERT( ( (uintptr_t)states & 0x1F ) == 0 );
 	b2FloatW t0 = _mm256_unpacklo_ps( simdBody->v.X, simdBody->v.Y );
 	b2FloatW t1 = _mm256_unpackhi_ps( simdBody->v.X, simdBody->v.Y );
@@ -1231,7 +1231,7 @@ static void b2ScatterBodies( b2BodyState* B2_RESTRICT states, int* B2_RESTRICT i
 // This is a load and transpose
 static b2BodyStateW b2GatherBodies( const b2BodyState* B2_RESTRICT states, int* B2_RESTRICT indices )
 {
-	_Static_assert( sizeof( b2BodyState ) == 32, "b2BodyState not 32 bytes" );
+	static_assert( sizeof( b2BodyState ) == 32, "b2BodyState not 32 bytes" );
 	B2_ASSERT( ( (uintptr_t)states & 0x1F ) == 0 );
 
 	// [vx vy w flags]
@@ -1291,7 +1291,7 @@ static b2BodyStateW b2GatherBodies( const b2BodyState* B2_RESTRICT states, int* 
 // https://developer.arm.com/documentation/102107a/0100/Floating-point-4x4-matrix-transposition
 static void b2ScatterBodies( b2BodyState* B2_RESTRICT states, int* B2_RESTRICT indices, const b2BodyStateW* B2_RESTRICT simdBody )
 {
-	_Static_assert( sizeof( b2BodyState ) == 32, "b2BodyState not 32 bytes" );
+	static_assert( sizeof( b2BodyState ) == 32, "b2BodyState not 32 bytes" );
 	B2_ASSERT( ( (uintptr_t)states & 0x1F ) == 0 );
 
 	//	b2FloatW x = b2SetW(0.0f, 1.0f, 2.0f, 3.0f);
@@ -1349,7 +1349,7 @@ static void b2ScatterBodies( b2BodyState* B2_RESTRICT states, int* B2_RESTRICT i
 // This is a load and transpose
 static b2BodyStateW b2GatherBodies( const b2BodyState* B2_RESTRICT states, int* B2_RESTRICT indices )
 {
-	_Static_assert( sizeof( b2BodyState ) == 32, "b2BodyState not 32 bytes" );
+	static_assert( sizeof( b2BodyState ) == 32, "b2BodyState not 32 bytes" );
 	B2_ASSERT( ( (uintptr_t)states & 0x1F ) == 0 );
 	B2_VALIDATE( indices[0] >= 0 && indices[1] >= 0 && indices[2] >= 0 && indices[3] >= 0 );
 
@@ -1408,7 +1408,7 @@ static b2BodyStateW b2GatherBodies( const b2BodyState* B2_RESTRICT states, int* 
 // This writes only the velocities back to the solver bodies
 static void b2ScatterBodies( b2BodyState* B2_RESTRICT states, int* B2_RESTRICT indices, const b2BodyStateW* B2_RESTRICT simdBody )
 {
-	_Static_assert( sizeof( b2BodyState ) == 32, "b2BodyState not 32 bytes" );
+	static_assert( sizeof( b2BodyState ) == 32, "b2BodyState not 32 bytes" );
 	B2_ASSERT( ( (uintptr_t)states & 0x1F ) == 0 );
 	B2_VALIDATE( indices[0] >= 0 && indices[1] >= 0 && indices[2] >= 0 && indices[3] >= 0 );
 

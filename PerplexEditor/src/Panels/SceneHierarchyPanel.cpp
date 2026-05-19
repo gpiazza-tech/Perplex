@@ -22,6 +22,18 @@ namespace Perplex
 		m_SelectedNodes.clear();
 	}
 
+	template<typename T>
+	static void AddComponentToEntities(std::vector<UUID>& IDs, Ref<Scene> context)
+	{
+		for (auto& ID : IDs)
+		{
+			Entity entity = context->GetEntity(ID);
+
+			if (!entity.HasComponent<T>())
+				entity.AddComponent<T>();
+		}
+	}
+
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
 		ImGui::Begin("Scene Hierarchy");
@@ -57,47 +69,60 @@ namespace Perplex
 		ImGui::End();
 
 		ImGui::Begin("Properties");
-		if (m_SelectedNodes.size() == 1)
+		
 		{
-			Entity selection = m_Context->GetEntity(m_SelectedNodes[0]);
-
-			DrawComponents(selection);
+			if (m_SelectedNodes.size() == 1)
+			{
+				Entity selection = m_Context->GetEntity(m_SelectedNodes[0]);
+				DrawComponents(selection);
+			}
 
 			if (ImGui::Button("Add Component"))
 				ImGui::OpenPopup("AddComponent");
 
 			if (ImGui::BeginPopup("AddComponent"))
 			{
-				if (!selection.HasComponent<TransformComponent>() && ImGui::MenuItem("Transform"))
+				if (ImGui::MenuItem("Transform"))
 				{
-					selection.AddComponent<TransformComponent>();
+					AddComponentToEntities<TransformComponent>(m_SelectedNodes, m_Context);
 					ImGui::CloseCurrentPopup();
 				}
 
-				if (!selection.HasComponent<CameraComponent>() && ImGui::MenuItem("Camera"))
+				if (ImGui::MenuItem("Camera"))
 				{
-					selection.AddComponent<CameraComponent>();
+					AddComponentToEntities<CameraComponent>(m_SelectedNodes, m_Context);
 					ImGui::CloseCurrentPopup();
 				}
 
-				if (!selection.HasComponent<SpriteRendererComponent>() && ImGui::MenuItem("Sprite Renderer"))
+				if (ImGui::MenuItem("Sprite Renderer"))
 				{
-					selection.AddComponent<SpriteRendererComponent>();
+					AddComponentToEntities<SpriteRendererComponent>(m_SelectedNodes, m_Context);
 					ImGui::CloseCurrentPopup();
 				}
 
-				if (!selection.HasComponent<ScriptComponent>() && ImGui::MenuItem("Script"))
+				if (ImGui::MenuItem("Script"))
 				{
-					selection.AddComponent<ScriptComponent>();
+					AddComponentToEntities<ScriptComponent>(m_SelectedNodes, m_Context);
 					ImGui::CloseCurrentPopup();
 				}
 
-				if (!selection.HasComponent<PerpixelRendererComponent>() && ImGui::MenuItem("Perpixel Renderer"))
+				if (ImGui::MenuItem("Perpixel Renderer"))
 				{
-					selection.AddComponent<PerpixelRendererComponent>();
+					AddComponentToEntities<PerpixelRendererComponent>(m_SelectedNodes, m_Context);
 					ImGui::CloseCurrentPopup();
 				}
 
+				if (ImGui::MenuItem("Box Collider"))
+				{
+					AddComponentToEntities<BoxColliderComponent>(m_SelectedNodes, m_Context);
+					ImGui::CloseCurrentPopup();
+				}
+
+				if (ImGui::MenuItem("Physics Body"))
+				{
+					AddComponentToEntities<PhysicsBodyComponent>(m_SelectedNodes, m_Context);
+					ImGui::CloseCurrentPopup();
+				}
 				ImGui::EndPopup();
 			}
 		}

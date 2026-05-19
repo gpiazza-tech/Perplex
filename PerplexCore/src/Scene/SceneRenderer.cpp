@@ -111,7 +111,8 @@ namespace Perplex
 			{
 				Entity entity{ handle, scene.get() };
 				auto& spriteRenderer = view.get<SpriteRendererComponent>(handle);
-				RenderSprite(spriteRenderer, entity.GetGlobalTransform());
+				if (entity.HasComponent<TransformComponent>())
+					RenderSprite(spriteRenderer, entity.GetGlobalTransform());
 			}
 
 			// Perpixel Renderers
@@ -172,9 +173,9 @@ namespace Perplex
 			Ref<const pxr::Sprite> emissionSprite = src.EmissionSpriteAsset.GetData<pxr::Sprite>();
 
 			if (src.EmissionSpriteAsset)
-				pxr::Renderer::DrawQuad(tc.Position, tc.Scale, *sprite.get(), *emissionSprite.get(), src.Color, src.Emission, true);
+				pxr::Renderer::DrawRotatedQuad(tc.Position, tc.Rotation, tc.Scale, *sprite.get(), *emissionSprite.get(), src.Color, src.Emission, true);
 			else
-				pxr::Renderer::DrawQuad(tc.Position, tc.Scale, *sprite.get(), *sprite.get(), src.Color, src.Emission, true);
+				pxr::Renderer::DrawRotatedQuad(tc.Position, tc.Rotation, tc.Scale, *sprite.get(), *sprite.get(), src.Color, src.Emission, true);
 		}
 		else
 		{

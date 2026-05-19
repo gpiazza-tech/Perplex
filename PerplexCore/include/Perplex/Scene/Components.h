@@ -126,4 +126,21 @@ namespace Perplex
 		{
 		}
 	};
+
+	struct BoxColliderComponent
+	{
+		glm::vec2 Scale{ 1.0f, 1.0f };
+
+		BoxColliderComponent() = default;
+		BoxColliderComponent(const BoxColliderComponent&) = default;
+	};
+
+	struct PhysicsBodyComponent
+	{
+		float Density{ 1.0f };
+		float Friction{ 0.3f };
+
+		PhysicsBodyComponent() = default;
+		PhysicsBodyComponent(const PhysicsBodyComponent&) = default;
+	};
 }

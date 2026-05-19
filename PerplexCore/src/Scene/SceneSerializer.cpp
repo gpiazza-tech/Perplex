@@ -62,6 +62,10 @@ namespace Perplex
 			json["CameraComponent"] = entity.GetComponent<CameraComponent>();
 		if (entity.HasComponent<ScriptComponent>())
 			json["ScriptComponent"] = entity.GetComponent<ScriptComponent>();
+		if (entity.HasComponent<BoxColliderComponent>())
+			json["BoxColliderComponent"] = entity.GetComponent<BoxColliderComponent>();
+		if (entity.HasComponent<PhysicsBodyComponent>())
+			json["PhysicsBodyComponent"] = entity.GetComponent<PhysicsBodyComponent>();
 	}
 
 	void SceneSerializer::DeserializeEntity(const nlohmann::json& json, Entity& entity)
@@ -74,5 +78,9 @@ namespace Perplex
 			entity.AddComponent<CameraComponent>(json["CameraComponent"]);
 		if (json.contains("ScriptComponent"))
 			entity.AddComponent<ScriptComponent>(json["ScriptComponent"]);
+		if (json.contains("BoxColliderComponent"))
+			entity.AddComponent<BoxColliderComponent>(json["BoxColliderComponent"]);
+		if (json.contains("PhysicsBodyComponent"))
+			entity.AddComponent<PhysicsBodyComponent>(json["PhysicsBodyComponent"]);
 	}
 }

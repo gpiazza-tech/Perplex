@@ -66,6 +66,7 @@ namespace Perplex
         else if (m_SceneState == SceneState::Play)
         {
             m_Interpreter.Update(m_ActiveScene, ts);
+            m_Simulator.Update(m_ActiveScene, ts);
             m_SceneRenderer.Render(m_ActiveScene);
         }
 
@@ -304,6 +305,7 @@ namespace Perplex
         m_SceneState = SceneState::Play;
 
         m_Interpreter.Start(m_ActiveScene);
+        m_Simulator.Start(m_ActiveScene);
     }
 
     void EditorLayer::OnSceneStop()
@@ -311,6 +313,7 @@ namespace Perplex
         m_SceneState = SceneState::Edit;
 
         m_Interpreter.Stop(m_ActiveScene);
+        m_Simulator.Stop(m_ActiveScene);
     }
 
     void EditorLayer::OnResize()

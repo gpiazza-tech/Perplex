@@ -22,4 +22,10 @@ namespace Perplex
 
 	struct PerpixelRendererComponent;
 	void Draw(PerpixelRendererComponent& component);
+
+	struct BoxColliderComponent;
+	void Draw(BoxColliderComponent& component);
+
+	struct PhysicsBodyComponent;
+	void Draw(PhysicsBodyComponent& component);
 }

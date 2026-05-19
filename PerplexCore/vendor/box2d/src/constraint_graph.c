@@ -27,9 +27,9 @@
 
 void b2CreateGraph( b2ConstraintGraph* graph, const b2Capacity* capacity )
 {
-	_Static_assert( B2_GRAPH_COLOR_COUNT >= 2, "must have at least two constraint graph colors" );
-	_Static_assert( B2_OVERFLOW_INDEX == B2_GRAPH_COLOR_COUNT - 1, "bad over flow index" );
-	_Static_assert( B2_DYNAMIC_COLOR_COUNT >= 2, "need more dynamic colors" );
+	static_assert( B2_GRAPH_COLOR_COUNT >= 2, "must have at least two constraint graph colors" );
+	static_assert( B2_OVERFLOW_INDEX == B2_GRAPH_COLOR_COUNT - 1, "bad over flow index" );
+	static_assert( B2_DYNAMIC_COLOR_COUNT >= 2, "need more dynamic colors" );
 
 	*graph = (b2ConstraintGraph){ 0 };
 

@@ -20,10 +20,10 @@ namespace Perplex
 		idc.ID = uuid;
 		m_UUIDMap[uuid] = (entt::entity)entity;
 
-		entity.AddComponent<TransformComponent>();
-
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
+
+		entity.AddComponent<TransformComponent>();
 
 		m_Hierarchy.Add(EntityNode(entity.GetUUID()), parent);
 

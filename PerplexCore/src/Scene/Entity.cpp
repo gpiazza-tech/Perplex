@@ -63,11 +63,29 @@ namespace Perplex
 			return transform;
 
 		const TransformComponent& parentTransform = m_Scene->GetEntity(node.ParentID).GetGlobalTransform();
+		/*
+		glm::mat4 newTransform = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, z));
 
+		// 2. Rotate (applied second)
+		model = glm::rotate(model, glm::radians(angle), glm::vec3(axis_x, axis_y, axis_z));
+
+		// 3. Scale (applied first)
+		model = glm::scale(model, glm::vec3(sx, sy, sz));
+
+		glm::vec3 scale;
+		glm::quat rotation;
+		glm::vec3 translation;
+		glm::vec3 skew;
+		glm::vec4 perspective;
+
+		glm::decompose(transform, scale, rotation, translation, skew, perspective);
+		*/
+		
 		transform.Position += parentTransform.Position;
 		transform.Rotation += parentTransform.Rotation;
 		transform.Scale *= parentTransform.Scale;
 
 		return transform;
+		
 	}
 }

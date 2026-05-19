@@ -52,6 +52,7 @@ namespace Perplex
 		float m_FPS = 0.0f;
 
 		Interpreter m_Interpreter{};
+		Simulator m_Simulator{};
 		SceneRenderer m_SceneRenderer{ 1, 1, 16 };
 		Ref<Scene> m_ActiveScene{};
 

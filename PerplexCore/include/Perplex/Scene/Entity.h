@@ -38,12 +38,15 @@ namespace Perplex
 		{
 			HW_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
 
-			// Remove actual component
-			m_Scene->m_Registry.remove<T>(m_EntityHandle);
+			entt::entity handle = m_EntityHandle;
+			Scene* scene = m_Scene;
 
 			// Remove polymorphic component
-			std::vector<Component>& components = m_Scene->m_ComponentsMap[m_EntityHandle];
+			std::vector<Component>& components = scene->m_ComponentsMap[handle];
 			std::erase(components, Component(T{}));
+
+			// Remove actual component
+			scene->m_Registry.remove<T>(handle);
 		}
 
 		template<typename T, typename ...Args>

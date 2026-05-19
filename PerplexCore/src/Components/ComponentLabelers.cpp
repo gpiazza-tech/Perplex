@@ -14,4 +14,6 @@ namespace Perplex
 	std::string Label(CameraComponent&) { return "Camera"; }
 	std::string Label(ScriptComponent&) { return "Script"; }
 	std::string Label(PerpixelRendererComponent&) { return "Perpixel Renderer"; }
+	std::string Label(BoxColliderComponent&) { return "Box Collider"; }
+	std::string Label(PhysicsBodyComponent&) { return "Physics Body"; }
 }

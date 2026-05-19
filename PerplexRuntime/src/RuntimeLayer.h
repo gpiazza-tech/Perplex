@@ -32,6 +32,7 @@ namespace Perplex
 		std::filesystem::path m_AssetsPath{};
 
 		Interpreter m_Interpreter{};
+		Simulator m_Simulator{};
 		SceneRenderer m_SceneRenderer{ 1, 1, 16 };
 		Ref<Scene> m_ActiveScene{};
 	};

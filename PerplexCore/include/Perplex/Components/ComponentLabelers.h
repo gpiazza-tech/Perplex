@@ -24,4 +24,10 @@ namespace Perplex
 
 	struct PerpixelRendererComponent;
 	std::string Label(PerpixelRendererComponent&);
+
+	struct BoxColliderComponent;
+	std::string Label(BoxColliderComponent&);
+
+	struct PhysicsBodyComponent;
+	std::string Label(PhysicsBodyComponent&);
 }

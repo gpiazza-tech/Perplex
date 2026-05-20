@@ -1,10 +1,12 @@
 #pragma once
 
+#include "ScriptProperty.h"
 #include "CUnit.h"
 
 #include <string>
 #include <utility>
 #include <optional>
+#include <vector>
 
 namespace Perplex
 {
@@ -23,7 +25,7 @@ namespace Perplex
 	{
 	public:
 		bool IsCompiled() { return m_Unit.IsCompiled(); }
-		bool Compile(const std::string& src, Entity entity);
+		bool Compile(const std::string& src, Entity entity, const std::vector<ScriptProperty>& properties);
 
 		template<typename ReturnType, typename... Args>
 		std::optional<ReturnType> TryCall(const char* funcName, Args&&... funcArgs)
@@ -57,9 +59,9 @@ namespace Perplex
 		void AddFunction(const ExternalFunction& function);
 	private:
 		CUnit m_Unit{};
-		Simulator* m_SimulatorContext = nullptr;
 		Scene* m_SceneContext = nullptr;
 
 		std::vector<ExternalFunction> m_ExternalFunctions = std::vector<ExternalFunction>();
+		std::vector<ScriptProperty> m_Properties = std::vector<ScriptProperty>();
 	};
 }

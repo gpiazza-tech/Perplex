@@ -102,15 +102,14 @@ namespace Perplex
 	struct ScriptComponent
 	{
 		Asset ScriptAsset;
-		ScriptInstance Instance;
 		std::vector<ScriptProperty> Properties;
 
 		ScriptComponent()
-			: ScriptAsset(Asset()), Instance(ScriptInstance()), Properties(std::vector<ScriptProperty>())
+			: ScriptAsset(Asset()), Properties(std::vector<ScriptProperty>())
 		{ }
-		ScriptComponent(const ScriptComponent&) = default;
+		ScriptComponent(const ScriptComponent& other) = default;
 		ScriptComponent(const std::filesystem::path& filepath)
-			: ScriptAsset(Asset(filepath)), Instance(ScriptInstance()), Properties(ScriptAsset.GetData<ScriptData>()->Properties)
+			: ScriptAsset(Asset(filepath)), Properties(ScriptAsset.GetData<ScriptData>()->Properties)
 		{ }
 	};
 

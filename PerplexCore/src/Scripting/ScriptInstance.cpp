@@ -31,9 +31,10 @@ namespace Perplex
 
 	static void try_call(Scene* scene, UUID uuid, const char* funcName)
 	{
-		Entity entity = scene->GetEntity(uuid);
-		if (entity.HasComponent<ScriptComponent>())
-			entity.GetComponent<ScriptComponent>().Instance.TryCall(funcName);
+		// TODO: call via Interpreter::GetSingleton()
+		//Entity entity = scene->GetEntity(uuid);
+		//if (entity.HasComponent<ScriptComponent>())
+		//	entity.GetComponent<ScriptComponent>().Instance->TryCall(funcName);
 	}
 
 	static long long _spawn(Scene* scene, uint64_t prefabAssetID)
@@ -47,30 +48,26 @@ namespace Perplex
 
 		Ref<Scene> prefabScene = prefabAsset.GetData<Scene>();
  		Entity newEntity = scene->CopyEntity(prefabScene->GetParentEntities().at(0));
-
-		// TODO: should be done inside Interpreter
-		if (newEntity.HasComponent<ScriptComponent>())
-		{
-			ScriptComponent& sc = newEntity.GetComponent<ScriptComponent>();
-
-			if (sc.ScriptAsset)
-			{
-				sc.Instance.Compile(sc.ScriptAsset.GetData<ScriptData>()->Source, newEntity);
-				sc.Instance.TryCall("start");
-			}
-		}
-
 		UUID newEntityID = newEntity.GetUUID();
 		return static_cast<long long>(newEntityID);
 	}
 
-	static void _destroy(Scene* scene, UUID entity) { scene->DestroyEntity(scene->GetEntity(entity)); }
+	static void _destroy(Scene* scene, UUID entity)
+	{
+		scene->DestroyEntity(scene->GetEntity(entity));
+	}
 
-	bool ScriptInstance::Compile(const std::string& src, Entity entity)
+	static void _destroy_delay(Scene* scene, UUID entity, float delay)
+	{
+		scene->DestroyEntityDelay(scene->GetEntity(entity), delay);
+	}
+
+	bool ScriptInstance::Compile(const std::string& src, Entity entity, const std::vector<ScriptProperty>& properties)
 	{
 		if (m_Unit.IsCompiled())
 			return true;
 
+		m_Properties = properties;
 		m_SceneContext = entity.GetScene();
 
 		const Project& project = Application::Get().GetCurrentProject();
@@ -79,7 +76,7 @@ namespace Perplex
 		m_Unit.DefineSymbol("PROPERTY", "__declspec(dllimport)");
 
 		// Bind properties
-		for (auto& property : entity.GetComponent<ScriptComponent>().Properties)
+		for (auto& property : m_Properties)
 		{
 			m_Unit.AddSymbol(property.GetName().c_str(), property.GetPtr());
 		}
@@ -106,6 +103,7 @@ namespace Perplex
 
 		m_Unit.AddSymbol("_spawn", _spawn);
 		m_Unit.AddSymbol("_destroy", _destroy);
+		m_Unit.AddSymbol("_destroy_delay", _destroy_delay);
 
 		for (auto& externalFunctions : m_ExternalFunctions)
 			m_Unit.AddSymbol(externalFunctions.Name.c_str(), externalFunctions.Ptr);

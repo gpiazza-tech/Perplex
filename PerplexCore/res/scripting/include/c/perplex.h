@@ -61,6 +61,7 @@ __declspec(dllimport) void try_call(Scene s, Entity e, char* funcName);
 
 __declspec(dllimport) Entity _spawn(Scene _scene, PrefabAsset _prefab);
 __declspec(dllimport) void _destroy(Scene _scene, Entity _entity);
+__declspec(dllimport) void _destroy_delay(Scene _scene, Entity _entity, float delay);
 
 #define get_position(e) (*get_position_ptr(scene, e))
 #define get_rotation(e) (*get_rotation_ptr(scene, e))
@@ -74,6 +75,7 @@ __declspec(dllimport) void _destroy(Scene _scene, Entity _entity);
 
 #define spawn(prefab) (_spawn(scene, prefab))
 #define destroy(entity) (_destroy(scene, entity))
+#define destroy_delay(entity, delay) (_destroy_delay(scene, entity, delay))
 
 // __declspec(dllimport) void _set_velocity(Scene s, Entity e, struct Vec2 velocity);
 // void set_velocity(struct Vec2 velocity) { _set_velocity(scene, entity, velocity); }

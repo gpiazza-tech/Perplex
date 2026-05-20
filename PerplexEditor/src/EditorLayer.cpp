@@ -68,6 +68,8 @@ namespace Perplex
         }
         else if (m_SceneState == SceneState::Play)
         {
+            m_ActiveScene->Update(ts);
+
             m_Interpreter.Update(m_ActiveScene, ts);
             m_Simulator.Update(m_ActiveScene, ts);
             m_SceneRenderer.Render(m_ActiveScene);

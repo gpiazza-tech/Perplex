@@ -5,6 +5,7 @@
 #include <Perplex/Scene/Entity.h>
 #include <Perplex/Scene/SceneHierarchy.h>
 #include <Perplex/Core/UUID.h>
+#include <Perplex/Core/Timestep.h>
 
 #include <entt.hpp>
 
@@ -50,8 +51,14 @@ namespace Perplex
 	{
 		m_Hierarchy.Remove(entity.GetUUID());
 
+		m_ComponentsMap.erase(entity);
 		m_UUIDMap.erase(entity.GetUUID());
 		m_Registry.destroy(entity);
+	}
+
+	void Scene::DestroyEntityDelay(Entity entity, float delay)
+	{
+		m_DyingEntities.emplace_back(entity.GetUUID(), delay);
 	}
 
 	Entity Scene::CopyEntity(Entity entity, UUID parent)
@@ -68,6 +75,10 @@ namespace Perplex
 			newEntity.AddComponent<CameraComponent>(entity.GetComponent<CameraComponent>());
 		if (entity.HasComponent<ScriptComponent>())
 			newEntity.AddComponent<ScriptComponent>(entity.GetComponent<ScriptComponent>());
+		if (entity.HasComponent<BoxColliderComponent>())
+			newEntity.AddComponent<BoxColliderComponent>(entity.GetComponent<BoxColliderComponent>());
+		if (entity.HasComponent<PhysicsBodyComponent>())
+			newEntity.AddComponent<PhysicsBodyComponent>(entity.GetComponent<PhysicsBodyComponent>());
 
 		// copy children
 		for (auto& childID : children)
@@ -89,5 +100,20 @@ namespace Perplex
 			entities.emplace_back(m_UUIDMap[rootUUID], this);
 
 		return entities;
+	}
+
+	void Scene::Update(Timestep ts)
+	{
+		for (size_t i{}; i < m_DyingEntities.size(); ++i)
+		{
+			m_DyingEntities[i].Time -= ts;
+
+			if (m_DyingEntities[i].Time <= 0.0f)
+			{
+				DestroyEntity(GetEntity(m_DyingEntities[i].EntityID));
+				m_DyingEntities.erase(m_DyingEntities.begin() + i);
+				--i;
+			}
+		}
 	}
 }

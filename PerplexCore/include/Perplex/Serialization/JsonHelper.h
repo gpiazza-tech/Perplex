@@ -3,6 +3,7 @@
 #include <Perplex/Scene/Components.h>
 #include <Perplex/Scene/EntityNode.h>
 
+#include <glm/fwd.hpp>
 #include <nlohmann/json.hpp>
 
 namespace Perplex

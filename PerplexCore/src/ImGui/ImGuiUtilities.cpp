@@ -15,116 +15,125 @@
 
 namespace Perplex
 {
-	void ImGuiUtilities::DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue, float columnWidth)
+	consteval ImVec4 Multiply(const ImVec4 col, float val)
 	{
-		ImGui::PushID(label.c_str());
-
-		ImGui::Columns(2);
-		ImGui::SetColumnWidth(0, columnWidth);
-		ImGui::Text(label.c_str());
-		ImGui::NextColumn();
-
-		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
-
-		float lineHeight = GImGui->Font->LegacySize + GImGui->Style.FramePadding.y * 2.0f;
-		ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
-
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.6f, 0.1f, 0.1f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.7f, 0.2f, 0.2f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.1f, 0.1f, 1.0f));
-		if (ImGui::Button("X", buttonSize))
-			values.x = resetValue;
-		ImGui::PopStyleColor(3);
-
-		ImGui::SameLine();
-		ImGui::DragFloat("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f");
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.5f, 0.3f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.6f, 0.3f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.2f, 0.5f, 0.3f, 1.0f));
-		if (ImGui::Button("Y", buttonSize))
-			values.x = resetValue;
-		ImGui::PopStyleColor(3);
-
-		ImGui::SameLine();
-		ImGui::DragFloat("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f");
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.1f, 0.6f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.2f, 0.7f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.1f, 0.6f, 1.0f));
-		if (ImGui::Button("Z", buttonSize))
-			values.x = resetValue;
-		ImGui::PopStyleColor(3);
-
-		ImGui::SameLine();
-		ImGui::DragFloat("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f");
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-
-		ImGui::PopStyleVar();
-
-		ImGui::Columns(1);
-
-		ImGui::PopID();
+		return ImVec4{ col.x * val, col.y * val, col.z * val, col.w };
 	}
 
-	void ImGuiUtilities::DrawAnyIntControl(const char* label, std::any& val)
+	void ImGuiUtilities::SetGlobalStyles()
 	{
-		int buffer = std::any_cast<int>(val);
-		ImGui::DragInt(label, &buffer);
-		val = buffer;
-	}
-
-	void ImGuiUtilities::DrawAnyFloatControl(const char* label, std::any& val)
-	{
-		float buffer = std::any_cast<float>(val);
-		ImGui::DragFloat(label, &buffer);
-		val = buffer;
-	}
-
-	void ImGuiUtilities::DrawAnyDoubleControl(const char* label, std::any& val)
-	{
-		double buffer = std::any_cast<double>(val);
-		ImGui::InputDouble(label, &buffer);
-		val = buffer;
-	}
-
-	void ImGuiUtilities::DrawAnyBoolControl(const char* label, std::any& val)
-	{
-		bool buffer = std::any_cast<bool>(val);
-		ImGui::Checkbox(label, &buffer);
-		val = buffer;
-	}
-
-	void ImGuiUtilities::EntityInput(const char* label, EntityData& entityData)
-	{
-		// SCENE_HIERARCHY_ITEM
-
-		ImGui::Text(label);
-
-		ImGui::SameLine();
-
-		const char* name = entityData.Tag != "" ? entityData.Tag.c_str() : "NULL ENTITY";
-		ImGui::Button(name, {200, 20});
-
-		if (ImGui::BeginDragDropTarget())
+#define CHILL
+#ifdef CHILL
+		constexpr ImVec4 DARK = ImVec4
 		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("SCENE_HIERARCHY_ITEM"))
-			{
-				Entity payloadEntity = *(Entity*)payload->Data;
+			0.0f / 255.0f,
+			0.0f / 255.0f,
+			0.0f / 255.0f,
+			1.0f
+		};
+		constexpr ImVec4 MID = ImVec4
+		{
+			20.0f / 255.0f,
+			33.0f / 255.0f,
+			61.0f / 255.0f,
+			1.0f
+		};
+		constexpr ImVec4 LIGHT = ImVec4
+		{
+			24.0f / 255.0f,
+			58.0f / 255.0f,
+			55.0f / 255.0f,
+			1.0f
+		};
+		constexpr ImVec4 POP = ImVec4
+		{
+			229.0f / 255.0f,
+			229.0f / 255.0f,
+			229.0f / 255.0f,
+			1.0f
+		};
+#else
+		constexpr ImVec4 DARK = ImVec4
+		{
+			0.0f / 255.0f,
+			0.0f / 255.0f,
+			0.0f / 255.0f,
+			1.0f
+		};
+		constexpr ImVec4 MID = ImVec4
+		{
+			247.0f / 255.0f,
+			39.0f / 255.0f,
+			152.0f / 255.0f,
+			1.0f
+		};
+		constexpr ImVec4 LIGHT = ImVec4
+		{
+			202.0f / 255.0f,
+			125.0f / 255.0f,
+			31.0f / 255.0f,
+			1.0f
+		};
+		constexpr ImVec4 POP = ImVec4
+		{
+			235.0f / 255.0f,
+			244.0f / 255.0f,
+			133.0f / 255.0f,
+			1.0f
+		};
+#endif
+		ImGuiStyle& style = ImGui::GetStyle();
 
-				if (payloadEntity) 
-				{
-					entityData.ID = payloadEntity.GetUUID();
-					entityData.Tag = payloadEntity.GetTag();
-				}
-			}
-			ImGui::EndDragDropTarget();
-		}
+		style.WindowBorderSize = 0.01f;
+		style.FrameRounding = 0.0f;
+		style.PopupRounding = 0.0f;
+		style.WindowRounding = 0.0f;
+		style.TabRounding = 0.0f;
+		style.GrabRounding = 0.0f;
+		style.ChildRounding = 0.0f;
+		style.WindowMenuButtonPosition = ImGuiDir_None;
+
+		style.Alpha = 1.0f;
+		style.FrameRounding = 3.0f;
+		style.Colors[ImGuiCol_Text] = POP;
+		style.Colors[ImGuiCol_TextDisabled] = POP;
+		style.Colors[ImGuiCol_TextSelectedBg] = POP;
+		style.Colors[ImGuiCol_WindowBg] = DARK;
+		style.Colors[ImGuiCol_PopupBg] = DARK;
+		style.Colors[ImGuiCol_Border] = MID;
+		style.Colors[ImGuiCol_BorderShadow] = MID;
+		style.Colors[ImGuiCol_FrameBg] = MID;
+		style.Colors[ImGuiCol_FrameBgHovered] = MID;
+		style.Colors[ImGuiCol_FrameBgActive] = MID;
+		style.Colors[ImGuiCol_TitleBg] = DARK;
+		style.Colors[ImGuiCol_TitleBgCollapsed] = MID;
+		style.Colors[ImGuiCol_TitleBgActive] = DARK;
+		style.Colors[ImGuiCol_MenuBarBg] = MID;
+		style.Colors[ImGuiCol_ScrollbarBg] = DARK;
+		style.Colors[ImGuiCol_ScrollbarGrab] = DARK;
+		style.Colors[ImGuiCol_ScrollbarGrabHovered] = DARK;
+		style.Colors[ImGuiCol_ScrollbarGrabActive] = DARK;
+		style.Colors[ImGuiCol_CheckMark] = MID;
+		style.Colors[ImGuiCol_SliderGrab] = MID;
+		style.Colors[ImGuiCol_SliderGrabActive] = MID;
+		style.Colors[ImGuiCol_Button] = LIGHT;
+		style.Colors[ImGuiCol_ButtonHovered] = Multiply(LIGHT, 0.9f);
+		style.Colors[ImGuiCol_ButtonActive] = Multiply(LIGHT, 0.8f);
+		style.Colors[ImGuiCol_Header] = MID;
+		style.Colors[ImGuiCol_HeaderHovered] = MID;
+		style.Colors[ImGuiCol_HeaderActive] = MID;
+		style.Colors[ImGuiCol_ResizeGrip] = DARK;
+		style.Colors[ImGuiCol_ResizeGripHovered] = DARK;
+		style.Colors[ImGuiCol_ResizeGripActive] = DARK;
+		style.Colors[ImGuiCol_PlotLines] = MID;
+		style.Colors[ImGuiCol_PlotLinesHovered] = MID;
+		style.Colors[ImGuiCol_PlotHistogram] = MID;
+		style.Colors[ImGuiCol_PlotHistogramHovered] = MID;
+		style.Colors[ImGuiCol_Tab] = MID;
+		style.Colors[ImGuiCol_TabDimmed] = MID;
+		style.Colors[ImGuiCol_TabDimmedSelected] = MID;
+		style.Colors[ImGuiCol_TabDimmedSelectedOverline] = MID;
+		style.Colors[ImGuiCol_TabActive] = MID;
+		style.Colors[ImGuiCol_TabHovered] = MID;
 	}
 }

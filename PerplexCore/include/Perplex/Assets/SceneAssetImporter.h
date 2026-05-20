@@ -11,7 +11,7 @@ namespace Perplex
 	class SceneAssetImporter : public AssetImporter
 	{
 	public:
-		bool CanImport(const std::filesystem::path& path) override { return path.extension() == ".hws"; }
+		bool CanImport(const std::filesystem::path& path) override { return path.extension() == ".pxs"; }
 		AssetType Type() override { return AssetType::SceneAsset; }
 
 		Ref<void> Load(const std::filesystem::path& path) override;

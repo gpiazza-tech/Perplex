@@ -5,8 +5,9 @@
 #include <Perplex/Assets/Asset.h>
 #include <Perplex/Scene/Components.h>
 #include <Perplex/ImGui/ImGuiUtilities.h>
-#include <Perplex/ImGui/Drawer.h>
+#include <Perplex/ImGui/PerplexDrawers.h>
 #include <Perplex/Serialization/JsonHelper.h>
+#include <Perplex/Assets/AssetType.h>
 
 #include <nlohmann/json_fwd.hpp>
 #include <nlohmann/json.hpp>
@@ -21,6 +22,7 @@ namespace Perplex
 	{
 		m_Name = name;
 		m_Type = PerplexTypesConversions::CToHwType(type);
+		m_TypeStr = type;
 
 		if (strValue != "")
 		{
@@ -80,26 +82,28 @@ namespace Perplex
 		switch (m_Type)
 		{
 		case PerplexTypes::Int:
-			ImGuiUtilities::DrawAnyIntControl(m_Name.c_str(), m_Value);
+			DrawAny<int>(m_Value, m_Name.c_str());
 			break;
 		case PerplexTypes::Float:
-			ImGuiUtilities::DrawAnyFloatControl(m_Name.c_str(), m_Value);
+			DrawAny<float>(m_Value, m_Name.c_str());
 			break;
 		case PerplexTypes::Double:
-			ImGuiUtilities::DrawAnyDoubleControl(m_Name.c_str(), m_Value);
+			DrawAny<double>(m_Value, m_Name.c_str());
  			break;
 		case PerplexTypes::Bool:
-			ImGuiUtilities::DrawAnyBoolControl(m_Name.c_str(), m_Value);
+			DrawAny<bool>(m_Value, m_Name.c_str());
+			break;
+		case PerplexTypes::Vec2:
+			DrawAny<glm::vec2>(m_Value, m_Name.c_str());
 			break;
 		case PerplexTypes::Vec3:
-			ImGuiUtilities::DrawVec3Control(m_Name, std::any_cast<glm::vec3&>(m_Value));
+			DrawAny<glm::vec3>(m_Value, m_Name.c_str());
 			break;
 		case PerplexTypes::Entity:
-			ImGuiUtilities::EntityInput(m_Name.c_str(), std::any_cast<EntityData&>(m_Value));
+			DrawEntityField(m_Name.c_str(), std::any_cast<EntityData&>(m_Value));
 			break;
 		case PerplexTypes::Asset:
-			HW_CORE_ERROR("HollowareType::Asset not implemented in ScriptProperty!");
-			// Drawer::AssetInput(m_Name.c_str(), std::any_cast<Asset&>(m_Value));
+			DrawAssetField(m_Name.c_str(), std::any_cast<Asset&>(m_Value), StringToAssetType(m_TypeStr));
 			break;
 		default:
 			break;
@@ -110,6 +114,7 @@ namespace Perplex
 	{
 		j["name"] = property.m_Name;
 		j["type"] = property.m_Type;
+		j["typeStr"] = property.m_TypeStr;
 
 		switch (property.m_Type)
 		{
@@ -124,6 +129,9 @@ namespace Perplex
 			break;
 		case PerplexTypes::Bool:
 			j["value"] = std::any_cast<bool>(property.m_Value);
+			break;
+		case PerplexTypes::Vec2:
+			j["value"] = std::any_cast<glm::vec3>(property.m_Value);
 			break;
 		case PerplexTypes::Vec3:
 			j["value"] = std::any_cast<glm::vec3>(property.m_Value);
@@ -143,6 +151,7 @@ namespace Perplex
 	{
 		property.m_Name = j["name"].get<std::string>();
 		property.m_Type = j["type"].get<PerplexTypes>();
+		property.m_TypeStr = j["typeStr"].get<std::string>();
 
 		switch (property.m_Type)
 		{
@@ -157,6 +166,9 @@ namespace Perplex
 			break;
 		case PerplexTypes::Bool:
 			property.m_Value = j["value"].get<bool>();
+			break;
+		case PerplexTypes::Vec2:
+			property.m_Value = j["value"].get<glm::vec2>();
 			break;
 		case PerplexTypes::Vec3:
 			property.m_Value = j["value"].get<glm::vec3>();

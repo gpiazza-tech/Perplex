@@ -1,8 +1,9 @@
 #include <pch.h>
 #include "EditorLayer.h"
 
-#include <glm/fwd.hpp>
+#include <Perplex/ImGui/ImGuiUtilities.h>
 
+#include <glm/fwd.hpp>
 #include <imgui/imgui.h>
 
 #include <string.h>
@@ -38,6 +39,8 @@ namespace Perplex
         m_ActiveScene = CreateRef<Scene>();
         m_ActiveScene->CreateAbstractEntity("Placeholder");
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+        ImGuiUtilities::SetGlobalStyles();
     }
 
     void EditorLayer::OnDetach()
@@ -163,7 +166,7 @@ namespace Perplex
         {
             ImGui::Text("Load Scene");
 
-            static fs::path filepath = m_AssetsPath / "scenes/scene.hws";
+            static fs::path filepath = m_AssetsPath / "scenes/scene.pxs";
             std::string filepathString = filepath.string();
 
             char buffer[64];
@@ -188,7 +191,7 @@ namespace Perplex
         {
             ImGui::Text("Load Scene");
 
-            static fs::path filepath = m_AssetsPath / "scenes/scene.hws";
+            static fs::path filepath = m_AssetsPath / "scenes/scene.pxs";
             std::string filepathString = filepath.string();
 
             char buffer[64];

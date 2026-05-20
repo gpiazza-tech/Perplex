@@ -28,12 +28,43 @@ namespace Perplex
 	static void console_error(const char* msg) { HW_ERROR(msg); }
 	static float degrees(float rad) { return glm::degrees(rad); }
 	static float radians(float deg) { return glm::radians(deg); }
+
 	static void try_call(Scene* scene, UUID uuid, const char* funcName)
 	{
 		Entity entity = scene->GetEntity(uuid);
 		if (entity.HasComponent<ScriptComponent>())
 			entity.GetComponent<ScriptComponent>().Instance.TryCall(funcName);
 	}
+
+	static long long _spawn(Scene* scene, uint64_t prefabAssetID)
+	{
+		Asset prefabAsset{ UUID{ prefabAssetID} };
+		if (!prefabAsset)
+		{
+			HW_ERROR("Trying to spawn empty prefab!");
+			return static_cast<long long>(UUID{});
+		}
+
+		Ref<Scene> prefabScene = prefabAsset.GetData<Scene>();
+ 		Entity newEntity = scene->CopyEntity(prefabScene->GetParentEntities().at(0));
+
+		// TODO: should be done inside Interpreter
+		if (newEntity.HasComponent<ScriptComponent>())
+		{
+			ScriptComponent& sc = newEntity.GetComponent<ScriptComponent>();
+
+			if (sc.ScriptAsset)
+			{
+				sc.Instance.Compile(sc.ScriptAsset.GetData<ScriptData>()->Source, newEntity);
+				sc.Instance.TryCall("start");
+			}
+		}
+
+		UUID newEntityID = newEntity.GetUUID();
+		return static_cast<long long>(newEntityID);
+	}
+
+	static void _destroy(Scene* scene, UUID entity) { scene->DestroyEntity(scene->GetEntity(entity)); }
 
 	bool ScriptInstance::Compile(const std::string& src, Entity entity)
 	{
@@ -72,6 +103,9 @@ namespace Perplex
 		m_Unit.AddSymbol("radians", radians);
 
 		m_Unit.AddSymbol("try_call", try_call);
+
+		m_Unit.AddSymbol("_spawn", _spawn);
+		m_Unit.AddSymbol("_destroy", _destroy);
 
 		for (auto& externalFunctions : m_ExternalFunctions)
 			m_Unit.AddSymbol(externalFunctions.Name.c_str(), externalFunctions.Ptr);

@@ -7,9 +7,8 @@
 #define PROPERTY
 #endif
 
-#ifndef Entity
-#define Entity unsigned long long
-#endif
+typedef unsigned long long Entity;
+typedef unsigned long long PrefabAsset;
 
 struct Vec3
 {
@@ -60,6 +59,9 @@ __declspec(dllimport) float radians(float deg);
 
 __declspec(dllimport) void try_call(Scene s, Entity e, char* funcName);
 
+__declspec(dllimport) Entity _spawn(Scene _scene, PrefabAsset _prefab);
+__declspec(dllimport) void _destroy(Scene _scene, Entity _entity);
+
 #define get_position(e) (*get_position_ptr(scene, e))
 #define get_rotation(e) (*get_rotation_ptr(scene, e))
 #define get_scale(e) (*get_scale_ptr(scene, e))
@@ -69,6 +71,9 @@ __declspec(dllimport) void try_call(Scene s, Entity e, char* funcName);
 #define scale (*get_scale_ptr(scene, entity))
 
 #define call(entity, funcName) (try_call(scene, entity, funcName))
+
+#define spawn(prefab) (_spawn(scene, prefab))
+#define destroy(entity) (_destroy(scene, entity))
 
 // __declspec(dllimport) void _set_velocity(Scene s, Entity e, struct Vec2 velocity);
 // void set_velocity(struct Vec2 velocity) { _set_velocity(scene, entity, velocity); }

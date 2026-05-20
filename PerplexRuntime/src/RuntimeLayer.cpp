@@ -25,7 +25,7 @@ namespace Perplex
 
         // Load Scene
         // TODO: should not be absolute path
-        Asset sceneAsset = Asset("C:/dev/PerplexProjects/Game/assets/scenes/scene.hws");
+        Asset sceneAsset = Asset("C:/dev/PerplexProjects/Game/assets/scenes/scene.pxs");
         m_ActiveScene = sceneAsset.GetData<Scene>();
         OnScenePlay();
 

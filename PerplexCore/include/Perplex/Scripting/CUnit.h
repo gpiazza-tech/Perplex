@@ -6,6 +6,7 @@ namespace Perplex
 	{
 	public:
 		CUnit();
+		CUnit(const CUnit&);
 		~CUnit();
 
 		bool AddLibraryPath(const char* path);

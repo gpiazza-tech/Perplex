@@ -5,7 +5,7 @@
 #include <Perplex/Core/Log.h>
 #include <Perplex/Assets/Asset.h>
 #include <Perplex/Assets/AssetManager.h>
-#include <Perplex/ImGui/Drawer.h>
+#include <Perplex/ImGui/PerplexDrawers.h>
 #include <Perplex/ImGui/ImGuiUtilities.h>
 #include <Perplex/Assets/AssetType.h>
 #include <Perplex/Scripting/ScriptData.h>
@@ -39,23 +39,23 @@ namespace Perplex
 
 	void Draw(TransformComponent& component)
 	{
-		ImGuiUtilities::DrawVec3Control("Position", component.Position);
+		DrawVec3Control("Position", component.Position);
 
 		glm::vec3 rotation = glm::degrees(component.Rotation);
-		ImGuiUtilities::DrawVec3Control("Rotation", rotation);
+		DrawVec3Control("Rotation", rotation);
 		component.Rotation = glm::radians(rotation);
 
-		ImGuiUtilities::DrawVec3Control("Scale", component.Scale);
+		DrawVec3Control("Scale", component.Scale);
 	}
 
 	void Draw(SpriteRendererComponent& component)
 	{
 		// Color
-		Drawer::DrawAssetField("Sprite", component.SpriteAsset, AssetType::SpriteAsset);
+		DrawAssetField("Sprite", component.SpriteAsset, AssetType::SpriteAsset);
 		ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
 
 		// Emission
-		Drawer::DrawAssetField("Emission Mask", component.EmissionSpriteAsset, AssetType::SpriteAsset);
+		DrawAssetField("Emission Mask", component.EmissionSpriteAsset, AssetType::SpriteAsset);
 		ImGui::DragFloat("Emission", &component.Emission, 0.01f);
 	}
 
@@ -73,14 +73,14 @@ namespace Perplex
 			{ "Larger Side", (int)pxr::ScalingMode::LargerSide },
 			{ "Smaller Side", (int)pxr::ScalingMode::SmallerSide }
 		};
-		Drawer::DrawOptions("Scaling Mode", (int&)component.PixelPerfect, scalingModeOptions, 4);
+		DrawOptions("Scaling Mode", (int&)component.PixelPerfect, scalingModeOptions, 4);
 	}
 
 	void Draw(ScriptComponent& component)
 	{
 		ImGui::PushID(&component);
 
-		if (Drawer::DrawAssetField("Source", component.ScriptAsset, AssetType::ScriptAsset))
+		if (DrawAssetField("Source", component.ScriptAsset, AssetType::ScriptAsset))
 		{
 			if (component.ScriptAsset)
 				component.Properties = component.ScriptAsset.GetData<ScriptData>()->Properties;
@@ -106,7 +106,7 @@ namespace Perplex
 			{ "Circle", (int)PerpixelShapeType::Circle }
 		};
 
-		if (Drawer::DrawOptions("Shape Type", (int&)component.Shape, shapeTypeOptions, 3))
+		if (DrawOptions("Shape Type", (int&)component.Shape, shapeTypeOptions, 3))
 			component.Instance.SetSpawnShape(component.Shape);
 
 		switch (component.Shape.Type)
@@ -118,7 +118,7 @@ namespace Perplex
 			ImGui::DragFloat2("Size", &component.Shape.Info.RectSize.x, 0.1f);
 			break;
 		case PerpixelShapeType::Sprite:
-			Drawer::DrawAssetField("Sprite", component.Shape.Info.SpriteAsset, AssetType::SpriteAsset);
+			DrawAssetField("Sprite", component.Shape.Info.SpriteAsset, AssetType::SpriteAsset);
 			break;
 		default:
 			break;

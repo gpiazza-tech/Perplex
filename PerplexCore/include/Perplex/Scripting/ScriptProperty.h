@@ -41,6 +41,7 @@ namespace Perplex
 		friend void from_json(const nlohmann::json& j, ScriptProperty& property);
 	private:
 		std::string m_Name{};
+		std::string m_TypeStr{};
 		PerplexTypes m_Type{};
 		std::any m_Value{};
 	};

@@ -8,8 +8,12 @@
 #include <imgui/imgui_internal.h>
 #include <nlohmann/json.hpp>
 
+#include <filesystem>
+
 namespace Perplex
 {
+	namespace fs = std::filesystem;
+
 	ContentBrowserPanel::ContentBrowserPanel()
 		: m_AssetsPath(Application::Get().GetCurrentProject().GetAssetsPath()), m_CurrentDirectory(m_AssetsPath)
 	{
@@ -28,9 +32,10 @@ namespace Perplex
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("SCENE_HIERARCHY_ITEM"))
 			{
 				Entity payloadEntity = *(Entity*)payload->Data;
-				nlohmann::json json{};
-				SceneSerializer::SerializeEntity(json["Entity"], payloadEntity);
-				HW_CORE_INFO(json.dump(4));
+				Ref<Scene> prefabScene = CreateRef<Scene>();
+				prefabScene->CopyEntity(payloadEntity);
+				fs::path prefabPath = m_CurrentDirectory / fs::path(payloadEntity.GetTag() + ".pxp");
+				SceneSerializer::Serialize(prefabScene, prefabPath);
 			}
 			ImGui::EndDragDropTarget();
 		}

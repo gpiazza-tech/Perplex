@@ -54,7 +54,7 @@ namespace Perplex
 		m_Registry.destroy(entity);
 	}
 
-	void Scene::CopyEntity(Entity entity, UUID parent)
+	Entity Scene::CopyEntity(Entity entity, UUID parent)
 	{
 		std::vector<UUID> children = m_Hierarchy.GetNode(entity.GetUUID()).ChildIDs;
 
@@ -72,10 +72,22 @@ namespace Perplex
 		// copy children
 		for (auto& childID : children)
 			CopyEntity(GetEntity(childID), newEntity.GetUUID());
+
+		return newEntity;
 	}
 
 	Entity Scene::GetEntity(UUID uuid)
 	{
 		return Entity(m_UUIDMap[uuid], this);
+	}
+
+	std::vector<Entity> Scene::GetParentEntities()
+	{
+		std::vector<Entity> entities{};
+
+		for (auto& rootUUID : m_Hierarchy.GetRoot().ChildIDs)
+			entities.emplace_back(m_UUIDMap[rootUUID], this);
+
+		return entities;
 	}
 }

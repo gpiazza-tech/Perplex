@@ -8,14 +8,15 @@ namespace Perplex
 	enum class PerplexTypes : uint8_t
 	{
 		None = 0,
-		Int,
-		Float,
-		Double,
-		Bool,
-		Vec3,
-		Entity,
-		Asset,
-		PerplexObject
+		Int = 1,
+		Float = 2,
+		Double = 3,
+		Bool = 4,
+		Vec2 = 5,
+		Vec3 = 6,
+		Entity = 7,
+		Asset = 8,
+		PerplexObject = 9
 	};
 
 	class PerplexTypesConversions
@@ -31,11 +32,13 @@ namespace Perplex
 				return PerplexTypes::Double;
 			else if (cType == "bool")
 				return PerplexTypes::Bool;
+			else if (cType == "Vec2")
+				return PerplexTypes::Vec2;
 			else if (cType == "Vec3")
 				return PerplexTypes::Vec3;
 			else if (cType == "Entity")
 				return PerplexTypes::Entity;
-			else if (cType == "Asset")
+			else if (cType == "PrefabAsset")
 				return PerplexTypes::Asset;
 			else 
 				return PerplexTypes::None;

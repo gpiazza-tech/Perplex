@@ -27,6 +27,20 @@ namespace Perplex
 		tcc_set_output_type(STATE, TCC_OUTPUT_MEMORY);
 	}
 
+	CUnit::CUnit(const CUnit& other)
+		: m_State(tcc_new()), m_IsCompiled(false)
+	{
+		tcc_set_error_func(STATE, nullptr, [](void* opaque, const char* msg) { HW_CORE_ERROR("C Script Error: {0}", msg); });
+
+		const Project& project = Application::Get().GetCurrentProject();
+		tcc_set_lib_path(STATE, project.EngineRes("scripting/tcc/lib").string().c_str());
+		tcc_add_library_path(STATE, project.EngineRes("scripting/tcc/win32/lib").string().c_str());
+		tcc_add_include_path(STATE, project.EngineRes("scripting/tcc/include").string().c_str());
+		tcc_add_include_path(STATE, project.EngineRes("scripting/tcc/win32/include").string().c_str());
+
+		tcc_set_output_type(STATE, TCC_OUTPUT_MEMORY);
+	}
+
 	CUnit::~CUnit()
 	{
 		tcc_delete(STATE);

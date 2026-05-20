@@ -21,8 +21,9 @@ namespace Perplex
 		Entity CreateEntity(const std::string& name = std::string(), UUID uuid = UUID(), UUID parent = 0);
 		Entity CreateAbstractEntity(const std::string& name = std::string(), UUID uuid = UUID(), UUID parent = 0);
 		void DestroyEntity(Entity entity);
-		void CopyEntity(Entity entity, UUID parent = 0);
+		Entity CopyEntity(Entity entity, UUID parent = 0);
 		Entity GetEntity(UUID uuid);
+		std::vector<Entity> GetParentEntities();
 
 		SceneHierarchy& GetHierarchy() { return m_Hierarchy; }
 

@@ -9,6 +9,7 @@
 #include <Perplex/Assets/SpriteAssetImporter.h>
 #include <Perplex/Assets/ScriptAssetImporter.h>
 #include <Perplex/Assets/SceneAssetImporter.h>
+#include <Perplex/Assets/PrefabAssetImporter.h>
 
 #include <Perplex/Core/Application.h>
 #include <Perplex/Core/Project.h>
@@ -42,6 +43,7 @@ namespace Perplex
 		s_Importers.push_back(std::make_unique<SpriteAssetImporter>());
 		s_Importers.push_back(std::make_unique<ScriptAssetImporter>());
 		s_Importers.push_back(std::make_unique<SceneAssetImporter>());
+		s_Importers.push_back(std::make_unique<PrefabAssetImporter>());
 
 		// Loop over all asset files in project
 		for (const auto& entry : fs::recursive_directory_iterator(s_AssetsPath))

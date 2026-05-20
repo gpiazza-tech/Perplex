@@ -88,6 +88,7 @@ namespace Perplex
 		}
 
 		TransformComponent GetGlobalTransform();
+		void SetGlobalTransform(const TransformComponent& transform);
 
 		UUID GetUUID();
 		std::string GetTag();

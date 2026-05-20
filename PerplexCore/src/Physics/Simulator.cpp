@@ -65,10 +65,13 @@ namespace Perplex
 				bodyDef.type = b2_dynamicBody;
 				shapeDef.density = physicsBody.Density;
 				shapeDef.material.friction = physicsBody.Friction;
+				bodyDef.enableSleep = false;
 			}
 
 			else
-				bodyDef.type = b2_staticBody;
+			{
+				bodyDef.type = b2_staticBody; 
+			}
 
 			b2BodyId bodyId = b2CreateBody(WORLD, &bodyDef);
 			b2CreatePolygonShape(bodyId, &shapeDef, &dynamicBox);
@@ -95,7 +98,7 @@ namespace Perplex
 		{
 			Entity entity{ e, scene.get() };
 			TransformComponent& transform = entity.GetComponent<TransformComponent>();
-			const TransformComponent& globalTransform = entity.GetGlobalTransform();
+			TransformComponent globalTransform = entity.GetGlobalTransform();
 
 			b2BodyId bodyId = std::bit_cast<b2BodyId>(m_Bodies[entity.GetUUID()]);
 			b2Vec2 position = b2Body_GetPosition(bodyId);
@@ -104,19 +107,32 @@ namespace Perplex
 			Box2DUserData* userData = (Box2DUserData*)b2Body_GetUserData(bodyId);
 			glm::vec2 oldBox2DPosition = userData->OldBox2DPosition;
 			glm::vec3 oldEntityPosition = userData->OldEntityPosition;
-			userData->OldBox2DPosition = { position.x, position.y };
-			userData->OldEntityPosition = globalTransform.Position;
 
 			float angle = b2Rot_GetAngle(b2Body_GetRotation(bodyId));
 
-			glm::vec3 delta =
+			glm::vec3 box2dDelta =
 				glm::vec3{ position.x, position.y, transform.Position.z } -
 				glm::vec3{ oldBox2DPosition.x, oldBox2DPosition.y, transform.Position.z };
 
-			transform.Position += delta;
-			transform.Rotation.z = angle;
+			if (box2dDelta != glm::vec3{ 0.0f })
+			{
+				transform.Position += box2dDelta;
+			}
 
-			// b2Body_SetTransform(bodyId, { transform.Position.x, transform.Position.y }, rotation);
+			globalTransform = entity.GetGlobalTransform();
+			glm::vec3 entityDelta =
+				glm::vec3{ globalTransform.Position.x, globalTransform.Position.y, globalTransform.Position.z } -
+				glm::vec3{ oldEntityPosition.x, oldEntityPosition.y, globalTransform.Position.z };
+
+			if (entityDelta != glm::vec3{ 0.0f })
+			{
+				globalTransform = entity.GetGlobalTransform();
+				b2Body_SetTransform(bodyId, { globalTransform.Position.x, globalTransform.Position.y }, rotation);
+			}
+
+			position = b2Body_GetPosition(bodyId);
+			userData->OldBox2DPosition = { position.x, position.y };
+			userData->OldEntityPosition = globalTransform.Position;
 		}
 	}
 

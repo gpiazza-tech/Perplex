@@ -86,6 +86,24 @@ namespace Perplex
 		transform.Scale *= parentTransform.Scale;
 
 		return transform;
-		
+	}
+
+	void Entity::SetGlobalTransform(const TransformComponent& transform)
+	{
+		EntityNode node = m_Scene->GetHierarchy().GetNode(GetUUID());
+		TransformComponent newTransform{ transform };
+
+		while (node.ParentID != 0)
+		{
+			const TransformComponent& parentTransform = m_Scene->GetEntity(node.ParentID).GetComponent<TransformComponent>();
+
+			newTransform.Position -= parentTransform.Position;
+			newTransform.Rotation -= parentTransform.Rotation;
+			newTransform.Scale /= parentTransform.Scale;
+
+			node = m_Scene->GetHierarchy().GetNode(node.ParentID);
+		}
+
+		m_Scene->GetEntity(node.ID).GetComponent<TransformComponent>() = newTransform;
 	}
 }

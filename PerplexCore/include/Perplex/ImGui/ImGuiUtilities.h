@@ -17,5 +17,7 @@ namespace Perplex
 	{
 	public:
 		static void SetGlobalStyles();
+		static void SetEditorStyles();
+		static void SetRuntimeStyles();
 	};
 }

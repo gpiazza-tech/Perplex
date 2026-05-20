@@ -307,6 +307,8 @@ namespace Perplex
 
     void EditorLayer::OnScenePlay()
     {
+        ImGuiUtilities::SetRuntimeStyles();
+
         m_SceneState = SceneState::Play;
 
         m_Simulator.Start(m_ActiveScene);
@@ -315,6 +317,8 @@ namespace Perplex
 
     void EditorLayer::OnSceneStop()
     {
+        ImGuiUtilities::SetEditorStyles();
+
         m_SceneState = SceneState::Edit;
 
         m_Interpreter.Stop(m_ActiveScene);

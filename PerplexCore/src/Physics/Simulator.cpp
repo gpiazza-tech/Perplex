@@ -85,7 +85,7 @@ namespace Perplex
 		// TODO: this function should be called on a separate thread with
 		//		a consitent framerate!
 
-		float timeStep = 1.0f / 120.0f;
+		float timeStep = ts.GetSeconds();
 
 		// recommended by box2d docs
 		int subStepCount = 4;
@@ -117,6 +117,7 @@ namespace Perplex
 			if (box2dDelta != glm::vec3{ 0.0f })
 			{
 				transform.Position += box2dDelta;
+				transform.Rotation.z = b2Rot_GetAngle(rotation);
 			}
 
 			globalTransform = entity.GetGlobalTransform();
@@ -127,6 +128,7 @@ namespace Perplex
 			if (entityDelta != glm::vec3{ 0.0f })
 			{
 				globalTransform = entity.GetGlobalTransform();
+				rotation = b2Body_GetRotation(bodyId);
 				b2Body_SetTransform(bodyId, { globalTransform.Position.x, globalTransform.Position.y }, rotation);
 			}
 

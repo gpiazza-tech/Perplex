@@ -41,7 +41,7 @@ namespace Perplex
 		// Create window
 		m_Window = std::unique_ptr<Window>(Window::Create(WindowProps(name)));
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
-		m_Window->SetVSync(true);
+		m_Window->SetVSync(false);
 
 		// Initialize renderers
 		// Renderer::Init();

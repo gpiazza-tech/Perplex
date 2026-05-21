@@ -2,6 +2,7 @@
 
 #include "ScriptProperty.h"
 #include "CUnit.h"
+#include <Perplex/Core/UUID.h>
 
 #include <string>
 #include <utility>
@@ -59,6 +60,7 @@ namespace Perplex
 		void AddFunction(const ExternalFunction& function);
 	private:
 		CUnit m_Unit{};
+		UUID m_EntityID{ 0 };
 		Scene* m_SceneContext = nullptr;
 
 		std::vector<ExternalFunction> m_ExternalFunctions = std::vector<ExternalFunction>();

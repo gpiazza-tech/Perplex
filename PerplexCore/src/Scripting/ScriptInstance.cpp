@@ -68,7 +68,8 @@ namespace Perplex
 	{
 		if (m_Unit.IsCompiled())
 			return true;
-
+		
+		m_EntityID = entity.GetUUID();;
 		m_Properties = properties;
 		m_SceneContext = entity.GetScene();
 
@@ -85,7 +86,7 @@ namespace Perplex
 
 		// Bind transform
 		m_Unit.AddSymbol("scene", &m_SceneContext);
-		m_Unit.AddSymbol("entity", &entity.GetComponent<IDComponent>().ID);
+		m_Unit.AddSymbol("entity", &m_EntityID);
 
 		// Bind host functions
 		m_Unit.AddSymbol("get_position_ptr", get_position_ptr);

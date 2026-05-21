@@ -33,3 +33,6 @@
 	path = PerplexCore/vendor/imgui
 	url = https://github.com/gpiazza-tech/imgui
 	branch = docking
+[submodule "PerplexCore/vendor/efsw"]
+	path = PerplexCore/vendor/efsw
+	url = https://github.com/gpiazza-tech/efsw

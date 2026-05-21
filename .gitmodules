@@ -29,3 +29,7 @@
 [submodule "PerplexCore/vendor/box2d"]
 	path = PerplexCore/vendor/box2d
 	url = https://github.com/gpiazza-tech/Box2D
+[submodule "PerplexCore/vendor/imgui"]
+	path = PerplexCore/vendor/imgui
+	url = https://github.com/gpiazza-tech/imgui
+	branch = docking

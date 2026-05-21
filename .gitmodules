@@ -20,3 +20,6 @@
 [submodule "Holloware/vendor/efsw"]
 	path = Holloware/vendor/efsw
 	url = https://github.com/SpartanJ/efsw
+[submodule "PerplexCore/vendor/GLFW"]
+	path = PerplexCore/vendor/GLFW
+	url = https://github.com/gpiazza-tech/glfw

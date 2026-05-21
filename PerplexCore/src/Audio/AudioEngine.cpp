@@ -40,6 +40,18 @@ namespace Perplex
 		Project proj = Application::Get().GetCurrentProject();
 		fs::path absPath = proj.GetAssetsPath() / audioFile;
 
-		ma_engine_play_sound(m_Engine, absPath.string().c_str(), NULL);
+		ma_result playResult = ma_engine_play_sound(m_Engine, absPath.string().c_str(), NULL);
+
+		switch (playResult)
+		{
+		case MA_SUCCESS:
+			return;
+		case MA_DOES_NOT_EXIST:
+			HW_INFO("Audio file {} does not exist!", audioFile.string());
+			break;
+		default:
+			HW_INFO("Failed to play audio file {}", audioFile.string());
+			break;
+		}
 	}
 }

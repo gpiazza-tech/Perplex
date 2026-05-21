@@ -150,12 +150,12 @@ namespace Perplex
         // POPUPS
         if (savePopup)
         {
-            ImGui::OpenPopup("SAVE_SCENE");
+            ImGui::OpenPopup("Save Scene");
             savePopup = false;
         }
         if (loadPopup)
         {
-            ImGui::OpenPopup("LOAD_SCENE");
+            ImGui::OpenPopup("Load Scene");
             loadPopup = false;
         }
 
@@ -164,10 +164,8 @@ namespace Perplex
 
     void EditorLayer::UI_Popups()
     {
-        if (ImGui::BeginPopupModal("SAVE_SCENE"))
+        if (ImGui::BeginPopupModal("Save Scene"))
         {
-            ImGui::Text("Load Scene");
-
             static fs::path filepath = m_AssetsPath / "scenes/scene.pxs";
             std::string filepathString = filepath.string();
 
@@ -189,10 +187,8 @@ namespace Perplex
             ImGui::EndPopup();
         }
 
-        if (ImGui::BeginPopupModal("LOAD_SCENE"))
+        if (ImGui::BeginPopupModal("Load Scene"))
         {
-            ImGui::Text("Load Scene");
-
             static fs::path filepath = m_AssetsPath / "scenes/scene.pxs";
             std::string filepathString = filepath.string();
 
@@ -303,6 +299,9 @@ namespace Perplex
     {
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
         OnResize();
+
+        if (m_SceneState == SceneState::Play)
+            OnScenePlay();
     }
 
     void EditorLayer::OnScenePlay()

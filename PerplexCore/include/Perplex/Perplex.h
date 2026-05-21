@@ -20,6 +20,9 @@
 #include <Perplex/Events/ApplicationEvent.h>
 
 #include <Perplex/ImGui/ImGuiLayer.h>
+#include <Perplex/ImGui/ImGuiUtilities.h>
+#include <Perplex/ImGui/PrimitiveDrawers.h>
+#include <Perplex/ImGui/PerplexDrawers.h>
 
 #include <Perplex/Scene/Scene.h>
 #include <Perplex/Scene/Entity.h>
@@ -27,6 +30,8 @@
 #include <Perplex/Scene/SceneSerializer.h>
 #include <Perplex/Scene/EditorCamera.h>
 #include <Perplex/Scene/SceneRenderer.h>
+
+#include <Perplex/Audio/AudioEngine.h>
 
 #include <Perplex/Scripting/Interpreter.h>
 

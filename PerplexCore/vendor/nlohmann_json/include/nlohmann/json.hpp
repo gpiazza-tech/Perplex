@@ -7980,7 +7980,7 @@ namespace detail
                     }
                 }
             }
-
+            [[fallthrough]];
             // multi-line comments skip input until */ is read
             case '*':
             {
@@ -8015,7 +8015,7 @@ namespace detail
                     }
                 }
             }
-
+            [[fallthrough]];
             // unexpected character after reading '/'
             default:
             {

@@ -35,7 +35,8 @@ namespace Perplex
 			Draw(*(glm::vec3*)value);
 			break;
 		default:
-			HW_CORE_ASSERT(false, "Perplex Type {0} not supported!", type);
+			HW_CORE_ASSERT(false, "Perplex Type {0} not supported!", static_cast<int>(type));
+			break;
 		}
 	}
 

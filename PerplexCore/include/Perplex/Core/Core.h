@@ -4,8 +4,13 @@
 
 #include <memory>
 
+
 #ifndef HW_PLATFORM_WINDOWS
 	#error Holloware only supports Windows!
+#endif
+
+#ifdef HW_DEBUG
+	#define HW_ENABLE_ASSERTS
 #endif
 
 #ifdef HW_ENABLE_ASSERTS

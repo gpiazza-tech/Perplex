@@ -63,6 +63,8 @@ __declspec(dllimport) Entity _spawn(Scene _scene, PrefabAsset _prefab);
 __declspec(dllimport) void _destroy(Scene _scene, Entity _entity);
 __declspec(dllimport) void _destroy_delay(Scene _scene, Entity _entity, float delay);
 
+__declspec(dllimport) void play_sound(const char* filepath);
+
 #define get_position(e) (*get_position_ptr(scene, e))
 #define get_rotation(e) (*get_rotation_ptr(scene, e))
 #define get_scale(e) (*get_scale_ptr(scene, e))

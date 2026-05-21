@@ -54,6 +54,7 @@ namespace Perplex
 		Interpreter m_Interpreter{};
 		Simulator m_Simulator{};
 		SceneRenderer m_SceneRenderer{ 1, 1, 16 };
+		AudioEngine m_AudioEngine{};
 		Ref<Scene> m_ActiveScene{};
 
 		bool m_ViewportFocused = false;

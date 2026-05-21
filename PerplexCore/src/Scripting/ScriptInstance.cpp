@@ -11,6 +11,7 @@
 #include <Perplex/Scene/Entity.h>
 #include <Perplex/Scene/Components.h>
 #include <Perplex/Physics/Simulator.h>
+#include <Perplex/Audio/AudioEngine.h>
 
 #include <glm/glm.hpp>
 #include <glm/fwd.hpp>
@@ -28,6 +29,7 @@ namespace Perplex
 	static void console_error(const char* msg) { HW_ERROR(msg); }
 	static float degrees(float rad) { return glm::degrees(rad); }
 	static float radians(float deg) { return glm::radians(deg); }
+	static void play_sound(const char* filepath) { AudioEngine::Get().PlaySound(filepath); }
 
 	static void try_call(Scene* scene, UUID uuid, const char* funcName)
 	{
@@ -104,6 +106,8 @@ namespace Perplex
 		m_Unit.AddSymbol("_spawn", _spawn);
 		m_Unit.AddSymbol("_destroy", _destroy);
 		m_Unit.AddSymbol("_destroy_delay", _destroy_delay);
+
+		m_Unit.AddSymbol("play_sound", play_sound);
 
 		for (auto& externalFunctions : m_ExternalFunctions)
 			m_Unit.AddSymbol(externalFunctions.Name.c_str(), externalFunctions.Ptr);

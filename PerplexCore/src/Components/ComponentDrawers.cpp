@@ -39,13 +39,18 @@ namespace Perplex
 
 	void Draw(TransformComponent& component)
 	{
+		ImVec2 padding = { 1.0f, 1.0f };
+
 		DrawVec3Control("Position", component.Position);
+		ImGui::Dummy(padding);
 
 		glm::vec3 rotation = glm::degrees(component.Rotation);
 		DrawVec3Control("Rotation", rotation);
+		ImGui::Dummy(padding);
 		component.Rotation = glm::radians(rotation);
 
-		DrawVec3Control("Scale", component.Scale);
+		DrawVec3Control("Scale", component.Scale, 1.0f);
+		ImGui::Dummy(padding);
 	}
 
 	void Draw(SpriteRendererComponent& component)

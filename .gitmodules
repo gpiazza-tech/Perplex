@@ -23,3 +23,6 @@
 [submodule "PerplexCore/vendor/GLFW"]
 	path = PerplexCore/vendor/GLFW
 	url = https://github.com/gpiazza-tech/glfw
+[submodule "PerplexCore/vendor/tcc"]
+	path = PerplexCore/vendor/tcc
+	url = https://github.com/gpiazza-tech/TCC

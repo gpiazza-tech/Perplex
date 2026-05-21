@@ -26,3 +26,6 @@
 [submodule "PerplexCore/vendor/tcc"]
 	path = PerplexCore/vendor/tcc
 	url = https://github.com/gpiazza-tech/TCC
+[submodule "PerplexCore/vendor/box2d"]
+	path = PerplexCore/vendor/box2d
+	url = https://github.com/gpiazza-tech/Box2D

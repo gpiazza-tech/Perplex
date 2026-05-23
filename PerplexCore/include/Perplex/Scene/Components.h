@@ -136,6 +136,7 @@ namespace Perplex
 
 	struct PhysicsBodyComponent
 	{
+		float GravityScale{ 1.0f };
 		float Density{ 1.0f };
 		float Friction{ 0.3f };
 

@@ -57,12 +57,7 @@ namespace Perplex
 		return entity;
 	}
 
-	void Scene::DestroyEntity(Entity entity)
-	{
-		m_DyingEntities.emplace_back(entity.GetUUID(), 0.0f);
-	}
-
-	void Scene::DestroyEntityDelay(Entity entity, float delay)
+	void Scene::DestroyEntity(Entity entity, float delay)
 	{
 		m_DyingEntities.emplace_back(entity.GetUUID(), delay);
 	}

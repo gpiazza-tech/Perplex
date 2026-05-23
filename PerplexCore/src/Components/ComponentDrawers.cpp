@@ -140,6 +140,7 @@ namespace Perplex
 
 	void Draw(PhysicsBodyComponent& component)
 	{
+		ImGui::DragFloat("Gravity Scale", &component.GravityScale, 0.01f);
 		ImGui::DragFloat("Density", &component.Density, 0.01f);
 		ImGui::DragFloat("Friction", &component.Friction, 0.01f);
 	}

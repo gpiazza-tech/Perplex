@@ -22,7 +22,7 @@ namespace Perplex
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CameraComponent, Primary, Zoom, Background, PixelsPerUnit, PixelPerfect, ScalingMode);
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ScriptComponent, ScriptAsset, Properties);
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(BoxColliderComponent, Scale);
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PhysicsBodyComponent, Density, Friction);
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PhysicsBodyComponent, GravityScale, Density, Friction);
 
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EntityData, ID, Tag);
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EntityNode, ID, Index, ParentID, ChildIDs);

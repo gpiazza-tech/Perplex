@@ -60,6 +60,7 @@ namespace Perplex
 		{
 			const PhysicsBodyComponent& physicsBody = entity.GetComponent<PhysicsBodyComponent>();
 			bodyDef.type = b2_dynamicBody;
+			bodyDef.gravityScale = physicsBody.GravityScale;
 			shapeDef.density = physicsBody.Density;
 			shapeDef.material.friction = physicsBody.Friction;
 			bodyDef.enableSleep = false;

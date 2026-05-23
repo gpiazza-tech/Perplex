@@ -68,7 +68,7 @@ namespace Perplex
 
 	static void _destroy_delay(Scene* scene, UUID entity, float delay)
 	{
-		scene->DestroyEntityDelay(scene->GetEntity(entity), delay);
+		scene->DestroyEntity(scene->GetEntity(entity), delay);
 	}
 
 	static void _set_velocity(Scene* scene, UUID entity, glm::vec2 velocity)

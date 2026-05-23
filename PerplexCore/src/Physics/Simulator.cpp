@@ -38,6 +38,8 @@ namespace Perplex
 			Ref<pxr::Sprite> colorSprite = entity.GetComponent<SpriteRendererComponent>().SpriteAsset.GetData<pxr::Sprite>();
 			if (colorSprite)
 				halfSize = { halfSize.x * colorSprite->ScaleFactorX, halfSize.y * colorSprite->ScaleFactorY };
+			else
+				halfSize /= 16.0f;
 		}
 
 		b2BodyDef bodyDef = b2DefaultBodyDef();

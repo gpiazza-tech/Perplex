@@ -1,5 +1,6 @@
 #include <Perplex/pch.h>
 #include <Perplex/Scripting/Interpreter.h>
+#include <Perplex/Scene/SceneSystem.h>
 
 #include <Perplex/Scene/Scene.h>
 #include <Perplex/Scene/Entity.h>
@@ -12,6 +13,8 @@
 
 namespace Perplex
 {
+	Interpreter::Interpreter(Ref<Scene> scene) : SceneSystem(scene) {}
+
 	static void SyncProperties(ScriptComponent& scriptComponent)
 	{
 		std::vector<ScriptProperty> oldProperties = scriptComponent.Properties;
@@ -38,14 +41,14 @@ namespace Perplex
 		}
 	}
 
-	void Interpreter::Start(Ref<Scene> scene)
+	void Interpreter::OnSceneStart()
 	{
 		// Compile Scripts
 		{
-			auto view = scene->View<ScriptComponent>();
+			auto view = m_Scene->View<ScriptComponent>();
 			for (auto e : view)
 			{
-				Entity entity{ e, scene.get() };
+				Entity entity{ e, m_Scene.get() };
 
 				auto& sc = view.get<ScriptComponent>(e);
 				TagComponent& tag = entity.GetComponent<TagComponent>();
@@ -56,10 +59,10 @@ namespace Perplex
 
 		// Call Start
 		{
-			auto view = scene->View<ScriptComponent>();
+			auto view = m_Scene->View<ScriptComponent>();
 			for (auto e : view)
 			{
-				Entity entity{ e, scene.get() };
+				Entity entity{ e, m_Scene.get() };
 
 				auto& sc = view.get<ScriptComponent>(e);
 				TagComponent& tag = entity.GetComponent<TagComponent>();
@@ -70,23 +73,17 @@ namespace Perplex
 		}
 	}
 
-	void Interpreter::Update(Ref<Scene> scene, Timestep ts)
+	void Interpreter::OnSceneUpdate(Timestep ts)
 	{
 		// Call Update
 		{
-			auto view = scene->View<ScriptComponent>();
+			auto view = m_Scene->View<ScriptComponent>();
 			for (auto e : view)
 			{
-				Entity entity{ e, scene.get() };
+				Entity entity{ e, m_Scene.get() };
 
 				auto& sc = view.get<ScriptComponent>(e);
 				TagComponent& tag = entity.GetComponent<TagComponent>();
-
-				if (!m_ScriptInstanceMap.contains(entity.GetUUID()))
-				{
-					InitScriptInstance(entity);
-					m_ScriptInstanceMap[entity.GetUUID()]->TryCall("start");
-				}
 
 				ScriptInstance* instance = m_ScriptInstanceMap[entity.GetUUID()];
 				instance->TryCall("update", ts.GetSeconds());
@@ -94,14 +91,14 @@ namespace Perplex
 		}
 	}
 
-	void Interpreter::Stop(Ref<Scene> scene)
+	void Interpreter::OnSceneStop()
 	{
 		// Call Stop
 		{
-			auto view = scene->View<ScriptComponent>();
+			auto view = m_Scene->View<ScriptComponent>();
 			for (auto e : view)
 			{
-				Entity entity{ e, scene.get() };
+				Entity entity{ e, m_Scene.get() };
 
 				auto& sc = view.get<ScriptComponent>(e);
 				TagComponent& tag = entity.GetComponent<TagComponent>();
@@ -111,6 +108,25 @@ namespace Perplex
 				delete instance;
 				m_ScriptInstanceMap.erase(entity.GetUUID());
 			}
+		}
+	}
+
+	void Interpreter::OnEntityCreated(UUID entityID)
+	{
+		Entity entity = m_Scene->GetEntity(entityID);
+
+		if (entity.HasComponent<ScriptComponent>())
+		{
+			InitScriptInstance(entity);
+			m_ScriptInstanceMap[entityID]->TryCall("start");
+		}
+	}
+
+	void Interpreter::OnEntityDestroyed(UUID entityID)
+	{
+		if (m_ScriptInstanceMap.contains(entityID))
+		{
+			delete m_ScriptInstanceMap[entityID];
 		}
 	}
 
@@ -126,5 +142,12 @@ namespace Perplex
 				SyncProperties(sc);
 			}
 		}
+	}
+
+	ScriptInstance* Interpreter::GetInstance(UUID entityID)
+	{
+		if (m_ScriptInstanceMap.contains(entityID))
+			return m_ScriptInstanceMap[entityID];
+		return nullptr;
 	}
 }

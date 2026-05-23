@@ -9,9 +9,12 @@ namespace Perplex
 {
     namespace fs = std::filesystem;
 
-    RuntimeLayer::RuntimeLayer()
-        : Layer("RuntimeLayer")
+    RuntimeLayer::RuntimeLayer() : Layer("RuntimeLayer") { }
+
+    void AttachSceneSystems(Ref<Scene> scene)
     {
+        scene->AddSystem<Simulator>();
+        scene->AddSystem<Interpreter>();
     }
 
     void RuntimeLayer::OnAttach()
@@ -27,7 +30,8 @@ namespace Perplex
         // TODO: should not be absolute path
         Asset sceneAsset = Asset("C:/dev/PerplexProjects/Game/assets/scenes/scene.pxs");
         m_ActiveScene = sceneAsset.GetData<Scene>();
-        OnScenePlay();
+        AttachSceneSystems(m_ActiveScene);
+        m_ActiveScene->Start();
 
         Window& window = Application::Get().GetWindow();
         m_SceneRenderer.Resize(window.GetWidth(), window.GetHeight());
@@ -43,9 +47,6 @@ namespace Perplex
         HW_PROFILE_FUNCTION();
 
         m_ActiveScene->Update(ts);
-
-        m_Interpreter.Update(m_ActiveScene, ts);
-        m_Simulator.Update(m_ActiveScene, ts);
         m_SceneRenderer.Render(m_ActiveScene);
         m_SceneRenderer.DrawToScreen();
     }
@@ -76,21 +77,9 @@ namespace Perplex
         return true;
     }
 
-    void RuntimeLayer::OnScenePlay()
-    {
-        m_Interpreter.Start(m_ActiveScene);
-        m_Simulator.Start(m_ActiveScene);
-    }
-
-    void RuntimeLayer::OnSceneStop()
-    {
-        m_Interpreter.Stop(m_ActiveScene);
-        m_Simulator.Stop(m_ActiveScene);
-    }
-
     void RuntimeLayer::OnAssetImported(Asset asset)
     {
-        if (asset.GetPath().extension() == ".c")
-            m_Interpreter.OnScriptAssetReimported(m_ActiveScene, asset);
+        //if (asset.GetPath().extension() == ".c")
+        //    m_Interpreter.OnScriptAssetReimported(m_ActiveScene, asset);
     }
 }

@@ -1,11 +1,13 @@
 #include <Perplex/pch.h>
 #include <Perplex/Physics/Simulator.h>
 
+#include <Perplex/Core/UUID.h>
 #include <Perplex/Core/Core.h>
 #include <Perplex/Scene/Scene.h>
 #include <Perplex/Scene/Entity.h>
 #include <Perplex/Scene/Components.h>
 #include <Perplex/Core/Timestep.h>
+#include <Perplex/Scripting/Interpreter.h>
 
 #include <glm/fwd.hpp>
 #include <box2d/box2d.h>
@@ -23,64 +25,72 @@ namespace Perplex
 		glm::vec3 OldEntityPosition{};
 	};
 
-	void Simulator::Start(Ref<Scene> scene)
+	Simulator::Simulator(Ref<Scene> scene) : SceneSystem(scene) {}
+
+	void Simulator::AddCollider(Entity entity)
+	{
+		const TransformComponent& globalTransform = entity.GetGlobalTransform();
+		const BoxColliderComponent& collider = entity.GetComponent<BoxColliderComponent>();
+
+		glm::vec2 halfSize{ collider.Scale / 2.0f };
+		if (entity.HasComponent<SpriteRendererComponent>())
+		{
+			Ref<pxr::Sprite> colorSprite = entity.GetComponent<SpriteRendererComponent>().SpriteAsset.GetData<pxr::Sprite>();
+			if (colorSprite)
+				halfSize = { halfSize.x * colorSprite->ScaleFactorX, halfSize.y * colorSprite->ScaleFactorY };
+		}
+
+		b2BodyDef bodyDef = b2DefaultBodyDef();
+		b2Polygon dynamicBox = b2MakeBox(halfSize.x, halfSize.y);
+		b2ShapeDef shapeDef = b2DefaultShapeDef();
+		shapeDef.enableContactEvents = true;
+
+		bodyDef.position = { globalTransform.Position.x, globalTransform.Position.y };
+
+		Box2DUserData* userData = new Box2DUserData{};
+		userData->OldBox2DPosition = { globalTransform.Position.x, globalTransform.Position.y };
+		userData->OldEntityPosition = globalTransform.Position;
+
+		bodyDef.userData = userData;
+		bodyDef.rotation = b2MakeRot(globalTransform.Rotation.z);
+
+		if (entity.HasComponent<PhysicsBodyComponent>())
+		{
+			const PhysicsBodyComponent& physicsBody = entity.GetComponent<PhysicsBodyComponent>();
+			bodyDef.type = b2_dynamicBody;
+			shapeDef.density = physicsBody.Density;
+			shapeDef.material.friction = physicsBody.Friction;
+			bodyDef.enableSleep = false;
+		}
+
+		else
+		{
+			bodyDef.type = b2_kinematicBody;
+		}
+
+		b2BodyId bodyId = b2CreateBody(WORLD, &bodyDef);
+		b2CreatePolygonShape(bodyId, &shapeDef, &dynamicBox);
+
+		m_BodyMap[entity.GetUUID()] = std::bit_cast<uint64_t>(bodyId);
+		m_UUIDMap[std::bit_cast<uint64_t>(bodyId)] = entity.GetUUID();
+	}
+
+	void Simulator::OnSceneStart()
 	{
 		b2WorldDef worldDef = b2DefaultWorldDef();
 		worldDef.gravity = { 0.0f, -10.0f };
 
 		m_World = std::bit_cast<int>(b2CreateWorld(&worldDef));
 
-		auto view = scene->View<BoxColliderComponent>();
+		auto view = m_Scene->View<BoxColliderComponent>();
 		for (auto e : view)
 		{
-			Entity entity{ e, scene.get() };
-
-			const TransformComponent& globalTransform = entity.GetGlobalTransform();
-			const BoxColliderComponent& collider = view.get<BoxColliderComponent>(e);
-
-			glm::vec2 halfSize{ collider.Scale / 2.0f };
-			if (entity.HasComponent<SpriteRendererComponent>())
-			{
-				Ref<pxr::Sprite> colorSprite = entity.GetComponent<SpriteRendererComponent>().SpriteAsset.GetData<pxr::Sprite>();
-				if (colorSprite)
-					halfSize = { halfSize.x * colorSprite->ScaleFactorX, halfSize.y * colorSprite->ScaleFactorY };
-			}
-
-			b2BodyDef bodyDef = b2DefaultBodyDef();
-			b2Polygon dynamicBox = b2MakeBox(halfSize.x, halfSize.y);
-			b2ShapeDef shapeDef = b2DefaultShapeDef();
-
-			bodyDef.position = { globalTransform.Position.x, globalTransform.Position.y };
-
-			Box2DUserData* userData = new Box2DUserData{};
-			userData->OldBox2DPosition = { globalTransform.Position.x, globalTransform.Position.y };
-			userData->OldEntityPosition = globalTransform.Position;
-
-			bodyDef.userData = userData;
-			bodyDef.rotation = b2MakeRot(globalTransform.Rotation.z);
-
-			if (entity.HasComponent<PhysicsBodyComponent>())
-			{
-				const PhysicsBodyComponent& physicsBody = entity.GetComponent<PhysicsBodyComponent>();
-				bodyDef.type = b2_dynamicBody;
-				shapeDef.density = physicsBody.Density;
-				shapeDef.material.friction = physicsBody.Friction;
-				bodyDef.enableSleep = false;
-			}
-
-			else
-			{
-				bodyDef.type = b2_staticBody; 
-			}
-
-			b2BodyId bodyId = b2CreateBody(WORLD, &bodyDef);
-			b2CreatePolygonShape(bodyId, &shapeDef, &dynamicBox);
-
-			m_Bodies[entity.GetUUID()] = std::bit_cast<uint64_t>(bodyId);
+			Entity entity{ e, m_Scene.get() };
+			AddCollider(entity);
 		}
 	}
 
-	void Simulator::Update(Ref<Scene> scene, Timestep ts)
+	void Simulator::OnSceneUpdate(Timestep ts)
 	{
 		// TODO: this function should be called on a separate thread with
 		//		a consitent framerate!
@@ -93,14 +103,15 @@ namespace Perplex
 		b2World_Step(WORLD, timeStep, subStepCount);
 
 		// Update positions
-		auto view = scene->View<BoxColliderComponent>();
+		auto view = m_Scene->View<BoxColliderComponent>();
 		for (auto e : view)
 		{
-			Entity entity{ e, scene.get() };
+			Entity entity{ e, m_Scene.get() };
+
 			TransformComponent& transform = entity.GetComponent<TransformComponent>();
 			TransformComponent globalTransform = entity.GetGlobalTransform();
 
-			b2BodyId bodyId = std::bit_cast<b2BodyId>(m_Bodies[entity.GetUUID()]);
+			b2BodyId bodyId = std::bit_cast<b2BodyId>(m_BodyMap[entity.GetUUID()]);
 			b2Vec2 position = b2Body_GetPosition(bodyId);
 			b2Rot rotation = b2Body_GetRotation(bodyId);
 
@@ -136,16 +147,42 @@ namespace Perplex
 			userData->OldBox2DPosition = { position.x, position.y };
 			userData->OldEntityPosition = globalTransform.Position;
 		}
+
+		// Events
+
+		b2ContactEvents contactEvents = b2World_GetContactEvents(WORLD);
+		for (int i = 0; i < contactEvents.beginCount; ++i)
+		{
+			b2ContactBeginTouchEvent* beginEvent = contactEvents.beginEvents + i;
+
+			UUID firstID = m_UUIDMap[std::bit_cast<uint64_t>(beginEvent->shapeIdA)];
+			UUID secondID = m_UUIDMap[std::bit_cast<uint64_t>(beginEvent->shapeIdB)];
+
+			HitEnter(m_Scene, firstID, secondID);
+		}
+		for (int i = 0; i < contactEvents.endCount; ++i)
+		{
+			b2ContactEndTouchEvent* endEvent = contactEvents.endEvents + i;
+
+			// Use b2Shape_IsValid because a shape may have been destroyed
+			if (b2Shape_IsValid(endEvent->shapeIdA) && b2Shape_IsValid(endEvent->shapeIdB))
+			{
+				UUID firstID = m_UUIDMap[std::bit_cast<uint64_t>(endEvent->shapeIdA)];
+				UUID secondID = m_UUIDMap[std::bit_cast<uint64_t>(endEvent->shapeIdB)];
+
+				HitExit(m_Scene, firstID, secondID);
+			}
+		}
 	}
 
-	void Simulator::Stop(Ref<Scene> scene)
+	void Simulator::OnSceneStop()
 	{
-		auto view = scene->View<BoxColliderComponent>();
+		auto view = m_Scene->View<BoxColliderComponent>();
 		for (auto e : view)
 		{
-			Entity entity{ e, scene.get() };
+			Entity entity{ e, m_Scene.get() };
 
-			b2BodyId bodyId = std::bit_cast<b2BodyId>(m_Bodies[entity.GetUUID()]);
+			b2BodyId bodyId = std::bit_cast<b2BodyId>(m_BodyMap[entity.GetUUID()]);
 			Box2DUserData* userData = (Box2DUserData*)b2Body_GetUserData(bodyId);
 
 			delete userData;
@@ -154,9 +191,53 @@ namespace Perplex
 		b2DestroyWorld(WORLD);
 	}
 
-	void Simulator::SetVelocity(Entity entity, glm::vec2 velocity)
+	void Simulator::OnEntityCreated(UUID entityID)
 	{
-		b2BodyId bodyId = std::bit_cast<b2BodyId>(m_Bodies[entity.GetUUID()]);
+		Entity entity = m_Scene->GetEntity(entityID);
+		if (entity.HasComponent<BoxColliderComponent>())
+			AddCollider(entity);
+	}
+
+	void Simulator::OnEntityDestroyed(UUID entityID)
+	{
+		if (m_BodyMap.contains(entityID))
+		{
+			b2BodyId bodyID = std::bit_cast<b2BodyId>(m_BodyMap[entityID]);
+
+			m_BodyMap.erase(entityID);
+			m_UUIDMap.erase(std::bit_cast<uint64_t>(bodyID));
+
+			b2DestroyBody(bodyID);
+		}
+	}
+
+	void Simulator::SetVelocity(UUID entityID, glm::vec2 velocity)
+	{
+		b2BodyId bodyId = std::bit_cast<b2BodyId>(m_BodyMap[entityID]);
 		b2Body_SetLinearVelocity(bodyId, { velocity.x, velocity.y });
+	}
+
+	void HitEnter(Ref<Scene> scene, UUID first, UUID second)
+	{
+		Interpreter& interpreter = scene->GetSystem<Interpreter>();
+		ScriptInstance* firstInstance = interpreter.GetInstance(first);
+		ScriptInstance* secondInstance = interpreter.GetInstance(second);
+
+		if (firstInstance)
+			firstInstance->TryCall("hit_enter", second);
+		if (secondInstance)
+			secondInstance->TryCall("hit_enter", first);
+	}
+
+	void HitExit(Ref<Scene> scene, UUID first, UUID second)
+	{
+		Interpreter& interpreter = scene->GetSystem<Interpreter>();
+		ScriptInstance* firstInstance = interpreter.GetInstance(first);
+		ScriptInstance* secondInstance = interpreter.GetInstance(second);
+
+		if (firstInstance)
+			firstInstance->TryCall("hit_exit", second);
+		if (secondInstance)
+			secondInstance->TryCall("hit_exit", first);
 	}
 }

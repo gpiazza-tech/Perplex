@@ -1,8 +1,6 @@
 #include <pch.h>
 #include "EditorLayer.h"
 
-#include <Perplex/ImGui/ImGuiUtilities.h>
-
 #include <glm/fwd.hpp>
 #include <imgui/imgui.h>
 
@@ -18,6 +16,12 @@ namespace Perplex
     EditorLayer::EditorLayer()
         : Layer("EditorLayer")
     {
+    }
+
+    void AttachSceneSystems(Ref<Scene> scene)
+    {
+        scene->AddSystem<Simulator>();
+        scene->AddSystem<Interpreter>();
     }
 
     void EditorLayer::OnAttach()
@@ -37,6 +41,8 @@ namespace Perplex
         m_StopIcon = CreateRef<pxr::TextureBuffer>(m_AssetsPath / "textures/pause_icon.png");
 
         m_ActiveScene = CreateRef<Scene>();
+        AttachSceneSystems(m_ActiveScene);
+
         m_ActiveScene->CreateAbstractEntity("Placeholder");
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
@@ -69,9 +75,6 @@ namespace Perplex
         else if (m_SceneState == SceneState::Play)
         {
             m_ActiveScene->Update(ts);
-
-            m_Interpreter.Update(m_ActiveScene, ts);
-            m_Simulator.Update(m_ActiveScene, ts);
             m_SceneRenderer.Render(m_ActiveScene);
         }
 
@@ -204,6 +207,7 @@ namespace Perplex
             {
                 Asset sceneAsset = Asset(filepathString);
                 m_ActiveScene = sceneAsset.GetData<Scene>();
+                AttachSceneSystems(m_ActiveScene);
 
                 OnSceneLoad();
                 ImGui::CloseCurrentPopup();
@@ -309,9 +313,7 @@ namespace Perplex
         ImGuiUtilities::SetRuntimeStyles();
 
         m_SceneState = SceneState::Play;
-
-        m_Simulator.Start(m_ActiveScene);
-        m_Interpreter.Start(m_ActiveScene);
+        m_ActiveScene->Start();
     }
 
     void EditorLayer::OnSceneStop()
@@ -319,9 +321,7 @@ namespace Perplex
         ImGuiUtilities::SetEditorStyles();
 
         m_SceneState = SceneState::Edit;
-
-        m_Interpreter.Stop(m_ActiveScene);
-        m_Simulator.Stop(m_ActiveScene);
+        m_ActiveScene->Stop();
     }
 
     void EditorLayer::OnResize()
@@ -334,7 +334,7 @@ namespace Perplex
 
     void EditorLayer::OnAssetImported(Asset asset)
     {
-        if (asset.GetPath().extension() == ".c")
-            m_Interpreter.OnScriptAssetReimported(m_ActiveScene, asset);
+        //if (asset.GetPath().extension() == ".c")
+        //    m_Interpreter.OnScriptAssetReimported(m_ActiveScene, asset);
     }
 }

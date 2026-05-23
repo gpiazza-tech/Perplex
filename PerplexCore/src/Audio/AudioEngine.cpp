@@ -2,6 +2,7 @@
 #include <Perplex/Audio/AudioEngine.h>
 
 #include <Perplex/Core/Core.h>
+#include <Perplex/Core/Log.h>
 #include <Perplex/Core/Application.h>
 #include <Perplex/Core/Project.h>
 
@@ -33,7 +34,7 @@ namespace Perplex
 	{
 		ma_engine_uninit(m_Engine);
 		delete m_Engine;
-	}
+	} 
 
 	void AudioEngine::PlaySound(const fs::path& audioFile)
 	{

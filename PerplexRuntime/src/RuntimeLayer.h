@@ -24,15 +24,10 @@ namespace Perplex
 		bool OnWindowResize(WindowResizeEvent& e);
 		bool OnWindowRefresh(WindowRefreshEvent& e);
 
-		void OnScenePlay();
-		void OnSceneStop();
-
 		void OnAssetImported(Asset asset);
 	private:
 		std::filesystem::path m_AssetsPath{};
 
-		Interpreter m_Interpreter{};
-		Simulator m_Simulator{};
 		SceneRenderer m_SceneRenderer{ 1, 1, 16 };
 		AudioEngine m_AudioEngine{};
 		Ref<Scene> m_ActiveScene{};

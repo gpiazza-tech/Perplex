@@ -10,6 +10,7 @@
 #include <Perplex/Scene/Scene.h>
 #include <Perplex/Scene/Entity.h>
 #include <Perplex/Scene/Components.h>
+#include <Perplex/Scripting/Interpreter.h>
 #include <Perplex/Physics/Simulator.h>
 #include <Perplex/Audio/AudioEngine.h>
 
@@ -33,10 +34,16 @@ namespace Perplex
 
 	static void try_call(Scene* scene, UUID uuid, const char* funcName)
 	{
-		// TODO: call via Interpreter::GetSingleton()
-		//Entity entity = scene->GetEntity(uuid);
-		//if (entity.HasComponent<ScriptComponent>())
-		//	entity.GetComponent<ScriptComponent>().Instance->TryCall(funcName);
+		ScriptInstance* instance = scene->GetSystem<Interpreter>().GetInstance(uuid);
+
+		if (instance != nullptr)
+		{
+			instance->TryCall(funcName);
+		}
+		else
+		{
+			HW_CORE_WARN("Tried to call function on entity with no ScriptComponent!");
+		}
 	}
 
 	static long long _spawn(Scene* scene, uint64_t prefabAssetID)
@@ -64,6 +71,11 @@ namespace Perplex
 		scene->DestroyEntityDelay(scene->GetEntity(entity), delay);
 	}
 
+	static void _set_velocity(Scene* scene, UUID entity, glm::vec2 velocity)
+	{
+		scene->GetSystem<Simulator>().SetVelocity(entity, velocity);
+	}
+
 	bool ScriptInstance::Compile(const std::string& src, Entity entity, const std::vector<ScriptProperty>& properties)
 	{
 		if (m_Unit.IsCompiled())
@@ -86,7 +98,7 @@ namespace Perplex
 
 		// Bind transform
 		m_Unit.AddSymbol("scene", &m_SceneContext);
-		m_Unit.AddSymbol("entity", &m_EntityID);
+		m_Unit.AddSymbol("this", &m_EntityID);
 
 		// Bind host functions
 		m_Unit.AddSymbol("get_position_ptr", get_position_ptr);
@@ -107,6 +119,7 @@ namespace Perplex
 		m_Unit.AddSymbol("_spawn", _spawn);
 		m_Unit.AddSymbol("_destroy", _destroy);
 		m_Unit.AddSymbol("_destroy_delay", _destroy_delay);
+		m_Unit.AddSymbol("_set_velocity", _set_velocity);
 
 		m_Unit.AddSymbol("play_sound", play_sound);
 

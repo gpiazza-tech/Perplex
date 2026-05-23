@@ -43,7 +43,7 @@ struct Vec2 vec2_create(float x, float y)
 typedef void* Scene;
 
 __declspec(dllimport) Scene scene;
-__declspec(dllimport) Entity entity;
+__declspec(dllimport) Entity this;
 
 __declspec(dllimport) void console_trace(char* msg);
 __declspec(dllimport) void console_info(char* msg);
@@ -62,6 +62,7 @@ __declspec(dllimport) void try_call(Scene s, Entity e, char* funcName);
 __declspec(dllimport) Entity _spawn(Scene _scene, PrefabAsset _prefab);
 __declspec(dllimport) void _destroy(Scene _scene, Entity _entity);
 __declspec(dllimport) void _destroy_delay(Scene _scene, Entity _entity, float delay);
+__declspec(dllimport) void _set_velocity(Scene _scene, Entity _entity, struct Vec2 _velocity);
 
 __declspec(dllimport) void play_sound(const char* filepath);
 
@@ -69,9 +70,9 @@ __declspec(dllimport) void play_sound(const char* filepath);
 #define get_rotation(e) (*get_rotation_ptr(scene, e))
 #define get_scale(e) (*get_scale_ptr(scene, e))
 
-#define position (*get_position_ptr(scene, entity))
-#define rotation (*get_rotation_ptr(scene, entity))
-#define scale (*get_scale_ptr(scene, entity))
+#define position (*get_position_ptr(scene, this))
+#define rotation (*get_rotation_ptr(scene, this))
+#define scale (*get_scale_ptr(scene, this))
 
 #define call(entity, funcName) (try_call(scene, entity, funcName))
 

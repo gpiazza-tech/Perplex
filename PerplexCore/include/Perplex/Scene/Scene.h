@@ -1,7 +1,9 @@
 #pragma once
 
 #include "SceneHierarchy.h"
+#include <Perplex/Scene/SceneSystem.h>
 #include <Perplex/Core/UUID.h>
+#include <Perplex/Core/Core.h>
 #include <Perplex/Core/Timestep.h>
 
 #include <entt.hpp>
@@ -27,6 +29,8 @@ namespace Perplex
 	class Scene
 	{
 	public:
+		Scene();
+
 		Entity CreateEntity(const std::string& name = std::string(), UUID uuid = UUID(), UUID parent = 0);
 		Entity CreateAbstractEntity(const std::string& name = std::string(), UUID uuid = UUID(), UUID parent = 0);
 		void DestroyEntity(Entity entity);
@@ -35,12 +39,32 @@ namespace Perplex
 		Entity GetEntity(UUID uuid);
 		std::vector<Entity> GetParentEntities();
 
+		void Start();
 		void Update(Timestep ts);
+		void Stop();
 
 		SceneHierarchy& GetHierarchy() { return m_Hierarchy; }
 
 		template<typename T>
 		auto View() { return m_Registry.view<T>(); }
+
+		template<typename T>
+		void AddSystem()
+		{
+			T* systemPtr = new T(Ref<Scene>(this));
+
+			m_Systems.emplace_back((SceneSystem*)systemPtr);
+			m_Registry.emplace<T*>(m_SystemsContainer, systemPtr);
+		} 
+
+		template<typename T>
+		T& GetSystem()
+		{
+			T* systemPtr = m_Registry.get<T*>(m_SystemsContainer);
+			return *systemPtr;
+		}
+	private:
+		Entity ConstructEntity(const std::string& name = std::string(), UUID uuid = UUID(), UUID parent = 0);
 	private:
 		entt::registry m_Registry;
 
@@ -49,6 +73,9 @@ namespace Perplex
 		std::vector<DyingEntity> m_DyingEntities;
 
 		SceneHierarchy m_Hierarchy;
+
+		entt::entity m_SystemsContainer{};
+		std::vector<SceneSystem*> m_Systems{};
 
 		friend class Entity;
 		friend class SceneHierarchyPanel;

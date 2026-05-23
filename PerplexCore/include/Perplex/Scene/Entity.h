@@ -2,21 +2,14 @@
 
 #include "Components.h"
 #include <Perplex/Core/Core.h>
-#include <Perplex/Core/Log.h>
 #include <Perplex/Scene/Scene.h>
 #include <Perplex/Components/Component.h>
-#include <Perplex/Components/ComponentLabelers.h>
-#include <Perplex/Components/ComponentDrawers.h>
-
-#include <glm/fwd.hpp>
 
 #include <entt.hpp>
 #include <cstdint>
 #include <string>
 #include <utility>
 #include <vector>
-#include <memory>
-#include <algorithm>
 #include <deque>
 #include <forward_list>
 #include <list>

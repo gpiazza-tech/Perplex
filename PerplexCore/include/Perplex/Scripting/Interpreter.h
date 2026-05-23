@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Perplex/Scripting/ScriptProperty.h>
+#include <Perplex/Scene/SceneSystem.h>
 #include <Perplex/Core/UUID.h>
 #include <Perplex/Core/Core.h>
 #include <Perplex/Core/Timestep.h>
@@ -16,14 +16,21 @@ namespace Perplex
 	class ScriptInstance;
 	class Entity;
 
-	class Interpreter
+	class Interpreter : SceneSystem
 	{
 	public:
-		void Start(Ref<Scene> scene);
-		void Update(Ref<Scene> scene, Timestep ts);
-		void Stop(Ref<Scene> scene);
+		Interpreter(Ref<Scene> scene);
+
+		void OnSceneStart() override;
+		void OnSceneUpdate(Timestep ts) override;
+		void OnSceneStop() override;
+
+		void OnEntityCreated(UUID entityID) override;
+		void OnEntityDestroyed(UUID entityID) override;
 
 		void OnScriptAssetReimported(Ref<Scene> scene, Asset asset);
+
+		ScriptInstance* GetInstance(UUID entityID);
 	private:
 		void InitScriptInstance(Entity entity);
 	private:

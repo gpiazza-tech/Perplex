@@ -23,6 +23,7 @@ namespace Perplex
 	{
 	public:
 		Simulator(Ref<Scene> scene);
+		~Simulator();
 
 		void OnSceneStart() override;
 		void OnSceneUpdate(Timestep ts) override;

@@ -26,7 +26,13 @@ namespace Perplex
 		glm::vec3 OldEntityPosition{};
 	};
 
-	Simulator::Simulator(Ref<Scene> scene) : SceneSystem(scene) {}
+	Simulator::Simulator(Ref<Scene> scene) : SceneSystem(scene)
+	{
+	}
+
+	Simulator::~Simulator()
+	{
+	}
 
 	void Simulator::AddCollider(Entity entity)
 	{
@@ -196,13 +202,13 @@ namespace Perplex
 
 	void Simulator::OnComponentAdded(Component component, Entity entity)
 	{
-		if (component == Component{ BoxColliderComponent{} })
+		if (m_Scene->IsPlaying() && component == Component{BoxColliderComponent{}})
 			AddCollider(entity);
 	}
 
 	void Simulator::OnComponentRemoved(Component component, Entity entity)
 	{
-		if (component == Component{ BoxColliderComponent{} })
+		if (m_Scene->IsPlaying() && component == Component{ BoxColliderComponent{} })
 		{
 			UUID entityID = entity.GetUUID();
 			HW_CORE_ASSERT(m_BodyMap.contains(entityID), 

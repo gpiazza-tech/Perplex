@@ -11,12 +11,6 @@ namespace Perplex
 
     RuntimeLayer::RuntimeLayer() : Layer("RuntimeLayer") { }
 
-    void AttachSceneSystems(Ref<Scene> scene)
-    {
-        scene->AddSystem<Simulator>();
-        scene->AddSystem<Interpreter>();
-    }
-
     void RuntimeLayer::OnAttach()
     {
         HW_PROFILE_FUNCTION();
@@ -30,7 +24,6 @@ namespace Perplex
         // TODO: should not be absolute path
         Asset sceneAsset = Asset("C:/dev/PerplexProjects/Game/assets/scenes/scene.pxs");
         m_ActiveScene = sceneAsset.GetData<Scene>();
-        AttachSceneSystems(m_ActiveScene);
         m_ActiveScene->Start();
 
         Window& window = Application::Get().GetWindow();

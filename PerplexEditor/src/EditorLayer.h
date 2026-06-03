@@ -5,6 +5,7 @@
 #include "Panels/Dockspace.h"
 #include "Panels/ContentBrowserPanel.h"
 #include "Panels/SceneHierarchyPanel.h"
+#include "Panels/PerpixelPanel.h"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
@@ -52,6 +53,7 @@ namespace Perplex
 		float m_FPS = 0.0f;
 
 		SceneRenderer m_SceneRenderer{ 1, 1, 16 };
+
 		AudioEngine m_AudioEngine{};
 		Ref<Scene> m_ActiveScene{};
 
@@ -67,6 +69,7 @@ namespace Perplex
 		Dockspace m_Dockspace{};
 		SceneHierarchyPanel m_SceneHierarchyPanel{};
 		ContentBrowserPanel m_ContentBrowserPanel{};
+		PerpixelPanel m_PerpixelPanel{};
 
 		enum class SceneState
 		{

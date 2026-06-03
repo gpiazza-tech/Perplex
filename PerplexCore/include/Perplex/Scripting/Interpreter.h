@@ -15,6 +15,7 @@ namespace Perplex
 	class Simulator;
 	class ScriptInstance;
 	class Entity;
+	class Component;
 
 	class Interpreter : SceneSystem
 	{
@@ -25,8 +26,8 @@ namespace Perplex
 		void OnSceneUpdate(Timestep ts) override;
 		void OnSceneStop() override;
 
-		void OnEntityCreated(UUID entityID) override;
-		void OnEntityDestroyed(UUID entityID) override;
+		void OnEntityCreated(Entity entity) override;
+		void OnEntityDestroyed(Entity entity) override;
 
 		void OnScriptAssetReimported(Ref<Scene> scene, Asset asset);
 
@@ -34,6 +35,6 @@ namespace Perplex
 	private:
 		void InitScriptInstance(Entity entity);
 	private:
-		std::unordered_map<UUID, ScriptInstance*> m_ScriptInstanceMap;
+		std::unordered_map<UUID, std::unique_ptr<ScriptInstance>> m_ScriptInstanceMap;
 	};
 }

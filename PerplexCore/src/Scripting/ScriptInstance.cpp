@@ -76,6 +76,22 @@ namespace Perplex
 		scene->GetSystem<Simulator>().SetVelocity(entity, velocity);
 	}
 
+	static void _to_perpixel(Scene* scene, UUID entityID)
+	{
+		Entity entity = scene->GetEntity(entityID);
+		
+		if (!entity.HasComponent<SpriteRendererComponent>())
+		{
+			HW_CORE_WARN("Entity {0} does not have sprite renderer to convert to perpixel!", (uint64_t)entityID);
+			return;
+		}
+
+		SpriteRendererComponent& spriteRenderer = entity.GetComponent<SpriteRendererComponent>();
+		PerpixelRendererComponent& perpixelRenderer = entity.AddComponent<PerpixelRendererComponent>(spriteRenderer.SpriteAsset);
+
+		entity.RemoveComponent<SpriteRendererComponent>();
+	}
+
 	bool ScriptInstance::Compile(const std::string& src, Entity entity, const std::vector<ScriptProperty>& properties)
 	{
 		if (m_Unit.IsCompiled())
@@ -120,6 +136,8 @@ namespace Perplex
 		m_Unit.AddSymbol("_destroy", _destroy);
 		m_Unit.AddSymbol("_destroy_delay", _destroy_delay);
 		m_Unit.AddSymbol("_set_velocity", _set_velocity);
+
+		m_Unit.AddSymbol("_to_perpixel", _to_perpixel);
 
 		m_Unit.AddSymbol("play_sound", play_sound);
 

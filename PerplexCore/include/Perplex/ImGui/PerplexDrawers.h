@@ -23,7 +23,7 @@ namespace Perplex
 	void DrawAny(std::any& value, const char* label = "")
 	{
 		T cpy = std::any_cast<T>(value);
-		Draw(cpy);
+		Draw(cpy, label);
 		value = cpy;
 	}
 }

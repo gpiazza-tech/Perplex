@@ -42,6 +42,8 @@ namespace Perplex
 		void Update(Timestep ts);
 		void Stop();
 
+		bool IsPlaying() { return m_Playing; }
+
 		SceneHierarchy& GetHierarchy() { return m_Hierarchy; }
 
 		template<typename T>
@@ -65,6 +67,8 @@ namespace Perplex
 	private:
 		Entity ConstructEntity(const std::string& name = std::string(), UUID uuid = UUID(), UUID parent = 0);
 	private:
+		bool m_Playing{ false };
+
 		entt::registry m_Registry;
 
 		std::unordered_map<UUID, entt::entity> m_UUIDMap;

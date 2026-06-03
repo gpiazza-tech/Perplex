@@ -8,7 +8,7 @@
 #include <Perplex/Scene/EditorCamera.h>
 #include <Perplex/Core/Core.h>
 #include <Perplex/Assets/Asset.h>
-#include <pxr/pxr.h>
+#include <Perplex/Perpixel/PerpixelSystem.h>
 #include <c/perplex_math.h>
 
 #include <glm/glm.hpp>
@@ -68,7 +68,7 @@ namespace Perplex
 			Entity entity{ handle, scene.get() };
 			auto& perpixelRenderer = perpixels.get<PerpixelRendererComponent>(handle);
 			if (entity.HasComponent<TransformComponent>())
-				RenderPerpixel(perpixelRenderer, entity.GetGlobalTransform());
+				RenderPerpixel(entity);
 		}
 
 		EndScene();
@@ -122,7 +122,7 @@ namespace Perplex
 				Entity entity{ handle, scene.get() };
 				auto& perpixelRenderer = perpixels.get<PerpixelRendererComponent>(handle);
 				if (entity.HasComponent<TransformComponent>())
-					RenderPerpixel(perpixelRenderer, entity.GetGlobalTransform());
+					RenderPerpixel(entity);
 			}
 
 			EndScene();
@@ -183,14 +183,17 @@ namespace Perplex
 		}
 	}
 
-	void SceneRenderer::RenderPerpixel(const PerpixelRendererComponent& src, const TransformComponent& tc)
+	void SceneRenderer::RenderPerpixel(Entity entity)
 	{
 		HW_PROFILE_FUNCTION();
 
-		for (auto& pxl : src.Instance.GetPixels())
-		{
-			pxr::Renderer::DrawPixel(tc.Position + vector3(pxl.Position.x, pxl.Position.y, 0.0f), pxl.Color, pxl.Emission, true);
-		}
+		PerpixelSystem& system = entity.GetScene()->GetSystem<PerpixelSystem>();
+		TransformComponent transform = entity.GetGlobalTransform();
+
+		const std::vector<pixel>& pixels = system.GetPixels(entity.GetUUID());
+
+		for (const auto& pxl : pixels)
+			pxr::Renderer::DrawPixel(transform.Position + vector3(pxl.Position.x, pxl.Position.y, 0.0f), pxl.Color, pxl.Emission);
 	}
 
 	void SceneRenderer::Resize(int width, int height)

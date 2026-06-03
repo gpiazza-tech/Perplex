@@ -116,14 +116,10 @@ namespace Perplex
 	struct PerpixelRendererComponent
 	{
 		PerpixelShape Shape{};
-		PerpixelInstance Instance{};
 
 		PerpixelRendererComponent() = default;
 		PerpixelRendererComponent(const PerpixelRendererComponent&) = default;
-		PerpixelRendererComponent(const PerpixelShape& shape)
-			: Shape(shape) 
-		{
-		}
+		PerpixelRendererComponent(const PerpixelShape& shape) : Shape(shape) { }
 	};
 
 	struct BoxColliderComponent

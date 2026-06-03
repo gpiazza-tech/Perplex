@@ -25,7 +25,7 @@ namespace Perplex
 		void DrawToScreen();
 
 		void RenderSprite(const SpriteRendererComponent& src, const TransformComponent& tc);
-		void RenderPerpixel(const PerpixelRendererComponent& src, const TransformComponent& tc);
+		void RenderPerpixel(Entity entity);
 
 		void Resize(int width, int height);
 	private:

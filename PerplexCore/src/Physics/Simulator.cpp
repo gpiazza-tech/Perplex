@@ -8,6 +8,7 @@
 #include <Perplex/Scene/Components.h>
 #include <Perplex/Core/Timestep.h>
 #include <Perplex/Scripting/Interpreter.h>
+#include <Perplex/Components/Component.h>
 
 #include <glm/fwd.hpp>
 #include <box2d/box2d.h>
@@ -74,8 +75,7 @@ namespace Perplex
 		b2BodyId bodyId = b2CreateBody(WORLD, &bodyDef);
 		b2CreatePolygonShape(bodyId, &shapeDef, &dynamicBox);
 
-		m_BodyMap[entity.GetUUID()] = std::bit_cast<uint64_t>(bodyId);
-		m_UUIDMap[std::bit_cast<uint64_t>(bodyId)] = entity.GetUUID();
+		m_BodyMap.set_pair(entity.GetUUID(), std::bit_cast<uint64_t>(bodyId));
 	}
 
 	void Simulator::OnSceneStart()
@@ -114,7 +114,7 @@ namespace Perplex
 			TransformComponent& transform = entity.GetComponent<TransformComponent>();
 			TransformComponent globalTransform = entity.GetGlobalTransform();
 
-			b2BodyId bodyId = std::bit_cast<b2BodyId>(m_BodyMap[entity.GetUUID()]);
+			b2BodyId bodyId = std::bit_cast<b2BodyId>(m_BodyMap.at(entity.GetUUID()));
 			b2Vec2 position = b2Body_GetPosition(bodyId);
 			b2Rot rotation = b2Body_GetRotation(bodyId);
 
@@ -158,8 +158,8 @@ namespace Perplex
 		{
 			b2ContactBeginTouchEvent* beginEvent = contactEvents.beginEvents + i;
 
-			UUID firstID = m_UUIDMap[std::bit_cast<uint64_t>(beginEvent->shapeIdA)];
-			UUID secondID = m_UUIDMap[std::bit_cast<uint64_t>(beginEvent->shapeIdB)];
+			UUID firstID = m_BodyMap.at(std::bit_cast<uint64_t>(beginEvent->shapeIdA));
+			UUID secondID = m_BodyMap.at(std::bit_cast<uint64_t>(beginEvent->shapeIdB));
 
 			HitEnter(m_Scene, firstID, secondID);
 		}
@@ -170,8 +170,8 @@ namespace Perplex
 			// Use b2Shape_IsValid because a shape may have been destroyed
 			if (b2Shape_IsValid(endEvent->shapeIdA) && b2Shape_IsValid(endEvent->shapeIdB))
 			{
-				UUID firstID = m_UUIDMap[std::bit_cast<uint64_t>(endEvent->shapeIdA)];
-				UUID secondID = m_UUIDMap[std::bit_cast<uint64_t>(endEvent->shapeIdB)];
+				UUID firstID = m_BodyMap.at(std::bit_cast<uint64_t>(endEvent->shapeIdA));
+				UUID secondID = m_BodyMap.at(std::bit_cast<uint64_t>(endEvent->shapeIdB));
 
 				HitExit(m_Scene, firstID, secondID);
 			}
@@ -185,7 +185,7 @@ namespace Perplex
 		{
 			Entity entity{ e, m_Scene.get() };
 
-			b2BodyId bodyId = std::bit_cast<b2BodyId>(m_BodyMap[entity.GetUUID()]);
+			b2BodyId bodyId = std::bit_cast<b2BodyId>(m_BodyMap.at(entity.GetUUID()));
 			Box2DUserData* userData = (Box2DUserData*)b2Body_GetUserData(bodyId);
 
 			delete userData;
@@ -194,29 +194,33 @@ namespace Perplex
 		b2DestroyWorld(WORLD);
 	}
 
-	void Simulator::OnEntityCreated(UUID entityID)
+	void Simulator::OnComponentAdded(Component component, Entity entity)
 	{
-		Entity entity = m_Scene->GetEntity(entityID);
-		if (entity.HasComponent<BoxColliderComponent>())
+		if (component == Component{ BoxColliderComponent{} })
 			AddCollider(entity);
 	}
 
-	void Simulator::OnEntityDestroyed(UUID entityID)
+	void Simulator::OnComponentRemoved(Component component, Entity entity)
 	{
-		if (m_BodyMap.contains(entityID))
+		if (component == Component{ BoxColliderComponent{} })
 		{
-			b2BodyId bodyID = std::bit_cast<b2BodyId>(m_BodyMap[entityID]);
+			UUID entityID = entity.GetUUID();
+			HW_CORE_ASSERT(m_BodyMap.contains(entityID), 
+				"Simulator does not contain box collider for entity {}!", static_cast<uint64_t>(entityID));
 
-			m_BodyMap.erase(entityID);
-			m_UUIDMap.erase(std::bit_cast<uint64_t>(bodyID));
+			b2BodyId bodyID = std::bit_cast<b2BodyId>(m_BodyMap.at(entityID));
 
+			m_BodyMap.erase_pair(entityID, std::bit_cast<uint64_t>(bodyID));
 			b2DestroyBody(bodyID);
 		}
 	}
 
 	void Simulator::SetVelocity(UUID entityID, glm::vec2 velocity)
 	{
-		b2BodyId bodyId = std::bit_cast<b2BodyId>(m_BodyMap[entityID]);
+		HW_CORE_ASSERT(m_BodyMap.contains(entityID), 
+			"Simulator does not contain body ID for entity {}!", (uint64_t)entityID);
+
+		b2BodyId bodyId = std::bit_cast<b2BodyId>(m_BodyMap.at(entityID));
 		b2Body_SetLinearVelocity(bodyId, { velocity.x, velocity.y });
 	}
 

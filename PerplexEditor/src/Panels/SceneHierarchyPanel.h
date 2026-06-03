@@ -19,6 +19,7 @@ namespace Perplex
 		void SetContext(const Ref<Scene>& context);
 
 		void OnImGuiRender();
+		UUID GetSelectedEntity();
 	private:
 		void DrawEntityNode(const EntityNode& node);
 		void DrawComponents(Entity entity);

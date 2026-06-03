@@ -7,8 +7,6 @@
 
 #include "../../../vendor/tcc/libtcc.h"
 
-#define STATE static_cast<TCCState*>(m_State)
-
 namespace Perplex
 {
 	static constexpr int TCC_STATUS_FAIL = -1;
@@ -16,75 +14,75 @@ namespace Perplex
 	CUnit::CUnit()
 		: m_State(tcc_new()), m_IsCompiled(false)
 	{
-		tcc_set_error_func(STATE, nullptr, [](void* opaque, const char* msg) { HW_CORE_ERROR("C Script Error: {0}", msg); });
+		tcc_set_error_func(m_State, nullptr, [](void* opaque, const char* msg) { HW_CORE_ERROR("C Script Error: {0}", msg); });
 
 		const Project& project = Application::Get().GetCurrentProject();
-		tcc_set_lib_path(STATE, project.EngineRes("scripting/tcc/lib").string().c_str());
-		tcc_add_library_path(STATE, project.EngineRes("scripting/tcc/win32/lib").string().c_str());
-		tcc_add_include_path(STATE, project.EngineRes("scripting/tcc/include").string().c_str());
-		tcc_add_include_path(STATE, project.EngineRes("scripting/tcc/win32/include").string().c_str());
+		tcc_set_lib_path(m_State, project.EngineRes("scripting/tcc/lib").string().c_str());
+		tcc_add_library_path(m_State, project.EngineRes("scripting/tcc/win32/lib").string().c_str());
+		tcc_add_include_path(m_State, project.EngineRes("scripting/tcc/include").string().c_str());
+		tcc_add_include_path(m_State, project.EngineRes("scripting/tcc/win32/include").string().c_str());
 
-		tcc_set_output_type(STATE, TCC_OUTPUT_MEMORY);
+		tcc_set_output_type(m_State, TCC_OUTPUT_MEMORY);
 	}
 
 	CUnit::CUnit(const CUnit& other)
 		: m_State(tcc_new()), m_IsCompiled(false)
 	{
-		tcc_set_error_func(STATE, nullptr, [](void* opaque, const char* msg) { HW_CORE_ERROR("C Script Error: {0}", msg); });
+		tcc_set_error_func(m_State, nullptr, [](void* opaque, const char* msg) { HW_CORE_ERROR("C Script Error: {0}", msg); });
 
 		const Project& project = Application::Get().GetCurrentProject();
-		tcc_set_lib_path(STATE, project.EngineRes("scripting/tcc/lib").string().c_str());
-		tcc_add_library_path(STATE, project.EngineRes("scripting/tcc/win32/lib").string().c_str());
-		tcc_add_include_path(STATE, project.EngineRes("scripting/tcc/include").string().c_str());
-		tcc_add_include_path(STATE, project.EngineRes("scripting/tcc/win32/include").string().c_str());
+		tcc_set_lib_path(m_State, project.EngineRes("scripting/tcc/lib").string().c_str());
+		tcc_add_library_path(m_State, project.EngineRes("scripting/tcc/win32/lib").string().c_str());
+		tcc_add_include_path(m_State, project.EngineRes("scripting/tcc/include").string().c_str());
+		tcc_add_include_path(m_State, project.EngineRes("scripting/tcc/win32/include").string().c_str());
 
-		tcc_set_output_type(STATE, TCC_OUTPUT_MEMORY);
+		tcc_set_output_type(m_State, TCC_OUTPUT_MEMORY);
 	}
 
 	CUnit::~CUnit()
 	{
-		tcc_delete(STATE);
+		tcc_delete(m_State);
 	}
 
 	bool CUnit::AddLibraryPath(const char* path)
 	{
-		return tcc_add_library_path(STATE, path) != TCC_STATUS_FAIL;
+		return tcc_add_library_path(m_State, path) != TCC_STATUS_FAIL;
 	}
 
 	bool CUnit::AddLibrary(const char* library)
 	{
-		return tcc_add_library(STATE, library) != TCC_STATUS_FAIL;
+		return tcc_add_library(m_State, library) != TCC_STATUS_FAIL;
 	}
 
 	bool CUnit::AddIncludePath(const char* path)
 	{
-		return tcc_add_include_path(STATE, path) != TCC_STATUS_FAIL;
+		return tcc_add_include_path(m_State, path) != TCC_STATUS_FAIL;
 	}
 
 	bool CUnit::AddSymbol(const char* name, const void* value)
 	{
-		return tcc_add_symbol(STATE, name, value) != TCC_STATUS_FAIL;
+		return tcc_add_symbol(m_State, name, value) != TCC_STATUS_FAIL;
 	}
 
 	void* CUnit::GetSymbol(const char* name)
 	{
-		return tcc_get_symbol(STATE, name);
+		return tcc_get_symbol(m_State, name);
 	}
 
 	bool CUnit::DefineSymbol(const char* name, const char* value)
 	{
-		tcc_define_symbol(STATE, name, value);
+		tcc_define_symbol(m_State, name, value);
 		return true;
 	}
 
 	bool CUnit::Compile(const char* string)
 	{
-		if (tcc_compile_string(STATE, string) == TCC_STATUS_FAIL)
+		if (tcc_compile_string(m_State, string) == TCC_STATUS_FAIL)
 		{
 			m_IsCompiled = false;
 			return false;
 		}
-		if (tcc_relocate(STATE) == TCC_STATUS_FAIL)
+		if (tcc_relocate(m_State) == TCC_STATUS_FAIL)
 		{
 			m_IsCompiled = false;
 			return false;

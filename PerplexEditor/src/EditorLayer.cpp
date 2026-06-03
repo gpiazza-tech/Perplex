@@ -1,6 +1,8 @@
 #include <pch.h>
 #include "EditorLayer.h"
 
+#include <Perplex/Perpixel/PerpixelSystem.h>
+
 #include <glm/fwd.hpp>
 #include <imgui/imgui.h>
 
@@ -16,12 +18,6 @@ namespace Perplex
     EditorLayer::EditorLayer()
         : Layer("EditorLayer")
     {
-    }
-
-    void AttachSceneSystems(Ref<Scene> scene)
-    {
-        scene->AddSystem<Simulator>();
-        scene->AddSystem<Interpreter>();
     }
 
     void EditorLayer::OnAttach()
@@ -41,7 +37,6 @@ namespace Perplex
         m_StopIcon = CreateRef<pxr::TextureBuffer>(m_AssetsPath / "textures/pause_icon.png");
 
         m_ActiveScene = CreateRef<Scene>();
-        AttachSceneSystems(m_ActiveScene);
 
         m_ActiveScene->CreateAbstractEntity("Placeholder");
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
@@ -70,12 +65,12 @@ namespace Perplex
         if (m_SceneState == SceneState::Edit)
         {
             if (m_ViewportFocused) { m_EditorCamera.OnUpdate(ts); }
-            m_SceneRenderer.RenderEditor(m_ActiveScene, m_EditorCamera);
+            // m_SceneRenderer.RenderEditor(m_ActiveScene, m_EditorCamera);
         }
         else if (m_SceneState == SceneState::Play)
         {
             m_ActiveScene->Update(ts);
-            m_SceneRenderer.Render(m_ActiveScene);
+            // m_SceneRenderer.Render(m_ActiveScene);
         }
 
         /* Entity Selection
@@ -99,12 +94,27 @@ namespace Perplex
     {
         HW_PROFILE_FUNCTION();
 
+        // Scene
+        switch (m_SceneState)
+        {
+        case SceneState::Edit:
+            m_SceneRenderer.RenderEditor(m_ActiveScene, m_EditorCamera);
+            break;
+        case SceneState::Play:
+            m_SceneRenderer.Render(m_ActiveScene);
+            break;
+        default:
+            break;
+        }
+
+        // ImGui
         m_Dockspace.Begin();
 
         UI_MenuBar();
 
         m_SceneHierarchyPanel.OnImGuiRender();
         m_ContentBrowserPanel.OnImGuiRender();
+        m_PerpixelPanel.OnImGuiRender(m_ActiveScene, m_SceneHierarchyPanel.GetSelectedEntity());
 
         UI_Viewport();
         UI_Stats();
@@ -207,7 +217,6 @@ namespace Perplex
             {
                 Asset sceneAsset = Asset(filepathString);
                 m_ActiveScene = sceneAsset.GetData<Scene>();
-                AttachSceneSystems(m_ActiveScene);
 
                 OnSceneLoad();
                 ImGui::CloseCurrentPopup();
@@ -264,6 +273,11 @@ namespace Perplex
     {
         ImGui::Begin("Stats");
         ImGui::Text("FPS: %.3f", 1000.0f / m_FrameMS);
+        ImGui::Dummy({ 0.0f, 10.0f });
+
+        const pxr::RenderStats& renderStats = pxr::Renderer::GetStats();
+        ImGui::Text("Quads: %i", renderStats.Quads);
+        ImGui::Text("Draw Calls: %i", renderStats.DrawCalls);
 
         ImGui::End();
     }

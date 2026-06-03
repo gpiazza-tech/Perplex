@@ -135,6 +135,14 @@ namespace Perplex
 		m_SelectedNodes[0] = entity;
 	}
 
+	UUID SceneHierarchyPanel::GetSelectedEntity()
+	{
+		if (m_SelectedNodes.size() > 0)
+			return m_SelectedNodes.at(0);
+
+		return UUID{};
+	}
+
 	void SceneHierarchyPanel::DrawEntityNode(const EntityNode& node)
 	{
 		SceneHierarchy& hierarchy = m_Context->GetHierarchy();

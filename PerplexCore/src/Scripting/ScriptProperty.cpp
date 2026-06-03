@@ -131,7 +131,7 @@ namespace Perplex
 			j["value"] = std::any_cast<bool>(property.m_Value);
 			break;
 		case PerplexTypes::Vec2:
-			j["value"] = std::any_cast<glm::vec3>(property.m_Value);
+			j["value"] = std::any_cast<glm::vec2>(property.m_Value);
 			break;
 		case PerplexTypes::Vec3:
 			j["value"] = std::any_cast<glm::vec3>(property.m_Value);

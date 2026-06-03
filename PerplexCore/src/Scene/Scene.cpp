@@ -38,11 +38,10 @@ namespace Perplex
 	Entity Scene::CreateEntity(const std::string& name, UUID uuid, UUID parent)
 	{
 		Entity entity = ConstructEntity(name, uuid, parent);
-
 		entity.AddComponent<TransformComponent>();
 
 		for (SceneSystem* system : m_Systems)
-			system->OnEntityCreated(uuid);
+			system->OnEntityCreated(entity);
 
 		return entity;
 	}
@@ -52,7 +51,7 @@ namespace Perplex
 		Entity entity = ConstructEntity(name, uuid, parent);
 
 		for (SceneSystem* system : m_Systems)
-			system->OnEntityCreated(uuid);
+			system->OnEntityCreated(entity);
 
 		return entity;
 	}
@@ -82,7 +81,7 @@ namespace Perplex
 			newEntity.AddComponent<PhysicsBodyComponent>(entity.GetComponent<PhysicsBodyComponent>());
 
 		for (SceneSystem* system : m_Systems)
-			system->OnEntityCreated(newEntity.GetUUID());
+			system->OnEntityCreated(newEntity);
 
 		// copy children
 		for (auto& childID : children)
@@ -108,6 +107,8 @@ namespace Perplex
 
 	void Scene::Start()
 	{
+		m_Playing = true;
+
 		for (SceneSystem* system : m_Systems)
 			system->OnSceneStart();
 	}
@@ -132,9 +133,9 @@ namespace Perplex
 				if (!entityToDestroy.HasComponent<IDComponent>())
 					continue;
 
-				// Destroy callback
+				// Callback while entity is still valid
 				for (SceneSystem* system : m_Systems)
-					system->OnEntityDestroyed(entityToDestroy.GetUUID());
+					system->OnEntityDestroyed(entityToDestroy);
 
 				// Actually destroy entity
 				m_Hierarchy.Remove(entityToDestroy.GetUUID());
@@ -148,6 +149,8 @@ namespace Perplex
 
 	void Scene::Stop()
 	{
+		m_Playing = false;
+
 		for (SceneSystem* system : m_Systems)
 			system->OnSceneStop();
 	}

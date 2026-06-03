@@ -24,6 +24,9 @@ namespace Perplex
 
 	struct PerpixelShape
 	{
+		PerpixelShape() {}
+		PerpixelShape(Asset spriteAsset) : Type(PerpixelShapeType::Sprite) { Info.SpriteAsset = spriteAsset; }
+
 		PerpixelShapeType Type{ PerpixelShapeType::Sprite };
 		PerpixelShapeInfo Info{};
 	};

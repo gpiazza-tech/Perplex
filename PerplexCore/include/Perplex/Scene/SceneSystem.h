@@ -7,6 +7,8 @@ namespace Perplex
 	class UUID;
 	class Timestep;
 	class Scene;
+	class Entity;
+	class Component;
 
 	class SceneSystem
 	{
@@ -14,12 +16,15 @@ namespace Perplex
 		SceneSystem(Ref<Scene> scene) : m_Scene(scene) {}
 		virtual ~SceneSystem() = default;
 
-		virtual void OnSceneStart() = 0;
-		virtual void OnSceneUpdate(Timestep ts) = 0;
-		virtual void OnSceneStop() = 0;
+		virtual void OnSceneStart();
+		virtual void OnSceneUpdate(Timestep ts);
+		virtual void OnSceneStop();
 
-		virtual void OnEntityCreated(UUID createdEntityID) = 0;
-		virtual void OnEntityDestroyed(UUID destroyedEntityID) = 0;
+		virtual void OnEntityCreated(Entity entity);
+		virtual void OnEntityDestroyed(Entity entity);
+
+		virtual void OnComponentAdded(Component component, Entity entity);
+		virtual void OnComponentRemoved(Component component, Entity entity);
 	protected:
 		Ref<Scene> m_Scene;
 	};

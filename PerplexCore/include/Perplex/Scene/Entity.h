@@ -40,6 +40,10 @@ namespace Perplex
 
 			// Remove actual component
 			scene->m_Registry.remove<T>(handle);
+
+			// OnComponentRemoved callbacks
+			for (SceneSystem* system : scene->m_Systems)
+				system->OnComponentRemoved(Component{ T{} }, Entity{ handle, scene});
 		}
 
 		template<typename T, typename ...Args>
@@ -54,6 +58,11 @@ namespace Perplex
 			auto componentGetter = [*this]() mutable -> T& { return GetComponent<T>(); };
 			auto componentRemover = [*this]() mutable -> void { RemoveComponent<T>(); };
 			m_Scene->m_ComponentsMap[m_EntityHandle].push_back(Component(component, componentGetter, componentRemover));
+
+			// OnComponentAdded callbacks
+			for (SceneSystem* system : m_Scene->m_Systems)
+				system->OnComponentAdded(Component{ T{} }, *this);
+
 			return component;
 		}
 

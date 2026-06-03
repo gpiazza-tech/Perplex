@@ -4,6 +4,7 @@
 #include <Perplex/Core/Core.h>
 #include <Perplex/Core/Timestep.h>
 #include <Perplex/Core/UUID.h>
+#include <Perplex/PTL/bimap.h>
 
 #include <glm/fwd.hpp>
 
@@ -27,15 +28,14 @@ namespace Perplex
 		void OnSceneUpdate(Timestep ts) override;
 		void OnSceneStop() override;
 
-		void OnEntityCreated(UUID entityID) override;
-		void OnEntityDestroyed(UUID entityID) override;
+		void OnComponentAdded(Component component, Entity entity) override;
+		void OnComponentRemoved(Component component, Entity entity) override;
 
 		void SetVelocity(UUID entityID, glm::vec2 velocity);
 	private:
 		void AddCollider(Entity entity);
 	private:
 		int m_World{};
-		std::unordered_map<UUID, uint64_t> m_BodyMap = std::unordered_map<UUID, uint64_t>();
-		std::unordered_map<uint64_t, UUID> m_UUIDMap = std::unordered_map<uint64_t, UUID>();
+		ptl::bimap<UUID, uint64_t> m_BodyMap{};
 	};
 }

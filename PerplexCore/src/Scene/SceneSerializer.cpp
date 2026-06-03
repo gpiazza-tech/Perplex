@@ -3,13 +3,18 @@
 
 #include <Perplex/Scene/Scene.h>
 #include <Perplex/Scene/Entity.h>
+#include <Perplex/Core/Core.h>
+#include <Perplex/Core/UUID.h>
 #include <Perplex/Scene/Components.h>
 #include <Perplex/Serialization/JsonHelper.h>
 #include <Perplex/Serialization/Json.h>
-
-#include <nlohmann/json.hpp>
+#include <Perplex/Physics/Simulator.h>
+#include <Perplex/Scripting/ScriptInstance.h>
+#include <Perplex/Scripting/Interpreter.h>
+#include <Perplex/Perpixel/PerpixelSystem.h>
 
 #include <filesystem>
+#include <string>
 
 namespace Perplex
 {
@@ -37,6 +42,9 @@ namespace Perplex
 		nlohmann::json sceneJson = JsonHelper::LoadFromFile(path);
 
 		Ref<Scene> scene = CreateRef<Scene>();
+		scene->AddSystem<Simulator>();
+		scene->AddSystem<Interpreter>();
+		scene->AddSystem<PerpixelSystem>();
 
 		for (auto& entityJson : sceneJson["Entities"])
 		{
@@ -66,6 +74,8 @@ namespace Perplex
 			json["BoxColliderComponent"] = entity.GetComponent<BoxColliderComponent>();
 		if (entity.HasComponent<PhysicsBodyComponent>())
 			json["PhysicsBodyComponent"] = entity.GetComponent<PhysicsBodyComponent>();
+		if (entity.HasComponent<PerpixelRendererComponent>())
+			json["PerpixelRendererComponent"] = entity.GetComponent<PerpixelRendererComponent>();
 	}
 
 	void SceneSerializer::DeserializeEntity(const nlohmann::json& json, Entity& entity)
@@ -82,5 +92,7 @@ namespace Perplex
 			entity.AddComponent<BoxColliderComponent>(json["BoxColliderComponent"]);
 		if (json.contains("PhysicsBodyComponent"))
 			entity.AddComponent<PhysicsBodyComponent>(json["PhysicsBodyComponent"]);
+		if (json.contains("PerpixelRendererComponent"))
+			entity.AddComponent<PerpixelRendererComponent>(json["PerpixelRendererComponent"]);
 	}
 }

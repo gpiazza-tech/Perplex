@@ -97,7 +97,9 @@ namespace Perplex
 
 		for (auto& property : component.Properties)
 		{
+			ImGui::PushID(property.GetPtr());
 			property.DrawGui();
+			ImGui::PopID();
 		}
 
 		ImGui::PopID();
@@ -111,8 +113,8 @@ namespace Perplex
 			{ "Circle", (int)PerpixelShapeType::Circle }
 		};
 
-		if (DrawOptions("Shape Type", (int&)component.Shape, shapeTypeOptions, 3))
-			component.Instance.SetSpawnShape(component.Shape);
+		//if (DrawOptions("Shape Type", (int&)component.Shape, shapeTypeOptions, 3))
+		//	component.Instance.SetSpawnShape(component.Shape);
 
 		switch (component.Shape.Type)
 		{
@@ -129,8 +131,8 @@ namespace Perplex
 			break;
 		}
 
-		if (ImGui::Button("Reset Pixels"))
-			component.Instance.ResetPixels();
+		//if (ImGui::Button("Reset Pixels"))
+		//	component.Instance.ResetPixels();
 	}
 
 	void Draw(BoxColliderComponent& component)

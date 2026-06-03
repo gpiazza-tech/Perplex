@@ -63,6 +63,7 @@ __declspec(dllimport) Entity _spawn(Scene _scene, PrefabAsset _prefab);
 __declspec(dllimport) void _destroy(Scene _scene, Entity _entity);
 __declspec(dllimport) void _destroy_delay(Scene _scene, Entity _entity, float delay);
 __declspec(dllimport) void _set_velocity(Scene _scene, Entity _entity, struct Vec2 _velocity);
+__declspec(dllimport) void _to_perpixel(Scene _scene, Entity _entity);
 
 __declspec(dllimport) void play_sound(const char* filepath);
 
@@ -79,6 +80,8 @@ __declspec(dllimport) void play_sound(const char* filepath);
 #define spawn(prefab) (_spawn(scene, prefab))
 #define destroy(entity) (_destroy(scene, entity))
 #define destroy_delay(entity, delay) (_destroy_delay(scene, entity, delay))
+
+#define to_perpixel() _to_perpixel(scene, this)
 
 // __declspec(dllimport) void _set_velocity(Scene s, Entity e, struct Vec2 velocity);
 // void set_velocity(struct Vec2 velocity) { _set_velocity(scene, entity, velocity); }

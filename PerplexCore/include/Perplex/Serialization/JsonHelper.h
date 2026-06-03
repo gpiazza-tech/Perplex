@@ -24,6 +24,11 @@ namespace Perplex
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(BoxColliderComponent, Scale);
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PhysicsBodyComponent, GravityScale, Density, Friction);
 
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PerpixelShapeInfo, CircleRadius, RectSize, SpriteAsset);
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PerpixelShape, Info, Type);
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PerpixelRendererComponent, Shape);
+
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EntityData, ID, Tag);
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EntityNode, ID, Index, ParentID, ChildIDs);
 }

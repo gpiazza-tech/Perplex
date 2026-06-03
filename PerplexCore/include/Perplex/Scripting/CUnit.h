@@ -1,5 +1,9 @@
 #pragma once
 
+#include <memory>
+
+struct TCCState;
+
 namespace Perplex
 {
 	class CUnit
@@ -20,7 +24,7 @@ namespace Perplex
 		bool Compile(const char* string);
 		bool IsCompiled() const { return m_IsCompiled; };
 	private:
-		void* m_State;
+		TCCState* m_State;
 		bool m_IsCompiled;
 	};
 }

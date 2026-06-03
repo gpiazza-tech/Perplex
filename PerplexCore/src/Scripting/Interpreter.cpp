@@ -10,6 +10,12 @@
 #include <Perplex/Core/Timestep.h>
 #include <Perplex/Core/UUID.h>
 #include <Perplex/Scripting/ScriptData.h>
+#include <Perplex/Scripting/ScriptInstance.h>
+#include <Perplex/Scripting/ScriptProperty.h>
+#include <Perplex/Perpixel/PerpixelSystem.h>
+
+#include <memory>
+#include <vector>
 
 namespace Perplex
 {
@@ -35,8 +41,10 @@ namespace Perplex
 		Ref<ScriptData> scriptData = sc.ScriptAsset.GetData<ScriptData>();
 		if (scriptData)
 		{
-			m_ScriptInstanceMap[entity.GetUUID()] = new ScriptInstance();
-			ScriptInstance* instance = m_ScriptInstanceMap[entity.GetUUID()];
+			m_ScriptInstanceMap[entity.GetUUID()] = std::make_unique<ScriptInstance>();
+			UUID entityID = entity.GetUUID();
+
+			std::unique_ptr<ScriptInstance>& instance = m_ScriptInstanceMap[entity.GetUUID()];
 			instance->Compile(scriptData->Source, entity, sc.Properties);
 		}
 	}
@@ -66,8 +74,9 @@ namespace Perplex
 
 				auto& sc = view.get<ScriptComponent>(e);
 				TagComponent& tag = entity.GetComponent<TagComponent>();
+				UUID entityID = entity.GetUUID();
 
-				ScriptInstance* instance = m_ScriptInstanceMap[entity.GetUUID()];
+				std::unique_ptr<ScriptInstance>& instance = m_ScriptInstanceMap[entityID];
 				instance->TryCall("start");
 			}
 		}
@@ -84,8 +93,9 @@ namespace Perplex
 
 				auto& sc = view.get<ScriptComponent>(e);
 				TagComponent& tag = entity.GetComponent<TagComponent>();
+				UUID entityID = entity.GetUUID();
 
-				ScriptInstance* instance = m_ScriptInstanceMap[entity.GetUUID()];
+				std::unique_ptr<ScriptInstance>& instance = m_ScriptInstanceMap.at(entityID);
 				instance->TryCall("update", ts.GetSeconds());
 			}
 		}
@@ -102,31 +112,33 @@ namespace Perplex
 
 				auto& sc = view.get<ScriptComponent>(e);
 				TagComponent& tag = entity.GetComponent<TagComponent>();
+				UUID entityID = entity.GetUUID();
 
-				ScriptInstance* instance = m_ScriptInstanceMap[entity.GetUUID()];
+				std::unique_ptr<ScriptInstance>& instance = m_ScriptInstanceMap[entityID];
 				instance->TryCall("stop");
-				delete instance;
-				m_ScriptInstanceMap.erase(entity.GetUUID());
+				m_ScriptInstanceMap.erase(entityID);
 			}
 		}
 	}
 
-	void Interpreter::OnEntityCreated(UUID entityID)
+	void Interpreter::OnEntityCreated(Entity entity)
 	{
-		Entity entity = m_Scene->GetEntity(entityID);
-
 		if (entity.HasComponent<ScriptComponent>())
 		{
 			InitScriptInstance(entity);
+			UUID entityID = entity.GetUUID();
+
 			m_ScriptInstanceMap[entityID]->TryCall("start");
 		}
 	}
 
-	void Interpreter::OnEntityDestroyed(UUID entityID)
+	void Interpreter::OnEntityDestroyed(Entity entity)
 	{
+		UUID entityID = entity.GetUUID();
+
 		if (m_ScriptInstanceMap.contains(entityID))
 		{
-			delete m_ScriptInstanceMap[entityID];
+			m_ScriptInstanceMap.erase(entityID);
 		}
 	}
 
@@ -146,8 +158,10 @@ namespace Perplex
 
 	ScriptInstance* Interpreter::GetInstance(UUID entityID)
 	{
+		// TODO: returning unique_ptr::get, a safer alternative should be implemented
+
 		if (m_ScriptInstanceMap.contains(entityID))
-			return m_ScriptInstanceMap[entityID];
+			return m_ScriptInstanceMap[entityID].get();
 		return nullptr;
 	}
 }

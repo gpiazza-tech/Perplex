@@ -87,9 +87,21 @@ namespace Perplex
 		}
 
 		SpriteRendererComponent& spriteRenderer = entity.GetComponent<SpriteRendererComponent>();
-		PerpixelRendererComponent& perpixelRenderer = entity.AddComponent<PerpixelRendererComponent>(spriteRenderer.SpriteAsset);
+
+		PerpixelRendererComponent perpixelDef;
+		perpixelDef.Shape.Type = PerpixelShapeType::Sprite;
+		perpixelDef.Shape.Info.ColorAsset = spriteRenderer.SpriteAsset;
+		perpixelDef.Shape.Info.EmissionAsset = spriteRenderer.EmissionSpriteAsset;
+		perpixelDef.Shape.Info.Color = spriteRenderer.Color;
+		perpixelDef.Shape.Info.Emission = spriteRenderer.Emission;
+		PerpixelRendererComponent& perpixelRenderer = entity.AddComponent<PerpixelRendererComponent>(perpixelDef);
 
 		entity.RemoveComponent<SpriteRendererComponent>();
+
+		if (entity.HasComponent<BoxColliderComponent>())
+			entity.RemoveComponent<BoxColliderComponent>();
+		if (entity.HasComponent<PhysicsBodyComponent>())
+			entity.RemoveComponent<PhysicsBodyComponent>();
 	}
 
 	bool ScriptInstance::Compile(const std::string& src, Entity entity, const std::vector<ScriptProperty>& properties)

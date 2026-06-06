@@ -75,12 +75,6 @@ namespace Perplex
 			const PerpixelRendererComponent& perpixelComponent = view.get<PerpixelRendererComponent>(e);
 			PerpixelInstance& perpixelInstance = m_PerpixelInstanceMap.at(entityID);
 
-			if (perpixelComponent.Shape.Info.SpriteAsset != perpixelInstance.GetSpawnShape().Info.SpriteAsset)
-			{
-				perpixelInstance.SetSpawnShape(perpixelComponent.Shape);
-				perpixelInstance.ResetPixels();
-			}
-
 			TryCallPerpixelUpdate(ts, entity, perpixelInstance);
 		}
 	}

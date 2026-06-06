@@ -17,16 +17,17 @@ namespace Perplex
 
 	struct PerpixelShapeInfo
 	{
-		Asset SpriteAsset{};
+		Asset ColorAsset{};
+		Asset EmissionAsset{};
+		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
+		float Emission = 1.0f;
+
 		glm::vec2 RectSize{};
 		float CircleRadius{};
 	};
 
 	struct PerpixelShape
 	{
-		PerpixelShape() {}
-		PerpixelShape(Asset spriteAsset) : Type(PerpixelShapeType::Sprite) { Info.SpriteAsset = spriteAsset; }
-
 		PerpixelShapeType Type{ PerpixelShapeType::Sprite };
 		PerpixelShapeInfo Info{};
 	};

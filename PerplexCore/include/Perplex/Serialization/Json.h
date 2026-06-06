@@ -18,29 +18,37 @@ namespace Perplex
 		Json(const std::filesystem::path& pathToLoad);
 
 		template<typename T>
-		bool Deserialize(T& value, const char* name) const
+		bool Deserialize(const char* name, T& value) const
 		{
 			if (!m_Json.contains(name))
-				return false;
-			
-			value = m_Json.value<T>();
-			return true;
+			{
+				HW_CORE_WARN("JSON: Key '{0}' not found, leaving value unchanged.", name);
+			}
+
+			else
+			{
+				value = m_Json[name].get<T>();
+			}
 		}
 
 		template<typename T>
-		T Get(const char* name) const
+		bool Serialize(const char* name, T& value)
 		{
-			if (!m_Json.contains(name))
-				return T{};
-
-			return m_Json.value<T>(name);
+			if (m_Json.contains(name))
+			{
+				HW_CORE_WARN("JSON: Key '{0}' already exists, overriding value.", name);
+			}
+			
+			else
+			{
+				m_Json[name] = value;
+			}
 		}
 
 		void WriteToFile(const std::filesystem::path& path);
 
 		template<typename T>
 		Json operator=(const T& other) noexcept { return m_Json = other; }
-		Json operator[](const char* name) noexcept { return Json(m_Json[name]); }
 	private:
 		Json(nlohmann::json json) : m_Json(std::move(json)) {}
 	private:

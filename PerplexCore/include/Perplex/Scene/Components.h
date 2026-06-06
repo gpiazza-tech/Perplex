@@ -13,8 +13,6 @@
 #include <glm/ext/matrix_common.hpp>
 #include <glm/ext/matrix_transform.hpp>
 
-#include <entt.hpp>
-
 #include <filesystem>
 #include <string>
 #include <vector>

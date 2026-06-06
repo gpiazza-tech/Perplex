@@ -2,11 +2,8 @@
 #include <Perplex/Components/ComponentDrawers.h>
 
 #include <Perplex/Scene/Components.h>
-#include <Perplex/Core/Log.h>
 #include <Perplex/Assets/Asset.h>
-#include <Perplex/Assets/AssetManager.h>
 #include <Perplex/ImGui/PerplexDrawers.h>
-#include <Perplex/ImGui/ImGuiUtilities.h>
 #include <Perplex/Assets/AssetType.h>
 #include <Perplex/Scripting/ScriptData.h>
 #include <pxr/pxr.h>
@@ -78,7 +75,7 @@ namespace Perplex
 			{ "Larger Side", (int)pxr::ScalingMode::LargerSide },
 			{ "Smaller Side", (int)pxr::ScalingMode::SmallerSide }
 		};
-		DrawOptions("Scaling Mode", (int&)component.PixelPerfect, scalingModeOptions, 4);
+		DrawOptions("Scaling Mode", (int&)component.ScalingMode, scalingModeOptions, 4);
 	}
 
 	void Draw(ScriptComponent& component)
@@ -112,9 +109,7 @@ namespace Perplex
 			{ "Rect", (int)PerpixelShapeType::Rect },
 			{ "Circle", (int)PerpixelShapeType::Circle }
 		};
-
-		//if (DrawOptions("Shape Type", (int&)component.Shape, shapeTypeOptions, 3))
-		//	component.Instance.SetSpawnShape(component.Shape);
+		// DrawOptions("Shape Type", (int&)component.Shape.Type, shapeTypeOptions, 3);
 
 		switch (component.Shape.Type)
 		{
@@ -125,14 +120,15 @@ namespace Perplex
 			ImGui::DragFloat2("Size", &component.Shape.Info.RectSize.x, 0.1f);
 			break;
 		case PerpixelShapeType::Sprite:
-			DrawAssetField("Sprite", component.Shape.Info.SpriteAsset, AssetType::SpriteAsset);
+			DrawAssetField("Color Sprite", component.Shape.Info.ColorAsset, AssetType::SpriteAsset);
+			DrawAssetField("Emission Sprite", component.Shape.Info.EmissionAsset, AssetType::SpriteAsset);
 			break;
 		default:
 			break;
 		}
 
-		//if (ImGui::Button("Reset Pixels"))
-		//	component.Instance.ResetPixels();
+		ImGui::DragFloat4("Color", &component.Shape.Info.Color.x);
+		ImGui::DragFloat("Emission", &component.Shape.Info.Emission);
 	}
 
 	void Draw(BoxColliderComponent& component)

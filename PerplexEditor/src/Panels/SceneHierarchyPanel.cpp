@@ -2,6 +2,9 @@
 #include "SceneHierarchyPanel.h"
 
 #include <Perplex/Perplex.h>
+#include <Perplex/ImGui/GuiSelection.h>
+#include <Perplex/ImGui/PrimitiveDrawers.h>
+#include <Perplex/Components/ComponentDrawers.h>
 
 #include <imgui/imgui.h>
 #include <cstdint>
@@ -10,6 +13,36 @@
 
 namespace Perplex
 {
+	std::vector<Component> GetCommonComponents(const std::vector<Entity>& entities)
+	{
+		const Entity& first = entities.at(0);
+		std::vector<Component> commonComponents = first.GetComponents();
+
+		for (size_t componentIndex{}; componentIndex < commonComponents.size(); componentIndex++)
+		{
+			Component& currentComponent = commonComponents.at(componentIndex);
+
+			// skip first entity
+			for (size_t entityIndex{ 1 }; entityIndex < entities.size(); entityIndex++)
+			{
+				const Entity& currentEntity = entities.at(entityIndex);
+				bool entityHasCurrentCommonComponent = false;
+
+				for (auto& component : currentEntity.GetComponents())
+					if (component == currentComponent)
+						entityHasCurrentCommonComponent = true;
+
+				if (!entityHasCurrentCommonComponent)
+				{
+					commonComponents.erase(commonComponents.begin() + componentIndex);
+					componentIndex--;
+				}
+			}
+		}
+
+		return commonComponents;
+	}
+
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
 		: m_SelectedNodes(0)
 	{
@@ -71,9 +104,13 @@ namespace Perplex
 		ImGui::Begin("Properties");
 		
 		{
-			if (m_SelectedNodes.size() == 1)
+			if (m_SelectedNodes.size() > 0)
 			{
-				Entity selection = m_Context->GetEntity(m_SelectedNodes[0]);
+				std::vector<Entity> selection;
+
+				for (auto& node : m_SelectedNodes)
+					selection.emplace_back(m_Context->GetEntity(node));
+
 				DrawComponents(selection);
 			}
 
@@ -221,32 +258,63 @@ namespace Perplex
 		}
 	}
 
-	void SceneHierarchyPanel::DrawComponents(Entity entity)
+	template<typename T>
+	bool TryDrawComponentSelection(std::vector<Entity>& entities)
+	{
+		GuiSelection<T> component;
+
+		for (auto& entity : entities)
+		{
+			if (!entity.HasComponent<T>())
+				return false;
+
+			component.Add(entity.GetComponent<T>());
+		}
+
+		Draw(component);
+		return true;
+	}
+
+	void SceneHierarchyPanel::DrawComponents(std::vector<Entity>& entitySelection)
 	{
 		using DrawComponentStatus = SceneHierarchyPanel::DrawComponentStatus;
 
-		std::vector<Component>& components = entity.GetComponents();
-		for (size_t i{}; i < components.size();)
+		if (entitySelection.size() == 1)
 		{
-			Component& component = components.at(i);
+			std::vector<Component>& components = entitySelection.at(0).GetComponents();
+			for (size_t i{}; i < components.size();)
+			{
+				Component& component = components.at(i);
 
-			if (component == Component(IDComponent{}) || component == Component(TagComponent{}))
-			{
-				component.Draw();
-				i++;
-			}
-			else
-			{
-				DrawComponentStatus status = DrawComponent(entity, component);
-				if (status == DrawComponentStatus::Removed)
-					component.Remove();
-				else
+				if (component == Component(IDComponent{}) || component == Component(TagComponent{}))
+				{
+					component.Draw();
 					i++;
+				}
+				else
+				{
+					DrawComponentStatus status = DrawComponent(component);
+					if (status == DrawComponentStatus::Removed)
+						component.Remove();
+					else
+						i++;
+				}
 			}
+		} 
+
+		else if (entitySelection.size() > 1)
+		{
+			TryDrawComponentSelection<TransformComponent>(entitySelection);
+			TryDrawComponentSelection<SpriteRendererComponent>(entitySelection);
+			TryDrawComponentSelection<CameraComponent>(entitySelection);
+			TryDrawComponentSelection<PerpixelRendererComponent>(entitySelection);
+			TryDrawComponentSelection<BoxColliderComponent>(entitySelection);
+			TryDrawComponentSelection<PhysicsBodyComponent>(entitySelection);
+			TryDrawComponentSelection<ScriptComponent>(entitySelection);
 		}
 	}
 
-	SceneHierarchyPanel::DrawComponentStatus SceneHierarchyPanel::DrawComponent(Entity entity, Component& component)
+	SceneHierarchyPanel::DrawComponentStatus SceneHierarchyPanel::DrawComponent(Component& component)
 	{
 		std::string componentLabel = component.Label();
 		bool open = ImGui::TreeNodeEx(componentLabel.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowOverlap, componentLabel.c_str());

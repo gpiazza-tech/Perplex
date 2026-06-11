@@ -23,22 +23,6 @@ namespace Perplex
 		static void WriteToFile(const nlohmann::json& j, const std::filesystem::path& path);
 		static nlohmann::json LoadFromFile(const std::filesystem::path& path);
 	};
-
-	PERPLEX_DEFINE_JSON_STRUCT(IDComponent, ID)
-	PERPLEX_DEFINE_JSON_STRUCT(TagComponent, Tag)
-	PERPLEX_DEFINE_JSON_STRUCT(TransformComponent, Position, Rotation, Scale)
-	PERPLEX_DEFINE_JSON_STRUCT(SpriteRendererComponent, SpriteAsset, Color, EmissionSpriteAsset, Emission)
-	PERPLEX_DEFINE_JSON_STRUCT(CameraComponent, Primary, Zoom, Background, PixelsPerUnit, PixelPerfect, ScalingMode)
-	PERPLEX_DEFINE_JSON_STRUCT(ScriptComponent, ScriptAsset, Properties)
-	PERPLEX_DEFINE_JSON_STRUCT(BoxColliderComponent, Scale)
-	PERPLEX_DEFINE_JSON_STRUCT(PhysicsBodyComponent, GravityScale, Density, Friction)
-
-	PERPLEX_DEFINE_JSON_STRUCT(PerpixelShapeInfo, CircleRadius, RectSize, ColorAsset, EmissionAsset, Color, Emission)
-	PERPLEX_DEFINE_JSON_STRUCT(PerpixelShape, Info, Type)
-	PERPLEX_DEFINE_JSON_STRUCT(PerpixelRendererComponent, Shape)
-
-	PERPLEX_DEFINE_JSON_STRUCT(EntityData, ID, Tag)
-	PERPLEX_DEFINE_JSON_STRUCT(EntityNode, ID, Index, ParentID, ChildIDs)
 }
 
 namespace glm

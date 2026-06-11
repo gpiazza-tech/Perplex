@@ -1,67 +1,76 @@
 #pragma once
 
+#include "GuiSelection.h"
+
 #include <glm/fwd.hpp>
 
 #include <string>
 #include <memory>
 #include <vector>
 #include <type_traits>
-#include <algorithm>
-#include <utility>
 
 namespace Perplex
 {
-	void Draw(int& value, const char* label = "");
-	void Draw(float& value, const char* label = "");
-	void Draw(double& value, const char* label = "");
-	void Draw(bool& value, const char* label = "");
-	void Draw(std::string& value, const char* label = "");
-	void Draw(glm::vec2& value, const char* label = "");
-	void Draw(glm::vec3& value, const char* label = "");
+	bool Draw(int& value, const char* label = "");
+	bool Draw(float& value, const char* label = "");
+	bool Draw(double& value, const char* label = "");
+	bool Draw(bool& value, const char* label = "");
+	bool Draw(std::string& value, const char* label = "", bool editable = true);
+	bool Draw(glm::vec2& value, const char* label = "");
+	bool Draw(glm::vec3& value, const char* label = "");
+	bool Draw(glm::vec4& value, const char* label = "");
 
-	/*
-	template<typename T>
-	void DrawSelected(std::vector<std::reference_wrapper<T>>& selections, const char* label = "")
+	template<typename T, typename Getter, typename Setter>
+	bool Draw(Getter getter, Setter setter, const char* label = "")
 	{
-		if (selections.size() == 1)
-		{
-			Draw(selections.at(0).get(), label);
-			return;
-		}
+		T value = getter();
+		bool changed = Draw(value, label);
 
-		bool allEqual = true;
-		for (auto& selection : selections)
-		{
-			if (selection.get() != selections.at(0).get())
-				allEqual = false;
-		}
+		if (changed)
+			setter(value);
 
-		if (allEqual)
+		return changed;
+	}
+
+	template<typename T>
+	bool DrawSelection(GuiSelection<T> selection, const char* label = "")
+	{
+		bool changed = false;
+
+		if (selection.Synced())
 		{
-			T temp{};
-			Draw(temp, label);
-			for (auto& selection : selections)
-				selection.get() = temp;
+			T temp = *selection.begin();
+			changed = Draw(temp, label);
+			selection.SetAll(temp);
 		}
 
 		else
 		{
 			// values are not equal; skip drawing
 		}
+
+		return changed;
 	}
 
-	template<typename StructT, typename MemT>
-	std::unique_ptr<std::vector<std::reference_wrapper<MemT>>> SelectionsFromStruct(std::unique_ptr<std::vector<std::reference_wrapper<StructT>>>, size_t memberOffset)
+	template<typename T>
+	bool DrawSelection(GuiSelection<T> selection, bool (*drawer)(T& value))
 	{
-		using VectorMemT = std::vector<std::reference_wrapper<MemT>>;
-		std::unique_ptr<VectorMemT> selections = std::make_unique<VectorMemT>();
-		
-		for (size_t i = 0; i < objects.size(); ++i)
+		bool changed = false;
+
+		if (selection.Synced())
 		{
-			selections->emplace_back((*(void*)(size_t)&(objects->at(i).get()) + memborOffet));
+			T temp = *selection.begin();
+			changed = drawer(temp);
+			selection.SetAll(temp);
 		}
 
-		return std::move(selections);
+		else
+		{
+			// values are not equal; skip drawing
+		}
+
+		return changed;
 	}
-	*/
 }
+
+#define PERPLEX_DRAW_SUBSELECTION(selection, subType, subMember) PERPLEX_SUBSELECTION(selection, subType, subMember)

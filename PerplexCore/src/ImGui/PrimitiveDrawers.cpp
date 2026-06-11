@@ -2,8 +2,9 @@
 #include <Perplex/ImGui/PrimitiveDrawers.h>
 
 #include <glm/fwd.hpp>
-
 #include <imgui.h>
+#include <misc/cpp/imgui_stdlib.h>
+
 #include <string>
 
 namespace Perplex
@@ -13,44 +14,53 @@ namespace Perplex
 	constexpr float min = 0.0f;
 	constexpr float max = 0.0f;
 
-	void Draw(int& value, const char* label)
+	bool Draw(int& value, const char* label)
 	{
-		ImGui::DragInt(label, &value);
+		return ImGui::DragInt(label, &value);
 	}
 
-	void Draw(float& value, const char* label)
+	bool Draw(float& value, const char* label)
 	{
-		ImGui::DragFloat(label, &value, speed, min, max, format);
+		return ImGui::DragFloat(label, &value, speed, min, max, format);
 	}
 
-	void Draw(double& value, const char* label)
+	bool Draw(double& value, const char* label)
 	{
 		constexpr double step = 0.0;
 		constexpr double stepFast = 0.0;
 
-		ImGui::InputDouble(label, &value, step, stepFast, format);
+		return ImGui::InputDouble(label, &value, step, stepFast, format);
 	}
 
-	void Draw(bool& value, const char* label)
+	bool Draw(bool& value, const char* label)
 	{
-		ImGui::Checkbox(label, &value);
+		return ImGui::Checkbox(label, &value);
 	}
 
-	void Draw(std::string& value, const char* label)
+	bool Draw(std::string& value, const char* label, bool editable)
 	{
-		constexpr size_t maxChars = 50;
-		char buf[maxChars];
+		if (editable)
+			return ImGui::InputText(label, &value);
 
-		ImGui::InputText(label, buf, maxChars);
+		else
+		{
+			ImGui::Text(value.c_str());
+			return false;
+		}
 	}
 
-	void Draw(glm::vec2& value, const char* label)
+	bool Draw(glm::vec2& value, const char* label)
 	{
-		ImGui::DragFloat2(label, &value.x, speed, min, max, format);
+		return ImGui::DragFloat2(label, &value.x, speed, min, max, format);
 	}
 
-	void Draw(glm::vec3& value, const char* label)
+	bool Draw(glm::vec3& value, const char* label)
 	{
-		ImGui::DragFloat3(label, &value.x, speed, min, max, format);
+		return ImGui::DragFloat3(label, &value.x, speed, min, max, format);
+	}
+
+	bool Draw(glm::vec4& value, const char* label)
+	{
+		return ImGui::DragFloat4(label, &value.x, speed, min, max, format);
 	}
 }

@@ -7,6 +7,7 @@
 #include <Perplex/ImGui/ImGuiUtilities.h>
 #include <Perplex/ImGui/PerplexDrawers.h>
 #include <Perplex/Serialization/JsonHelper.h>
+#include <Perplex/Components/ComponentSerializers.h>
 #include <Perplex/Assets/AssetType.h>
 
 #include <nlohmann/json_fwd.hpp>

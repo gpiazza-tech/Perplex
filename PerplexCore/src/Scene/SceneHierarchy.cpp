@@ -4,6 +4,7 @@
 #include <Perplex/Scene/EntityNode.h>
 #include <Perplex/Core/UUID.h>
 #include <Perplex/Serialization/JsonHelper.h>
+#include <Perplex/Components/ComponentSerializers.h>
 
 #include <vector>
 

@@ -1,31 +1,33 @@
 #pragma once
 
+#include <Perplex/ImGui/GuiSelection.h>
+
 namespace Perplex
 {
 	struct IDComponent;
-	void Draw(IDComponent& component);
+	void Draw(GuiSelection<IDComponent> component);
 
 	struct TagComponent;
-	void Draw(TagComponent& component);
+	void Draw(GuiSelection<TagComponent> component);
 
 	struct TransformComponent;
-	void Draw(TransformComponent& component);
+	void Draw(GuiSelection<TransformComponent> component);
 
 	struct SpriteRendererComponent;
-	void Draw(SpriteRendererComponent& component);
+	void Draw(GuiSelection<SpriteRendererComponent> component);
 
 	struct CameraComponent;
-	void Draw(CameraComponent& component);
+	void Draw(GuiSelection<CameraComponent> component);
 
 	struct ScriptComponent;
-	void Draw(ScriptComponent& component);
+	void Draw(GuiSelection<ScriptComponent> component);
 
 	struct PerpixelRendererComponent;
-	void Draw(PerpixelRendererComponent& component);
+	void Draw(GuiSelection<PerpixelRendererComponent> component);
 
 	struct BoxColliderComponent;
-	void Draw(BoxColliderComponent& component);
+	void Draw(GuiSelection<BoxColliderComponent> component);
 
 	struct PhysicsBodyComponent;
-	void Draw(PhysicsBodyComponent& component);
+	void Draw(GuiSelection<PhysicsBodyComponent> component);
 }

@@ -1,42 +1,40 @@
 #pragma once
 
+#include <Perplex/Serialization/JsonHelper.h>
+#include <Perplex/Scene/Components.h>
+
 namespace Perplex
 {
-	class Json;
+	// ID
+	PERPLEX_DEFINE_JSON_STRUCT(IDComponent, ID)
 
-	struct IDComponent;
-	void ToJson(Json& json, const IDComponent& obj);
-	void FromJson(const Json& json, IDComponent& obj);
+	// Tag
+	PERPLEX_DEFINE_JSON_STRUCT(TagComponent, Tag)
 
-	struct TagComponent;
-	void ToJson(Json& json, const TagComponent& obj);
-	void FromJson(const Json& json, TagComponent& obj);
+	// Transform
+	PERPLEX_DEFINE_JSON_STRUCT(TransformComponent, Position, Rotation, Scale)
 
-	struct TransformComponent;
-	void ToJson(Json& json, const TransformComponent& obj);
-	void FromJson(const Json& json, TransformComponent& obj);
+	// Sprite Renderer
+	PERPLEX_DEFINE_JSON_STRUCT(SpriteRendererComponent, SpriteAsset, Color, EmissionSpriteAsset, Emission)
 
-	struct SpriteRendererComponent;
-	void ToJson(Json& json, const SpriteRendererComponent& obj);
-	void FromJson(const Json& json, SpriteRendererComponent& obj);
+	// Camera
+	PERPLEX_DEFINE_JSON_STRUCT(CameraComponent, Primary, Zoom, Background, PixelsPerUnit, PixelPerfect, ScalingMode)
 
-	struct CameraComponent;
-	void ToJson(Json& json, const CameraComponent& obj);
-	void FromJson(const Json& json, CameraComponent& obj);
+	// Script
+	PERPLEX_DEFINE_JSON_STRUCT(ScriptComponent, ScriptAsset, Properties)
 
-	struct ScriptComponent;
-	void ToJson(Json& json, const ScriptComponent& obj);
-	void FromJson(const Json& json, ScriptComponent& obj);
+	// Box Collider
+	PERPLEX_DEFINE_JSON_STRUCT(BoxColliderComponent, Scale)
 
-	struct PerpixelRendererComponent;
-	void ToJson(Json& json, const PerpixelRendererComponent& obj);
-	void FromJson(const Json& json, PerpixelRendererComponent& obj);
+	// Physics Body
+	PERPLEX_DEFINE_JSON_STRUCT(PhysicsBodyComponent, GravityScale, Density, Friction)
 
-	struct BoxColliderComponent;
-	void ToJson(Json& json, const BoxColliderComponent& obj);
-	void FromJson(const Json& json, BoxColliderComponent& obj);
+	// Perpixel Renderer
+	PERPLEX_DEFINE_JSON_STRUCT(PerpixelShapeInfo, CircleRadius, RectSize, ColorAsset, EmissionAsset, Color, Emission)
+	PERPLEX_DEFINE_JSON_STRUCT(PerpixelShape, Info, Type)
+	PERPLEX_DEFINE_JSON_STRUCT(PerpixelRendererComponent, Shape)
 
-	struct PhysicsBodyComponent;
-	void ToJson(Json& json, const PhysicsBodyComponent& obj);
-	void FromJson(const Json& json, PhysicsBodyComponent& obj);
+	// Misc
+	PERPLEX_DEFINE_JSON_STRUCT(EntityData, ID, Tag)
+	PERPLEX_DEFINE_JSON_STRUCT(EntityNode, ID, Index, ParentID, ChildIDs)
 }

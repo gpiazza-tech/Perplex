@@ -193,7 +193,8 @@ namespace Perplex
 		const std::vector<pixel>& pixels = system.GetPixels(entity.GetUUID());
 
 		for (const auto& pxl : pixels)
-			pxr::Renderer::DrawPixel(transform.Position + vector3(pxl.Position.x, pxl.Position.y, 0.0f), pxl.Color, pxl.Emission);
+			if (pxl.Lifetime > 0.0f)
+				pxr::Renderer::DrawPixel(transform.Position + vector3(pxl.Position.x, pxl.Position.y, 0.0f), pxl.Color, pxl.Emission);
 	}
 
 	void SceneRenderer::Resize(int width, int height)

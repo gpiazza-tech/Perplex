@@ -7,9 +7,8 @@
 #include <Perplex/Core/UUID.h>
 #include <Perplex/Scene/Components.h>
 #include <Perplex/Serialization/JsonHelper.h>
-#include <Perplex/Serialization/Json.h>
+#include <Perplex/Components/ComponentSerializers.h>
 #include <Perplex/Physics/Simulator.h>
-#include <Perplex/Scripting/ScriptInstance.h>
 #include <Perplex/Scripting/Interpreter.h>
 #include <Perplex/Perpixel/PerpixelSystem.h>
 

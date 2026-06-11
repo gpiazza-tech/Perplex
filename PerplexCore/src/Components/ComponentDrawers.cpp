@@ -3,6 +3,8 @@
 
 #include <Perplex/Scene/Components.h>
 #include <Perplex/Assets/Asset.h>
+#include <Perplex/ImGui/GuiSelection.h>
+#include <Perplex/ImGui/PrimitiveDrawers.h>
 #include <Perplex/ImGui/PerplexDrawers.h>
 #include <Perplex/Assets/AssetType.h>
 #include <Perplex/Scripting/ScriptData.h>
@@ -17,129 +19,166 @@
 
 namespace Perplex
 {
-	void Draw(IDComponent& component)
+	void Draw(GuiSelection<IDComponent> component)
 	{
-		std::string tempString = std::to_string(component.ID);
-		ImGui::Text(tempString.c_str());
+		GuiSelection<UUID> ids = PERPLEX_SUBSELECTION(component, UUID, ID);
+
+		GuiSelection<std::string> stringIds;
+		for (auto& id : ids)
+			stringIds.AddValue(std::to_string(id.get()));
+		
+		DrawSelection<std::string>(stringIds, [](std::string& value) { return Draw(value, "ID", false); });
 	}
 
-	void Draw(TagComponent& component)
+	void Draw(GuiSelection<TagComponent> component)
 	{
-		char buffer[32];
-		memset(buffer, 0, sizeof(buffer));
-		strcpy_s(buffer, sizeof(buffer), component.Tag.c_str());
-		if (ImGui::InputText("Tag", buffer, sizeof(buffer)))
-		{
-			component.Tag = std::string(buffer);
-		}
+		GuiSelection<std::string> tags = PERPLEX_SUBSELECTION(component, std::string, Tag);
+		DrawSelection(tags, "Tag");
 	}
 
-	void Draw(TransformComponent& component)
+	void Draw(GuiSelection<TransformComponent> component)
 	{
 		ImVec2 padding = { 1.0f, 1.0f };
 
-		DrawVec3Control("Position", component.Position);
+		GuiSelection<glm::vec3> position = PERPLEX_SUBSELECTION(component, glm::vec3, Position);
+		DrawSelection<glm::vec3>(position, [](glm::vec3& value) { DrawVec3Control("Position", value); return true; });
 		ImGui::Dummy(padding);
 
-		glm::vec3 rotation = glm::degrees(component.Rotation);
-		DrawVec3Control("Rotation", rotation);
+		GuiSelection<glm::vec3> rotation = PERPLEX_SUBSELECTION(component, glm::vec3, Rotation);
+		DrawSelection<glm::vec3>(rotation, [](glm::vec3& value) { DrawVec3Control("Rotation", value); return true; });
 		ImGui::Dummy(padding);
-		component.Rotation = glm::radians(rotation);
 
-		DrawVec3Control("Scale", component.Scale, 1.0f);
+		GuiSelection<glm::vec3> scale = PERPLEX_SUBSELECTION(component, glm::vec3, Scale);
+		DrawSelection<glm::vec3>(scale, [](glm::vec3& value) { DrawVec3Control("Scale", value); return true; });
 		ImGui::Dummy(padding);
 	}
 
-	void Draw(SpriteRendererComponent& component)
+	void Draw(GuiSelection<SpriteRendererComponent> component)
 	{
 		// Color
-		DrawAssetField("Sprite", component.SpriteAsset, AssetType::SpriteAsset);
-		ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+		GuiSelection<Asset> spriteAsset = PERPLEX_SUBSELECTION(component, Asset, SpriteAsset);
+		DrawSelection<Asset>(spriteAsset, [](Asset& value) { return DrawAssetField("Sprite", value, AssetType::SpriteAsset); });
+
+		DrawSelection<glm::vec4>(PERPLEX_SUBSELECTION(component, glm::vec4, Color), "Color");
 
 		// Emission
-		DrawAssetField("Emission Mask", component.EmissionSpriteAsset, AssetType::SpriteAsset);
-		ImGui::DragFloat("Emission", &component.Emission, 0.01f);
+		GuiSelection<Asset> emissionAsset = PERPLEX_SUBSELECTION(component, Asset, EmissionSpriteAsset);
+		DrawSelection<Asset>(emissionAsset, [](Asset& value) { return DrawAssetField("Emission Mask", value, AssetType::SpriteAsset); });
+
+		DrawSelection<float>(PERPLEX_SUBSELECTION(component, float, Emission), "Emission");
 	}
 
-	void Draw(CameraComponent& component)
+	void Draw(GuiSelection<CameraComponent> component)
 	{
-		ImGui::Checkbox("Primary", &component.Primary);
-		ImGui::DragFloat("Zoom", &component.Zoom);
-		ImGui::ColorEdit4("Background", &component.Background.r);
-		ImGui::DragInt("Pixels Per Unit", &component.PixelsPerUnit);
-		ImGui::Checkbox("Pixel Perfect", &component.PixelPerfect);
+		DrawSelection(PERPLEX_SUBSELECTION(component, bool, Primary), "Primary");
+		DrawSelection(PERPLEX_SUBSELECTION(component, float, Zoom), "Zoom");
+		DrawSelection(PERPLEX_SUBSELECTION(component, glm::vec4, Background), "Background");
+		DrawSelection(PERPLEX_SUBSELECTION(component, int, PixelsPerUnit), "Pixels Per Unit");
+		DrawSelection(PERPLEX_SUBSELECTION(component, bool, PixelPerfect), "Pixel Perfect");
 
-		Option scalingModeOptions[] = {
-			{ "Width", (int)pxr::ScalingMode::Width },
-			{ "Height", (int)pxr::ScalingMode::Height },
-			{ "Larger Side", (int)pxr::ScalingMode::LargerSide },
-			{ "Smaller Side", (int)pxr::ScalingMode::SmallerSide }
-		};
-		DrawOptions("Scaling Mode", (int&)component.ScalingMode, scalingModeOptions, 4);
+		GuiSelection<pxr::ScalingMode> scalingMode = PERPLEX_SUBSELECTION(component, pxr::ScalingMode, ScalingMode);
+		DrawSelection<pxr::ScalingMode>(scalingMode, [](pxr::ScalingMode& value) 
+			{
+				Option scalingModeOptions[] =
+				{
+					{ "Width", (int)pxr::ScalingMode::Width },
+					{ "Height", (int)pxr::ScalingMode::Height },
+					{ "Larger Side", (int)pxr::ScalingMode::LargerSide },
+					{ "Smaller Side", (int)pxr::ScalingMode::SmallerSide }
+				};
+				return DrawOptions("Scaling Mode", (int&)value, scalingModeOptions, 4);
+			});
 	}
 
-	void Draw(ScriptComponent& component)
+	void Draw(GuiSelection<ScriptComponent> component)
 	{
 		ImGui::PushID(&component);
 
-		if (DrawAssetField("Source", component.ScriptAsset, AssetType::ScriptAsset))
+		GuiSelection<Asset> scriptAsset = PERPLEX_SUBSELECTION(component, Asset, ScriptAsset);
+		bool scriptAssetChanged = DrawSelection<Asset>(scriptAsset, [](Asset& value) { return DrawAssetField("Source", value, AssetType::ScriptAsset); });
+
+		if (scriptAssetChanged)
 		{
-			if (component.ScriptAsset)
-				component.Properties = component.ScriptAsset.GetData<ScriptData>()->Properties;
-			else
-				component.Properties.clear();
+			for (auto& componentRef : component)
+			{
+				if (componentRef.get().ScriptAsset)
+					componentRef.get().Properties = componentRef.get().ScriptAsset.GetData<ScriptData>()->Properties;  
+				else
+					componentRef.get().Properties.clear();
+			}
 		}
 
 		ImGui::Dummy(ImVec2(0.0f, 20.0f));
 
-		for (auto& property : component.Properties)
+		if (scriptAsset.Size() == 1)
 		{
-			ImGui::PushID(property.GetPtr());
-			property.DrawGui();
-			ImGui::PopID();
+			Ref<ScriptData> scriptData = scriptAsset.At(0).GetData<ScriptData>();
+
+			if (scriptData)
+			{
+				std::vector<ScriptProperty>& properties = scriptData->Properties;
+
+				for (auto& property : properties)
+				{
+					ImGui::PushID(property.GetPtr());
+					property.DrawGui();
+					ImGui::PopID();
+				}
+			}
 		}
 
 		ImGui::PopID();
 	}
 
-	void Draw(PerpixelRendererComponent& component)
+	void Draw(GuiSelection<PerpixelRendererComponent> component)
 	{
-		Option shapeTypeOptions[] = {
-			{ "Sprite", (int)PerpixelShapeType::Sprite },
-			{ "Rect", (int)PerpixelShapeType::Rect },
-			{ "Circle", (int)PerpixelShapeType::Circle }
-		};
-		// DrawOptions("Shape Type", (int&)component.Shape.Type, shapeTypeOptions, 3);
+		GuiSelection<PerpixelShapeType> shapeType = PERPLEX_SUBSELECTION(component, PerpixelShapeType, Shape.Type);
+		DrawSelection<PerpixelShapeType>(shapeType, [](PerpixelShapeType& value)
+			{
+				Option shapeTypeOptions[] =
+				{
+					{ "Sprite", (int)PerpixelShapeType::Sprite },
+					{ "Rect", (int)PerpixelShapeType::Rect },
+					{ "Circle", (int)PerpixelShapeType::Circle }
+				};
+				return DrawOptions("Shape Type", (int&)value, shapeTypeOptions, 3);
+			});
 
-		switch (component.Shape.Type)
+		if (shapeType.Synced())
 		{
-		case PerpixelShapeType::Circle:
-			ImGui::DragFloat("Radius", &component.Shape.Info.CircleRadius, 0.1f);
-			break;
-		case PerpixelShapeType::Rect:
-			ImGui::DragFloat2("Size", &component.Shape.Info.RectSize.x, 0.1f);
-			break;
-		case PerpixelShapeType::Sprite:
-			DrawAssetField("Color Sprite", component.Shape.Info.ColorAsset, AssetType::SpriteAsset);
-			DrawAssetField("Emission Sprite", component.Shape.Info.EmissionAsset, AssetType::SpriteAsset);
-			break;
-		default:
-			break;
+			GuiSelection<Asset> colorAsset = PERPLEX_SUBSELECTION(component, Asset, Shape.Info.ColorAsset);
+			GuiSelection<Asset> emissionAsset = PERPLEX_SUBSELECTION(component, Asset, Shape.Info.EmissionAsset);
+
+			switch (shapeType.GetValue())
+			{
+			case PerpixelShapeType::Circle:  
+				DrawSelection(PERPLEX_SUBSELECTION(component, float, Shape.Info.CircleRadius), "Radius");
+				break;
+			case PerpixelShapeType::Rect:
+				DrawSelection(PERPLEX_SUBSELECTION(component, glm::vec2, Shape.Info.RectSize), "Size");
+				break;
+			case PerpixelShapeType::Sprite:
+				DrawSelection<Asset>(colorAsset, [](Asset& value) { return DrawAssetField("Color Asset", value, AssetType::SpriteAsset); });
+				DrawSelection<Asset>(emissionAsset, [](Asset& value) { return DrawAssetField("Emission Asset", value, AssetType::SpriteAsset); });
+				break;
+			default:
+				break;
+			}
 		}
 
-		ImGui::DragFloat4("Color", &component.Shape.Info.Color.x);
-		ImGui::DragFloat("Emission", &component.Shape.Info.Emission);
+		DrawSelection(PERPLEX_SUBSELECTION(component, glm::vec4, Shape.Info.Color), "Color");
+		DrawSelection(PERPLEX_SUBSELECTION(component, float, Shape.Info.Emission), "Emission");
 	}
 
-	void Draw(BoxColliderComponent& component)
+	void Draw(GuiSelection<BoxColliderComponent> component)
 	{
-		ImGui::DragFloat2("Scale", &component.Scale.x, 0.01f);
+		DrawSelection(PERPLEX_SUBSELECTION(component, glm::vec2, Scale), "Scale");
 	}
 
-	void Draw(PhysicsBodyComponent& component)
+	void Draw(GuiSelection<PhysicsBodyComponent> component)
 	{
-		ImGui::DragFloat("Gravity Scale", &component.GravityScale, 0.01f);
-		ImGui::DragFloat("Density", &component.Density, 0.01f);
-		ImGui::DragFloat("Friction", &component.Friction, 0.01f);
+		DrawSelection(PERPLEX_SUBSELECTION(component, float, GravityScale), "Gravity Scale");
+		DrawSelection(PERPLEX_SUBSELECTION(component, float, Density), "Density");
+		DrawSelection(PERPLEX_SUBSELECTION(component, float, Friction), "Friction");
 	}
 }

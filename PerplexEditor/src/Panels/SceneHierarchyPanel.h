@@ -21,11 +21,12 @@ namespace Perplex
 
 		void OnImGuiRender();
 		UUID GetSelectedEntity();
+	public:
+		enum class DrawComponentStatus { None = 0, Removed };
 	private:
 		void DrawEntityNode(const EntityNode& node);
 		void DrawComponents(std::vector<Entity>& entitySelection);
 
-		enum class DrawComponentStatus { None = 0, Removed };
 		DrawComponentStatus DrawComponent(Component& component);
 	
 		void SetSelectedEntity(UUID entity);

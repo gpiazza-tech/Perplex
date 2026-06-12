@@ -42,7 +42,7 @@ namespace Perplex
 
 	bool DrawAssetField(const char* label, Asset& asset, AssetType type)
 	{
-		ImGui::PushID(&asset);
+		ImGui::PushID(label);
 
 		std::string valueLabel = !asset ? "<none>" : asset.GetName().string();
 		ImGui::Button(valueLabel.c_str(), { 200, 20 });

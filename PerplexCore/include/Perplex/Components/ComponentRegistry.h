@@ -4,10 +4,14 @@
 
 namespace Perplex
 {
-	class Component;
+	class ComponentKind;
 
 	class ComponentRegistry
 	{
-		static const std::vector<Component>& GetAll();
+	public:
+		static const std::vector<ComponentKind> GetBaseKinds();
+		static const std::vector<ComponentKind> GetAdditiveKinds();
+
+		static const std::vector<ComponentKind> GetAllKinds();
 	};
 }

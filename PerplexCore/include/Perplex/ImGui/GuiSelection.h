@@ -19,11 +19,6 @@ namespace Perplex
 			m_Refs.emplace_back(reference);
 		}
 
-		void AddValue(const T& value)
-		{
-			m_Refs.emplace_back(m_Values.emplace_back(value));
-		}
-
 		template<typename NewT>
 		GuiSelection<NewT> GetSubSelection(NewT&(*getter)(T&))
 		{
@@ -73,7 +68,6 @@ namespace Perplex
 		std::vector<std::reference_wrapper<T>>::const_iterator begin() const { return m_Refs.begin(); }
 		std::vector<std::reference_wrapper<T>>::const_iterator end() const { return m_Refs.end(); }
 	private:
-		std::vector<T> m_Values{};
 		std::vector<std::reference_wrapper<T>> m_Refs{};
 	};
 }

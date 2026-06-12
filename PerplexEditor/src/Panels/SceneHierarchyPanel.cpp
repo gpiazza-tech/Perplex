@@ -5,6 +5,8 @@
 #include <Perplex/ImGui/GuiSelection.h>
 #include <Perplex/ImGui/PrimitiveDrawers.h>
 #include <Perplex/Components/ComponentDrawers.h>
+#include <Perplex/Components/ComponentKind.h>
+#include <Perplex/Components/ComponentRegistry.h>
 
 #include <imgui/imgui.h>
 #include <cstdint>
@@ -53,18 +55,6 @@ namespace Perplex
 	{
 		m_Context = context;
 		m_SelectedNodes.clear();
-	}
-
-	template<typename T>
-	static void AddComponentToEntities(std::vector<UUID>& IDs, Ref<Scene> context)
-	{
-		for (auto& ID : IDs)
-		{
-			Entity entity = context->GetEntity(ID);
-
-			if (!entity.HasComponent<T>())
-				entity.AddComponent<T>();
-		}
 	}
 
 	void SceneHierarchyPanel::OnImGuiRender()
@@ -119,47 +109,19 @@ namespace Perplex
 
 			if (ImGui::BeginPopup("AddComponent"))
 			{
-				if (ImGui::MenuItem("Transform"))
+				for (auto& componentKind : ComponentRegistry::GetAdditiveKinds())
 				{
-					AddComponentToEntities<TransformComponent>(m_SelectedNodes, m_Context);
-					ImGui::CloseCurrentPopup();
+					if (ImGui::MenuItem(componentKind.Label().c_str()))
+					{
+						std::vector<Entity> entitySelection;
+						for (auto& id : m_SelectedNodes)
+							entitySelection.emplace_back(m_Context->GetEntity(id));
+						componentKind.Add(entitySelection);
+
+						ImGui::CloseCurrentPopup();
+					}
 				}
 
-				if (ImGui::MenuItem("Camera"))
-				{
-					AddComponentToEntities<CameraComponent>(m_SelectedNodes, m_Context);
-					ImGui::CloseCurrentPopup();
-				}
-
-				if (ImGui::MenuItem("Sprite Renderer"))
-				{
-					AddComponentToEntities<SpriteRendererComponent>(m_SelectedNodes, m_Context);
-					ImGui::CloseCurrentPopup();
-				}
-
-				if (ImGui::MenuItem("Script"))
-				{
-					AddComponentToEntities<ScriptComponent>(m_SelectedNodes, m_Context);
-					ImGui::CloseCurrentPopup();
-				}
-
-				if (ImGui::MenuItem("Perpixel Renderer"))
-				{
-					AddComponentToEntities<PerpixelRendererComponent>(m_SelectedNodes, m_Context);
-					ImGui::CloseCurrentPopup();
-				}
-
-				if (ImGui::MenuItem("Box Collider"))
-				{
-					AddComponentToEntities<BoxColliderComponent>(m_SelectedNodes, m_Context);
-					ImGui::CloseCurrentPopup();
-				}
-
-				if (ImGui::MenuItem("Physics Body"))
-				{
-					AddComponentToEntities<PhysicsBodyComponent>(m_SelectedNodes, m_Context);
-					ImGui::CloseCurrentPopup();
-				}
 				ImGui::EndPopup();
 			}
 		}
@@ -258,21 +220,63 @@ namespace Perplex
 		}
 	}
 
-	template<typename T>
-	bool TryDrawComponentSelection(std::vector<Entity>& entities)
+	SceneHierarchyPanel::DrawComponentStatus TryDrawComponentSelection(std::vector<Entity>& entities, ComponentKind kind)
 	{
-		GuiSelection<T> component;
-
+		// return if not all entities have component T
 		for (auto& entity : entities)
 		{
-			if (!entity.HasComponent<T>())
-				return false;
-
-			component.Add(entity.GetComponent<T>());
+			if (!kind.Has(entity))
+				return SceneHierarchyPanel::DrawComponentStatus::None;
 		}
 
-		Draw(component);
-		return true;
+		std::string componentLabel = kind.Label();
+		bool open = ImGui::TreeNodeEx(componentLabel.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowOverlap, componentLabel.c_str());
+		bool removeComponent = false;
+
+		if (ImGui::BeginPopupContextItem())
+		{
+			if (ImGui::MenuItem("Remove"))
+				removeComponent = true;
+
+			ImGui::EndPopup();
+		}
+
+		if (open)
+		{
+			kind.DrawSelection(entities);
+			ImGui::TreePop();
+		}
+
+		if (removeComponent)
+			return SceneHierarchyPanel::DrawComponentStatus::Removed;
+
+		return SceneHierarchyPanel::DrawComponentStatus::None;
+	}
+
+	SceneHierarchyPanel::DrawComponentStatus SceneHierarchyPanel::DrawComponent(Component& component)
+	{
+		std::string componentLabel = component.Label();
+		bool open = ImGui::TreeNodeEx(componentLabel.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowOverlap, componentLabel.c_str());
+		bool removeComponent = false;
+
+		if (ImGui::BeginPopupContextItem())
+		{
+			if (ImGui::MenuItem("Remove"))
+				removeComponent = true;
+
+			ImGui::EndPopup();
+		}
+
+		if (open)
+		{
+			component.Draw();
+			ImGui::TreePop();
+		}
+
+		if (removeComponent)
+			return SceneHierarchyPanel::DrawComponentStatus::Removed;
+
+		return SceneHierarchyPanel::DrawComponentStatus::None;
 	}
 
 	void SceneHierarchyPanel::DrawComponents(std::vector<Entity>& entitySelection)
@@ -304,39 +308,8 @@ namespace Perplex
 
 		else if (entitySelection.size() > 1)
 		{
-			TryDrawComponentSelection<TransformComponent>(entitySelection);
-			TryDrawComponentSelection<SpriteRendererComponent>(entitySelection);
-			TryDrawComponentSelection<CameraComponent>(entitySelection);
-			TryDrawComponentSelection<PerpixelRendererComponent>(entitySelection);
-			TryDrawComponentSelection<BoxColliderComponent>(entitySelection);
-			TryDrawComponentSelection<PhysicsBodyComponent>(entitySelection);
-			TryDrawComponentSelection<ScriptComponent>(entitySelection);
+			for (auto& componentKind : ComponentRegistry::GetAdditiveKinds())
+				TryDrawComponentSelection(entitySelection, componentKind);
 		}
-	}
-
-	SceneHierarchyPanel::DrawComponentStatus SceneHierarchyPanel::DrawComponent(Component& component)
-	{
-		std::string componentLabel = component.Label();
-		bool open = ImGui::TreeNodeEx(componentLabel.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowOverlap, componentLabel.c_str());
-		bool removeComponent = false;
-
-		if (ImGui::BeginPopupContextItem())
-		{
-			if (ImGui::MenuItem("Remove"))
-				removeComponent = true;
-
-			ImGui::EndPopup();
-		}
-
-		if (open)
-		{
-			component.Draw();
-			ImGui::TreePop();
-		}
-
-		if (removeComponent)
-			return SceneHierarchyPanel::DrawComponentStatus::Removed;
-
-		return SceneHierarchyPanel::DrawComponentStatus::None;
 	}
 }

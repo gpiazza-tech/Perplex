@@ -22,12 +22,11 @@ namespace Perplex
 	void Draw(GuiSelection<IDComponent> component)
 	{
 		GuiSelection<UUID> ids = PERPLEX_SUBSELECTION(component, UUID, ID);
-
-		GuiSelection<std::string> stringIds;
-		for (auto& id : ids)
-			stringIds.AddValue(std::to_string(id.get()));
-		
-		DrawSelection<std::string>(stringIds, [](std::string& value) { return Draw(value, "ID", false); });
+		DrawSelection<UUID>(ids, [](UUID& value) 
+			{ 
+				std::string strId = std::to_string(value); 
+				return Draw(strId, "ID", false); 
+			});
 	}
 
 	void Draw(GuiSelection<TagComponent> component)

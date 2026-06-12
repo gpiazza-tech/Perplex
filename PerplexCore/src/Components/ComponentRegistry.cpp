@@ -1,27 +1,49 @@
 #include <Perplex/pch.h>
 #include <Perplex/Components/ComponentRegistry.h>
 
-#include <Perplex/Components/Component.h>
+#include <Perplex/Components/ComponentKind.h>
 #include <Perplex/Scene/Components.h>
 
 #include <vector>
 
 namespace Perplex
 {
-	const std::vector<Component>& ComponentRegistry::GetAll()
+	const std::vector<ComponentKind> ComponentRegistry::GetBaseKinds()
 	{
-		static std::vector<Component> components
+		std::vector<ComponentKind> components
 		{
-			Component{ IDComponent{} },
-			Component{ TagComponent{} },
-			Component{ TransformComponent{} },
-			Component{ SpriteRendererComponent{} },
-			Component{ CameraComponent{} },
-			Component{ ScriptComponent{} },
-			Component{ PerpixelRendererComponent{} },
-			Component{ BoxColliderComponent{} },
-			Component{ PhysicsBodyComponent{} },
+			ComponentKind{ IDComponent{} },
+			ComponentKind{ TagComponent{} },
 		};
+
+		return components;
+	}
+
+	const std::vector<ComponentKind> ComponentRegistry::GetAdditiveKinds()
+	{
+		std::vector<ComponentKind> components
+		{
+			ComponentKind{ TransformComponent{} },
+			ComponentKind{ SpriteRendererComponent{} },
+			ComponentKind{ CameraComponent{} },
+			ComponentKind{ ScriptComponent{} },
+			ComponentKind{ PerpixelRendererComponent{} },
+			ComponentKind{ BoxColliderComponent{} },
+			ComponentKind{ PhysicsBodyComponent{} },
+		};
+
+		return components;
+	}
+
+	const std::vector<ComponentKind> ComponentRegistry::GetAllKinds()
+	{
+		std::vector<ComponentKind> components;
+
+		for (auto& baseComponentKind : GetBaseKinds())
+			components.emplace_back(baseComponentKind);
+
+		for (auto& additiveComponentKind : GetAdditiveKinds())
+			components.emplace_back(additiveComponentKind);
 
 		return components;
 	}

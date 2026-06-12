@@ -43,7 +43,7 @@ namespace Perplex
 		style.Colors[ImGuiCol_ScrollbarGrab] = dark;
 		style.Colors[ImGuiCol_ScrollbarGrabHovered] = dark;
 		style.Colors[ImGuiCol_ScrollbarGrabActive] = dark;
-		style.Colors[ImGuiCol_CheckMark] = light;
+		style.Colors[ImGuiCol_CheckMark] = pop;
 		style.Colors[ImGuiCol_SliderGrab] = light;
 		style.Colors[ImGuiCol_SliderGrabActive] = light;
 		style.Colors[ImGuiCol_Button] = mid;

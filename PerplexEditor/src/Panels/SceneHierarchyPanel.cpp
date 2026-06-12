@@ -309,7 +309,12 @@ namespace Perplex
 		else if (entitySelection.size() > 1)
 		{
 			for (auto& componentKind : ComponentRegistry::GetAdditiveKinds())
-				TryDrawComponentSelection(entitySelection, componentKind);
+			{
+				DrawComponentStatus status = TryDrawComponentSelection(entitySelection, componentKind);
+
+				if (status == DrawComponentStatus::Removed)
+					componentKind.Remove(entitySelection);
+			}
 		}
 	}
 }

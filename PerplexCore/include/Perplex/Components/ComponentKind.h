@@ -18,6 +18,8 @@ namespace Perplex
 
 		virtual void Add(Entity& entity) = 0;
 		virtual void Add(std::vector<Entity>& entities) = 0;
+		virtual void Remove(Entity& entity) = 0;
+		virtual void Remove(std::vector<Entity>& entities) = 0;
 		virtual bool Has(Entity& entity) = 0;
 		virtual void DrawSelection(std::vector<Entity>& entitySelection) = 0;
 		virtual std::string Label() = 0;
@@ -43,6 +45,20 @@ namespace Perplex
 			{
 				if (!entity.HasComponent<T>())
 					entity.AddComponent<T>();
+			}
+		}
+
+		void Remove(Entity& entity) override
+		{
+			entity.RemoveComponent<T>();
+		}
+
+		void Remove(std::vector<Entity>& entities) override
+		{
+			for (auto& entity : entities)
+			{
+				if (entity.HasComponent<T>())
+					entity.RemoveComponent<T>();
 			}
 		}
 
@@ -75,6 +91,8 @@ namespace Perplex
 
 		void Add(Entity& entity) const { m_Pimpl->Add(entity); }
 		void Add(std::vector<Entity>& entities) const { m_Pimpl->Add(entities); }
+		void Remove(Entity& entity) const { m_Pimpl->Remove(entity); }
+		void Remove(std::vector<Entity>& entities) const { m_Pimpl->Remove(entities); }
 		bool Has(Entity& entity) const { return m_Pimpl->Has(entity); }
 		void DrawSelection(std::vector<Entity>& entitySelection) const { m_Pimpl->DrawSelection(entitySelection); }
 		std::string Label() const { return m_Pimpl->Label(); }

@@ -31,6 +31,8 @@ namespace Perplex
 	static float degrees(float rad) { return glm::degrees(rad); }
 	static float radians(float deg) { return glm::radians(deg); }
 	static void play_sound(const char* filepath) { AudioEngine::Get().PlaySound(filepath); }
+	static Sound* start_loop(const char* filepath) { return AudioEngine::Get().StartLoop(filepath); }
+	static void end_loop(Sound* sound) { return AudioEngine::Get().EndLoop(sound); }
 
 	static void try_call(Scene* scene, UUID uuid, const char* funcName)
 	{
@@ -152,6 +154,8 @@ namespace Perplex
 		m_Unit.AddSymbol("_to_perpixel", _to_perpixel);
 
 		m_Unit.AddSymbol("play_sound", play_sound);
+		m_Unit.AddSymbol("start_loop", start_loop);
+		m_Unit.AddSymbol("end_loop", end_loop);
 
 		for (auto& externalFunctions : m_ExternalFunctions)
 			m_Unit.AddSymbol(externalFunctions.Name.c_str(), externalFunctions.Ptr);

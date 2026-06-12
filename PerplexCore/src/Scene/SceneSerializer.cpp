@@ -7,10 +7,11 @@
 #include <Perplex/Core/UUID.h>
 #include <Perplex/Scene/Components.h>
 #include <Perplex/Serialization/JsonHelper.h>
-#include <Perplex/Components/ComponentSerializers.h>
 #include <Perplex/Physics/Simulator.h>
 #include <Perplex/Scripting/Interpreter.h>
 #include <Perplex/Perpixel/PerpixelSystem.h>
+#include <Perplex/Components/ComponentRegistry.h>
+#include <Perplex/Components/ComponentKind.h>
 
 #include <filesystem>
 #include <string>
@@ -34,7 +35,7 @@ namespace Perplex
 		JsonHelper::WriteToFile(sceneJson, path);
 
 		return true;
-	}   
+	}
 
 	Ref<Scene> SceneSerializer::Deserialize(const fs::path& path)
 	{
@@ -61,37 +62,13 @@ namespace Perplex
 		json["ID"] = entity.GetComponent<IDComponent>().ID;
 		json["Tag"] = entity.GetComponent<TagComponent>().Tag;
 
-		if (entity.HasComponent<TransformComponent>())
-			json["TransformComponent"] = entity.GetComponent<TransformComponent>();
-		if (entity.HasComponent<SpriteRendererComponent>())
-			json["SpriteRendererComponent"] = entity.GetComponent<SpriteRendererComponent>();
-		if (entity.HasComponent<CameraComponent>())
-			json["CameraComponent"] = entity.GetComponent<CameraComponent>();
-		if (entity.HasComponent<ScriptComponent>())
-			json["ScriptComponent"] = entity.GetComponent<ScriptComponent>();
-		if (entity.HasComponent<BoxColliderComponent>())
-			json["BoxColliderComponent"] = entity.GetComponent<BoxColliderComponent>();
-		if (entity.HasComponent<PhysicsBodyComponent>())
-			json["PhysicsBodyComponent"] = entity.GetComponent<PhysicsBodyComponent>();
-		if (entity.HasComponent<PerpixelRendererComponent>())
-			json["PerpixelRendererComponent"] = entity.GetComponent<PerpixelRendererComponent>();
+		for (auto& componentKind : ComponentRegistry::GetAdditiveKinds())
+			componentKind.ToJson(json, entity);
 	}
 
 	void SceneSerializer::DeserializeEntity(const nlohmann::json& json, Entity& entity)
 	{
-		if (json.contains("TransformComponent"))
-			entity.AddComponent<TransformComponent>(json["TransformComponent"]);
-		if (json.contains("SpriteRendererComponent"))
-			entity.AddComponent<SpriteRendererComponent>(json["SpriteRendererComponent"]);
-		if (json.contains("CameraComponent"))
-			entity.AddComponent<CameraComponent>(json["CameraComponent"]);
-		if (json.contains("ScriptComponent"))
-			entity.AddComponent<ScriptComponent>(json["ScriptComponent"]);
-		if (json.contains("BoxColliderComponent"))
-			entity.AddComponent<BoxColliderComponent>(json["BoxColliderComponent"]);
-		if (json.contains("PhysicsBodyComponent"))
-			entity.AddComponent<PhysicsBodyComponent>(json["PhysicsBodyComponent"]);
-		if (json.contains("PerpixelRendererComponent"))
-			entity.AddComponent<PerpixelRendererComponent>(json["PerpixelRendererComponent"]);
+		for (auto& componentKind : ComponentRegistry::GetAdditiveKinds())
+			componentKind.FromJson(json, entity);
 	}
 }

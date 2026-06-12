@@ -32,6 +32,8 @@ namespace Perplex
 		void OnComponentAdded(Component component, Entity entity) override;
 		void OnComponentRemoved(Component component, Entity entity) override;
 
+		void OnEntityDestroyed(Entity entity) override;
+
 		void SetVelocity(UUID entityID, glm::vec2 velocity);
 	private:
 		void AddCollider(Entity entity);

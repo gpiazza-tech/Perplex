@@ -65,7 +65,10 @@ __declspec(dllimport) void _destroy_delay(Scene _scene, Entity _entity, float de
 __declspec(dllimport) void _set_velocity(Scene _scene, Entity _entity, struct Vec2 _velocity);
 __declspec(dllimport) void _to_perpixel(Scene _scene, Entity _entity);
 
+typedef void* Sound;
 __declspec(dllimport) void play_sound(const char* filepath);
+__declspec(dllimport) Sound start_loop(const char* filepath);
+__declspec(dllimport) void end_loop(Sound sound);
 
 #define get_position(e) (*get_position_ptr(scene, e))
 #define get_rotation(e) (*get_rotation_ptr(scene, e))

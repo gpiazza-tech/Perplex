@@ -48,11 +48,46 @@ namespace Perplex
 		case MA_SUCCESS:
 			return;
 		case MA_DOES_NOT_EXIST:
-			HW_INFO("Audio file {} does not exist!", audioFile.string());
+			HW_WARN("Audio file {} does not exist!", audioFile.string());
 			break;
 		default:
-			HW_INFO("Failed to play audio file {}", audioFile.string());
+			HW_WARN("Failed to play audio file {}", audioFile.string());
 			break;
 		}
+	}
+
+	Sound* AudioEngine::StartLoop(const fs::path& audioFile)
+	{
+		Project proj = Application::Get().GetCurrentProject();
+		fs::path absPath = proj.GetAssetsPath() / audioFile;
+
+		ma_sound* sound = new ma_sound{};
+		ma_result initResult;
+		initResult = ma_sound_init_from_file(m_Engine, absPath.string().c_str(), 0, NULL, NULL, sound);
+		switch (initResult)
+		{
+		case MA_SUCCESS:
+			break;
+		case MA_DOES_NOT_EXIST:
+			HW_WARN("Audio file {} does not exist!", audioFile.string());
+			break;
+		default:
+			HW_WARN("Failed to init audio file {}", audioFile.string());
+			break;
+		}
+
+		ma_sound_set_looping(sound, MA_TRUE);
+
+		ma_result startResult = ma_sound_start(sound);
+		if (startResult != MA_SUCCESS)
+			HW_WARN("Failed to start audio file {}", audioFile.string());
+
+		return sound;
+	}
+
+	void AudioEngine::EndLoop(Sound* sound)
+	{
+		ma_sound_uninit(sound);
+		delete sound;
 	}
 }

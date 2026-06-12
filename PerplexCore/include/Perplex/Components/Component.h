@@ -3,13 +3,18 @@
 #include "ComponentLabelers.h"
 #include "ComponentDrawers.h"
 
-// #include <Perplex/Serialization/Json.h>
-
 #include <memory>
 #include <string>
 
 namespace Perplex
 {
+	template<typename T>
+	concept ComponentTemplateConcept = requires(T t, Entity entity)
+	{
+		Draw(t);
+		Label(t);
+	};
+
 	class ComponentConcept
 	{
 	public:
@@ -25,7 +30,7 @@ namespace Perplex
 		virtual bool EqualsType(ComponentConcept& other) = 0;
 	};
 
-	template <typename ComponentT, typename GetStrategy, typename RemoveStrategy>
+	template <ComponentTemplateConcept ComponentT, typename GetStrategy, typename RemoveStrategy>
 	class ComponentRefModel : public ComponentConcept
 	{
 	public:

@@ -7,10 +7,13 @@
 #include <Perplex/Scene/SceneHierarchy.h>
 #include <Perplex/Core/UUID.h>
 #include <Perplex/Core/Timestep.h>
+#include <Perplex/Components/ComponentRegistry.h>
+#include <Perplex/Components/ComponentKind.h>
 
 #include <entt.hpp>
 
 #include <string>
+#include <vector>
 
 namespace Perplex
 {
@@ -67,18 +70,9 @@ namespace Perplex
 
 		// copy main
 		Entity newEntity = ConstructEntity(entity.GetTag(), UUID(), parent);
-		if (entity.HasComponent<TransformComponent>())
-			newEntity.AddComponent<TransformComponent>(entity.GetComponent<TransformComponent>());
-		if (entity.HasComponent<SpriteRendererComponent>())
-			newEntity.AddComponent<SpriteRendererComponent>(entity.GetComponent<SpriteRendererComponent>());
-		if (entity.HasComponent<CameraComponent>())
-			newEntity.AddComponent<CameraComponent>(entity.GetComponent<CameraComponent>());
-		if (entity.HasComponent<ScriptComponent>())
-			newEntity.AddComponent<ScriptComponent>(entity.GetComponent<ScriptComponent>());
-		if (entity.HasComponent<BoxColliderComponent>())
-			newEntity.AddComponent<BoxColliderComponent>(entity.GetComponent<BoxColliderComponent>());
-		if (entity.HasComponent<PhysicsBodyComponent>())
-			newEntity.AddComponent<PhysicsBodyComponent>(entity.GetComponent<PhysicsBodyComponent>());
+
+		for (auto& componentKind : ComponentRegistry::GetAdditiveKinds())
+			componentKind.Copy(entity, newEntity);
 
 		for (SceneSystem* system : m_Systems)
 			system->OnEntityCreated(newEntity);

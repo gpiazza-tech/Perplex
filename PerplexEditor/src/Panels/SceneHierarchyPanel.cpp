@@ -301,7 +301,7 @@ namespace Perplex
 					if (status == DrawComponentStatus::Removed)
 						component.Remove();
 					else
-						i++;
+						i++; 
 				}
 			}
 		} 

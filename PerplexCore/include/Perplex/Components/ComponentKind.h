@@ -2,6 +2,7 @@
 
 #include <Perplex/Components/ComponentLabelers.h>
 #include <Perplex/Components/ComponentDrawers.h>
+#include <Perplex/Components/ComponentSerializers.h>
 #include <Perplex/ImGui/GuiSelection.h>
 #include <Perplex/Scene/Entity.h>
 
@@ -11,6 +12,19 @@
 
 namespace Perplex
 {
+	template<typename T>
+	concept ComponentKindTemplateConcept = requires(T t, Entity entity, nlohmann::json& json)
+	{
+		entity.HasComponent<T>();
+		entity.GetComponent<T>();
+		entity.AddComponent<T>();
+		entity.RemoveComponent<T>();
+		to_json(json, t);
+		from_json(json, t);
+		Draw(t);
+		Label(t);
+	};
+
 	class ComponentKindConcept
 	{
 	public:
@@ -18,14 +32,20 @@ namespace Perplex
 
 		virtual void Add(Entity& entity) = 0;
 		virtual void Add(std::vector<Entity>& entities) = 0;
+		virtual void Copy(Entity& from, Entity& to) = 0;
 		virtual void Remove(Entity& entity) = 0;
 		virtual void Remove(std::vector<Entity>& entities) = 0;
 		virtual bool Has(Entity& entity) = 0;
+
 		virtual void DrawSelection(std::vector<Entity>& entitySelection) = 0;
+
+		virtual void ToJson(nlohmann::json& json, Entity& entity) = 0;
+		virtual void FromJson(const nlohmann::json& json, Entity& entity) = 0;
+
 		virtual std::string Label() = 0;
 	};
 
-	template<typename T>
+	template<ComponentKindTemplateConcept T>
 	class ComponentKindModel : public ComponentKindConcept
 	{
 	public:
@@ -46,6 +66,12 @@ namespace Perplex
 				if (!entity.HasComponent<T>())
 					entity.AddComponent<T>();
 			}
+		}
+
+		void Copy(Entity& from, Entity& to) override
+		{
+			if (from.HasComponent<T>() && !to.HasComponent<T>())
+				to.AddComponent<T>(from.GetComponent<T>());
 		}
 
 		void Remove(Entity& entity) override
@@ -75,6 +101,26 @@ namespace Perplex
 			Draw(component);
 		}
 
+		void ToJson(nlohmann::json& json, Entity& entity) override
+		{
+			T tag{};
+			std::string label = Perplex::Label(tag);
+
+			if (entity.HasComponent<T>())
+				json[label] = entity.GetComponent<T>();
+		}
+
+		void FromJson(const nlohmann::json& json, Entity& entity) override
+		{
+			T tag{};
+			std::string label = Perplex::Label(tag);
+
+			if (json.contains(label) && !entity.HasComponent<T>())
+				entity.AddComponent<T>(json[label]);
+			else if (json.contains(label) && entity.HasComponent<T>())
+				entity.GetComponent<T>() = json[label];
+		}
+
 		std::string Label() override
 		{
 			T tag{};
@@ -91,10 +137,16 @@ namespace Perplex
 
 		void Add(Entity& entity) const { m_Pimpl->Add(entity); }
 		void Add(std::vector<Entity>& entities) const { m_Pimpl->Add(entities); }
+		void Copy(Entity& from, Entity& to) const { m_Pimpl->Copy(from, to); }
 		void Remove(Entity& entity) const { m_Pimpl->Remove(entity); }
 		void Remove(std::vector<Entity>& entities) const { m_Pimpl->Remove(entities); }
 		bool Has(Entity& entity) const { return m_Pimpl->Has(entity); }
+
 		void DrawSelection(std::vector<Entity>& entitySelection) const { m_Pimpl->DrawSelection(entitySelection); }
+
+		void ToJson(nlohmann::json& json, Entity& entity) const { m_Pimpl->ToJson(json, entity); }
+		void FromJson(const nlohmann::json& json, Entity& entity) const { m_Pimpl->FromJson(json, entity); }
+
 		std::string Label() const { return m_Pimpl->Label(); }
 
 	private:

@@ -221,6 +221,21 @@ namespace Perplex
 		}
 	}
 
+	void Simulator::OnEntityDestroyed(Entity entity)
+	{
+		if (m_Scene->IsPlaying() && entity.HasComponent<BoxColliderComponent>())
+		{
+			UUID entityID = entity.GetUUID();
+			HW_CORE_ASSERT(m_BodyMap.contains(entityID),
+				"Simulator does not contain box collider for entity {}!", static_cast<uint64_t>(entityID));
+
+			b2BodyId bodyID = std::bit_cast<b2BodyId>(m_BodyMap.at(entityID));
+
+			m_BodyMap.erase_pair(entityID, std::bit_cast<uint64_t>(bodyID));
+			b2DestroyBody(bodyID);
+		}
+	}
+
 	void Simulator::SetVelocity(UUID entityID, glm::vec2 velocity)
 	{
 		HW_CORE_ASSERT(m_BodyMap.contains(entityID), 

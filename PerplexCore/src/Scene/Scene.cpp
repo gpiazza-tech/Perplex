@@ -2,7 +2,6 @@
 #include <Perplex/Scene/Scene.h>
 
 #include <Perplex/Scene/SceneSystem.h>
-#include <Perplex/Scene/Components.h>
 #include <Perplex/Scene/Entity.h>
 #include <Perplex/Scene/SceneHierarchy.h>
 #include <Perplex/Core/UUID.h>
@@ -72,7 +71,8 @@ namespace Perplex
 		Entity newEntity = ConstructEntity(entity.GetTag(), UUID(), parent);
 
 		for (auto& componentKind : ComponentRegistry::GetAdditiveKinds())
-			componentKind.Copy(entity, newEntity);
+			if (componentKind.Has(entity) && !componentKind.Has(newEntity))
+				componentKind.Copy(entity, newEntity);
 
 		for (SceneSystem* system : m_Systems)
 			system->OnEntityCreated(newEntity);
@@ -134,7 +134,6 @@ namespace Perplex
 				// Actually destroy entity
 				m_Hierarchy.Remove(entityToDestroy.GetUUID());
 
-				m_ComponentsMap.erase(entityToDestroy);
 				m_UUIDMap.erase(entityToDestroy.GetUUID());
 				m_Registry.destroy(entityToDestroy);
 			}

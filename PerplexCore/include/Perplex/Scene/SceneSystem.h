@@ -23,8 +23,8 @@ namespace Perplex
 		virtual void OnEntityCreated(Entity entity);
 		virtual void OnEntityDestroyed(Entity entity);
 
-		virtual void OnComponentAdded(Component component, Entity entity);
-		virtual void OnComponentRemoved(Component component, Entity entity);
+		virtual void OnComponentAdded(const std::string& componentLabel, Entity entity);
+		virtual void OnComponentRemoved(const std::string& componentLabel, Entity entity);
 	protected:
 		Ref<Scene> m_Scene;
 	};

@@ -30,4 +30,7 @@ namespace Perplex
 
 	struct PhysicsBodyComponent;
 	void Draw(GuiSelection<PhysicsBodyComponent> component);
+
+	struct SpriteAnimatorComponent;
+	void Draw(GuiSelection<SpriteAnimatorComponent> component);
 }

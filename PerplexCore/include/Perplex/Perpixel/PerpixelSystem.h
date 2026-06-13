@@ -28,8 +28,8 @@ namespace Perplex
 		void OnSceneUpdate(Timestep ts) override;
 		void OnSceneStop() override;
 
-		void OnComponentAdded(Component component, Entity entity) override;
-		void OnComponentRemoved(Component component, Entity entity) override;
+		void OnComponentAdded(const std::string& componentLabel, Entity entity) override;
+		void OnComponentRemoved(const std::string& componentLabel, Entity entity) override;
 
 		std::vector<pixel>& GetPixels(UUID perpixelEntityID);
 		const std::vector<pixel>& GetPixels(UUID perpixelEntityID) const;

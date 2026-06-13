@@ -126,7 +126,7 @@ namespace Perplex
 
 	void AssetManager::Unload(Asset asset)
 	{
-		s_DataMap[asset] = nullptr;
+		s_DataMap.erase(asset);
 	}
 
 	const std::filesystem::path& AssetManager::GetPath(Asset asset)

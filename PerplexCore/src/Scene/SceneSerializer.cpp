@@ -63,12 +63,14 @@ namespace Perplex
 		json["Tag"] = entity.GetComponent<TagComponent>().Tag;
 
 		for (auto& componentKind : ComponentRegistry::GetAdditiveKinds())
-			componentKind.ToJson(json, entity);
+			if (componentKind.Has(entity))
+				componentKind.ToJson(json, entity);
 	}
 
 	void SceneSerializer::DeserializeEntity(const nlohmann::json& json, Entity& entity)
 	{
 		for (auto& componentKind : ComponentRegistry::GetAdditiveKinds())
-			componentKind.FromJson(json, entity);
+			if (json.contains(componentKind.Label()))
+				componentKind.FromJson(json, entity);
 	}
 }

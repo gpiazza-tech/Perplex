@@ -30,6 +30,7 @@ namespace Perplex
 			ComponentKind{ PerpixelRendererComponent{} },
 			ComponentKind{ BoxColliderComponent{} },
 			ComponentKind{ PhysicsBodyComponent{} },
+			ComponentKind{ SpriteAnimatorComponent{} },
 		};
 
 		return components;

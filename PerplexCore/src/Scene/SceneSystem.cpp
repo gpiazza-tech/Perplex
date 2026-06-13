@@ -3,7 +3,6 @@
 
 #include <Perplex/Core/Timestep.h>
 #include <Perplex/Scene/Entity.h>
-#include <Perplex/Components/Component.h>
 
 namespace Perplex
 {
@@ -14,6 +13,6 @@ namespace Perplex
 	void SceneSystem::OnEntityCreated(Entity entity) {}
 	void SceneSystem::OnEntityDestroyed(Entity entity) {}
 
-	void SceneSystem::OnComponentAdded(Component component, Entity entity) {}
-	void SceneSystem::OnComponentRemoved(Component component, Entity entity) {}
+	void SceneSystem::OnComponentAdded(const std::string& componentLabel, Entity entity) {}
+	void SceneSystem::OnComponentRemoved(const std::string& componentLabel, Entity entity) {}
 }

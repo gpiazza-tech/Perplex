@@ -8,8 +8,8 @@
 #include <Perplex/Scene/Entity.h>
 #include <Perplex/Scene/Components.h>
 #include <Perplex/Perpixel/PerpixelInstance.h>
-#include <Perplex/Components/Component.h>
 #include <Perplex/Scripting/Interpreter.h>
+#include <Perplex/Scripting/ScriptInstance.h>
 #include <c/perplex_pixel.h>
 
 #include <cstdint>
@@ -85,9 +85,10 @@ namespace Perplex
 	}
 
 
-	void PerpixelSystem::OnComponentAdded(Component component, Entity entity)
+	void PerpixelSystem::OnComponentAdded(const std::string& componentLabel, Entity entity)
 	{
-		if (component == Component{ PerpixelRendererComponent {} })
+		PerpixelRendererComponent tag{};
+		if (componentLabel == Label(tag))
 		{
 			UUID entityID = entity.GetUUID();
 			m_PerpixelInstanceMap.insert(std::pair{ entityID, PerpixelInstance{} });
@@ -103,9 +104,10 @@ namespace Perplex
 		}
 	}
 
-	void PerpixelSystem::OnComponentRemoved(Component component, Entity entity)
+	void PerpixelSystem::OnComponentRemoved(const std::string& componentLabel, Entity entity)
 	{
-		if (component == Component{ PerpixelRendererComponent {} })
+		PerpixelRendererComponent tag{};
+		if (componentLabel == Label(tag))
 		{
 			UUID entityID = entity.GetUUID();
 			m_PerpixelInstanceMap.erase(entityID);

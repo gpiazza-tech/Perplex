@@ -2,9 +2,7 @@
 
 #include <Perplex/Core/UUID.h>
 #include <Perplex/Assets/Asset.h>
-#include <Perplex/Scripting/ScriptInstance.h>
 #include <Perplex/Scripting/ScriptData.h>
-#include <Perplex/Perpixel/PerpixelInstance.h>
 #include <Perplex/Perpixel/PerpixelSpawnShape.h>
 #include <pxr/pxr.h>
 
@@ -17,10 +15,21 @@
 #include <string>
 #include <vector>
 
+/*
+*	-----------------------------------------------
+*	A new component type can be added in FIVE STEPS
+*	-----------------------------------------------
+* 
+*	1.	Define Struct	- Define the struct in this file, including default and copy constructors
+*	2.	Label Function	- Create a free function in ComponentLabelers with signature Label(NewComponentType&)
+*	3.	Draw Function	- Create a free function in ComponentDrawers with signature Draw(GuiSelection<NewComponentType>)
+*	4.	Serialization	- Add an entry to ComponentSerializers.h using the PERPLEX_DEFINE_JSON_STRUCT macro
+*	5.	Add to Registry	- Add a ComponentKind entry to the appropriate group in ComponentRegistry.cpp
+* 
+*/
+
 namespace Perplex
 {
-	class SerializedField;
-
 	struct EntityData
 	{
 		UUID ID = 0;
@@ -136,5 +145,13 @@ namespace Perplex
 
 		PhysicsBodyComponent() = default;
 		PhysicsBodyComponent(const PhysicsBodyComponent&) = default;
+	};
+
+	struct SpriteAnimatorComponent
+	{
+		Asset AnimationAsset{};
+
+		SpriteAnimatorComponent() = default;
+		SpriteAnimatorComponent(const SpriteAnimatorComponent&) = default;
 	};
 }

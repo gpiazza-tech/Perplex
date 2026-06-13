@@ -30,4 +30,7 @@ namespace Perplex
 
 	struct PhysicsBodyComponent;
 	std::string Label(PhysicsBodyComponent&);
+
+	struct SpriteAnimatorComponent;
+	std::string Label(SpriteAnimatorComponent&);
 }

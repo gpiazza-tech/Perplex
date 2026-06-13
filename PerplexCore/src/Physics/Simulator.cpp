@@ -8,7 +8,7 @@
 #include <Perplex/Scene/Components.h>
 #include <Perplex/Core/Timestep.h>
 #include <Perplex/Scripting/Interpreter.h>
-#include <Perplex/Components/Component.h>
+#include <Perplex/Scripting/ScriptInstance.h>
 
 #include <glm/fwd.hpp>
 #include <box2d/box2d.h>
@@ -200,15 +200,17 @@ namespace Perplex
 		b2DestroyWorld(WORLD);
 	}
 
-	void Simulator::OnComponentAdded(Component component, Entity entity)
+	void Simulator::OnComponentAdded(const std::string& componentLabel, Entity entity)
 	{
-		if (m_Scene->IsPlaying() && component == Component{BoxColliderComponent{}})
+		BoxColliderComponent tag{};
+		if (m_Scene->IsPlaying() && componentLabel == Label(tag))
 			AddCollider(entity);
 	}
 
-	void Simulator::OnComponentRemoved(Component component, Entity entity)
+	void Simulator::OnComponentRemoved(const std::string& componentLabel, Entity entity)
 	{
-		if (m_Scene->IsPlaying() && component == Component{ BoxColliderComponent{} })
+		BoxColliderComponent tag{};
+		if (m_Scene->IsPlaying() && componentLabel == Label(tag))
 		{
 			UUID entityID = entity.GetUUID();
 			HW_CORE_ASSERT(m_BodyMap.contains(entityID), 

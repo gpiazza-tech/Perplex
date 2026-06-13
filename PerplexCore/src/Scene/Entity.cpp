@@ -9,8 +9,6 @@
 
 #include <imgui.h>
 #include <entt.hpp>
-#include <glm/fwd.hpp>
-#include <nlohmann/json.hpp>
 
 #include <string>
 
@@ -27,7 +25,7 @@ namespace Perplex
 	}
 
 	UUID Entity::GetUUID() { return GetComponent<IDComponent>().ID; }
-	std::string Entity::GetTag() { return GetComponent<TagComponent>().Tag; }
+	std::string Entity::GetTag() { return HasComponent<TagComponent>() ? GetComponent<TagComponent>().Tag : "NULL_TAG"; }
 
 	bool Entity::operator==(const Entity& other) const
 	{

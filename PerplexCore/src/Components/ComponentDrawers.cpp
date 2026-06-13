@@ -22,10 +22,10 @@ namespace Perplex
 	void Draw(GuiSelection<IDComponent> component)
 	{
 		GuiSelection<UUID> ids = PERPLEX_SUBSELECTION(component, UUID, ID);
-		DrawSelection<UUID>(ids, [](UUID& value) 
-			{ 
-				std::string strId = std::to_string(value); 
-				return Draw(strId, "ID", false); 
+		DrawSelection<UUID>(ids, [](UUID& value)
+			{
+				std::string strId = std::to_string(value);
+				return Draw(strId, "ID", false);
 			});
 	}
 
@@ -76,7 +76,7 @@ namespace Perplex
 		DrawSelection(PERPLEX_SUBSELECTION(component, bool, PixelPerfect), "Pixel Perfect");
 
 		GuiSelection<pxr::ScalingMode> scalingMode = PERPLEX_SUBSELECTION(component, pxr::ScalingMode, ScalingMode);
-		DrawSelection<pxr::ScalingMode>(scalingMode, [](pxr::ScalingMode& value) 
+		DrawSelection<pxr::ScalingMode>(scalingMode, [](pxr::ScalingMode& value)
 			{
 				Option scalingModeOptions[] =
 				{
@@ -101,7 +101,7 @@ namespace Perplex
 			for (auto& componentRef : component)
 			{
 				if (componentRef.get().ScriptAsset)
-					componentRef.get().Properties = componentRef.get().ScriptAsset.GetData<ScriptData>()->Properties;  
+					componentRef.get().Properties = componentRef.get().ScriptAsset.GetData<ScriptData>()->Properties;
 				else
 					componentRef.get().Properties.clear();
 			}
@@ -150,7 +150,7 @@ namespace Perplex
 
 			switch (shapeType.GetValue())
 			{
-			case PerpixelShapeType::Circle:  
+			case PerpixelShapeType::Circle:
 				DrawSelection(PERPLEX_SUBSELECTION(component, float, Shape.Info.CircleRadius), "Radius");
 				break;
 			case PerpixelShapeType::Rect:
@@ -179,5 +179,11 @@ namespace Perplex
 		DrawSelection(PERPLEX_SUBSELECTION(component, float, GravityScale), "Gravity Scale");
 		DrawSelection(PERPLEX_SUBSELECTION(component, float, Density), "Density");
 		DrawSelection(PERPLEX_SUBSELECTION(component, float, Friction), "Friction");
+	}
+
+	void Draw(GuiSelection<SpriteAnimatorComponent> component)
+	{
+		GuiSelection<Asset> startSprite = PERPLEX_SUBSELECTION(component, Asset, AnimationAsset);
+		DrawSelection<Asset>(startSprite, [](Asset& value) { return DrawAssetField("Animation Asset", value, AssetType::AnimationAsset); });
 	}
 }

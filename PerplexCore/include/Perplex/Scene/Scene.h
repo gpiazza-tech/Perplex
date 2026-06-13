@@ -15,7 +15,6 @@
 namespace Perplex
 {
 	class Entity;
-	class Component;
 
 	struct DyingEntity
 	{
@@ -72,7 +71,6 @@ namespace Perplex
 		entt::registry m_Registry;
 
 		std::unordered_map<UUID, entt::entity> m_UUIDMap;
-		std::unordered_map<entt::entity, std::vector<Component>> m_ComponentsMap;
 		std::vector<DyingEntity> m_DyingEntities;
 
 		SceneHierarchy m_Hierarchy;

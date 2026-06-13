@@ -34,6 +34,9 @@ namespace Perplex
 	PERPLEX_DEFINE_JSON_STRUCT(PerpixelShape, Info, Type)
 	PERPLEX_DEFINE_JSON_STRUCT(PerpixelRendererComponent, Shape)
 
+	// Sprite Animator
+	PERPLEX_DEFINE_JSON_STRUCT(SpriteAnimatorComponent, AnimationAsset)
+
 	// Misc
 	PERPLEX_DEFINE_JSON_STRUCT(EntityData, ID, Tag)
 	PERPLEX_DEFINE_JSON_STRUCT(EntityNode, ID, Index, ParentID, ChildIDs)

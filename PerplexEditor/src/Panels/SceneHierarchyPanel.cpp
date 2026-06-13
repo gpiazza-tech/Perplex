@@ -15,36 +15,6 @@
 
 namespace Perplex
 {
-	std::vector<Component> GetCommonComponents(const std::vector<Entity>& entities)
-	{
-		const Entity& first = entities.at(0);
-		std::vector<Component> commonComponents = first.GetComponents();
-
-		for (size_t componentIndex{}; componentIndex < commonComponents.size(); componentIndex++)
-		{
-			Component& currentComponent = commonComponents.at(componentIndex);
-
-			// skip first entity
-			for (size_t entityIndex{ 1 }; entityIndex < entities.size(); entityIndex++)
-			{
-				const Entity& currentEntity = entities.at(entityIndex);
-				bool entityHasCurrentCommonComponent = false;
-
-				for (auto& component : currentEntity.GetComponents())
-					if (component == currentComponent)
-						entityHasCurrentCommonComponent = true;
-
-				if (!entityHasCurrentCommonComponent)
-				{
-					commonComponents.erase(commonComponents.begin() + componentIndex);
-					componentIndex--;
-				}
-			}
-		}
-
-		return commonComponents;
-	}
-
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
 		: m_SelectedNodes(0)
 	{
@@ -113,10 +83,12 @@ namespace Perplex
 				{
 					if (ImGui::MenuItem(componentKind.Label().c_str()))
 					{
-						std::vector<Entity> entitySelection;
 						for (auto& id : m_SelectedNodes)
-							entitySelection.emplace_back(m_Context->GetEntity(id));
-						componentKind.Add(entitySelection);
+						{
+							Entity entity = m_Context->GetEntity(id);
+							if (!componentKind.Has(entity))
+								componentKind.Add(entity);
+						}
 
 						ImGui::CloseCurrentPopup();
 					}
@@ -253,67 +225,25 @@ namespace Perplex
 		return SceneHierarchyPanel::DrawComponentStatus::None;
 	}
 
-	SceneHierarchyPanel::DrawComponentStatus SceneHierarchyPanel::DrawComponent(Component& component)
-	{
-		std::string componentLabel = component.Label();
-		bool open = ImGui::TreeNodeEx(componentLabel.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowOverlap, componentLabel.c_str());
-		bool removeComponent = false;
-
-		if (ImGui::BeginPopupContextItem())
-		{
-			if (ImGui::MenuItem("Remove"))
-				removeComponent = true;
-
-			ImGui::EndPopup();
-		}
-
-		if (open)
-		{
-			component.Draw();
-			ImGui::TreePop();
-		}
-
-		if (removeComponent)
-			return SceneHierarchyPanel::DrawComponentStatus::Removed;
-
-		return SceneHierarchyPanel::DrawComponentStatus::None;
-	}
-
 	void SceneHierarchyPanel::DrawComponents(std::vector<Entity>& entitySelection)
 	{
 		using DrawComponentStatus = SceneHierarchyPanel::DrawComponentStatus;
 
-		if (entitySelection.size() == 1)
+		if (entitySelection.size() >= 1)
 		{
-			std::vector<Component>& components = entitySelection.at(0).GetComponents();
-			for (size_t i{}; i < components.size();)
-			{
-				Component& component = components.at(i);
+			for (auto& componentKind : ComponentRegistry::GetBaseKinds())
+				componentKind.DrawSelection(entitySelection);
 
-				if (component == Component(IDComponent{}) || component == Component(TagComponent{}))
-				{
-					component.Draw();
-					i++;
-				}
-				else
-				{
-					DrawComponentStatus status = DrawComponent(component);
-					if (status == DrawComponentStatus::Removed)
-						component.Remove();
-					else
-						i++; 
-				}
-			}
-		} 
-
-		else if (entitySelection.size() > 1)
-		{
 			for (auto& componentKind : ComponentRegistry::GetAdditiveKinds())
 			{
 				DrawComponentStatus status = TryDrawComponentSelection(entitySelection, componentKind);
 
 				if (status == DrawComponentStatus::Removed)
-					componentKind.Remove(entitySelection);
+				{
+					for (auto& entity : entitySelection)
+						if (componentKind.Has(entity))
+							componentKind.Remove(entity);
+				}
 			}
 		}
 	}

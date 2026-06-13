@@ -2,7 +2,6 @@
 
 #include <Perplex/Scene/Entity.h>
 #include <Perplex/Core/Core.h>
-#include <Perplex/ImGui/GuiSelection.h>
 
 #include <vector>
 
@@ -26,8 +25,6 @@ namespace Perplex
 	private:
 		void DrawEntityNode(const EntityNode& node);
 		void DrawComponents(std::vector<Entity>& entitySelection);
-
-		DrawComponentStatus DrawComponent(Component& component);
 	
 		void SetSelectedEntity(UUID entity);
 	private:

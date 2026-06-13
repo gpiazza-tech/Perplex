@@ -3,6 +3,7 @@
 #include "Components.h"
 #include "SceneSystem.h"
 #include <Perplex/Core/Core.h>
+#include <Perplex/Core/TypeID.h>
 #include <Perplex/Scene/Scene.h>
 #include <Perplex/Components/ComponentLabelers.h>
 
@@ -26,7 +27,7 @@ namespace Perplex
 		template<typename T>
 		void RemoveComponent()
 		{
-			HW_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
+			HW_CORE_ASSERT(HasComponent<T>(), "Tried to remove non-existent component type '{0}' on entity '{1}'", Label((T&)(T{})).c_str(), GetTag().c_str());
 
 			entt::entity handle = m_EntityHandle;
 			Scene* scene = m_Scene;
@@ -36,7 +37,7 @@ namespace Perplex
 
 			// OnComponentRemoved callbacks
 			for (SceneSystem* system : scene->m_Systems)
-				system->OnComponentRemoved(Label((T&)(T{})), *this);
+				system->OnComponentRemoved(GetTypeID<T>(), *this);
 		}
 
 		template<typename T, typename ...Args>
@@ -49,7 +50,7 @@ namespace Perplex
 
 			// OnComponentAdded callbacks
 			for (SceneSystem* system : m_Scene->m_Systems)
-				system->OnComponentAdded(Label((T&)(T{})), *this);
+				system->OnComponentAdded(GetTypeID<T>(), *this);
 
 			return component;
 		}
@@ -57,7 +58,7 @@ namespace Perplex
 		template<typename T>
 		T& GetComponent()
 		{
-			HW_CORE_ASSERT(HasComponent<T>(), "Tried to get null component type '{0}' on entity '{1}'", Label((T&)(T{})).c_str(), GetTag().c_str());
+			HW_CORE_ASSERT(HasComponent<T>(), "Tried to get non-existent component type '{0}' on entity '{1}'", Label((T&)(T{})).c_str(), GetTag().c_str());
 			return m_Scene->m_Registry.get<T>(m_EntityHandle);
 		}
 

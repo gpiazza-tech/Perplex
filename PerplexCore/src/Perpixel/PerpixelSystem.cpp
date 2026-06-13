@@ -2,6 +2,7 @@
 #include <Perplex/Perpixel/PerpixelSystem.h>
 
 #include <Perplex/Core/Core.h>
+#include <Perplex/Core/TypeID.h>
 #include <Perplex/Core/Timestep.h>
 #include <Perplex/Core/UUID.h>
 #include <Perplex/Scene/Scene.h>
@@ -15,9 +16,7 @@
 #include <cstdint>
 #include <vector>
 #include <utility>
-#include <optional>
 #include <functional>
-#include <type_traits>
 
 namespace Perplex
 {
@@ -85,10 +84,9 @@ namespace Perplex
 	}
 
 
-	void PerpixelSystem::OnComponentAdded(const std::string& componentLabel, Entity entity)
+	void PerpixelSystem::OnComponentAdded(TypeID componentTypeID, Entity entity)
 	{
-		PerpixelRendererComponent tag{};
-		if (componentLabel == Label(tag))
+		if (componentTypeID == GetTypeID<PerpixelRendererComponent>())
 		{
 			UUID entityID = entity.GetUUID();
 			m_PerpixelInstanceMap.insert(std::pair{ entityID, PerpixelInstance{} });
@@ -104,10 +102,9 @@ namespace Perplex
 		}
 	}
 
-	void PerpixelSystem::OnComponentRemoved(const std::string& componentLabel, Entity entity)
+	void PerpixelSystem::OnComponentRemoved(TypeID componentTypeID, Entity entity)
 	{
-		PerpixelRendererComponent tag{};
-		if (componentLabel == Label(tag))
+		if (componentTypeID == GetTypeID<PerpixelRendererComponent>())
 		{
 			UUID entityID = entity.GetUUID();
 			m_PerpixelInstanceMap.erase(entityID);

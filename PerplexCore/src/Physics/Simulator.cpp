@@ -200,17 +200,15 @@ namespace Perplex
 		b2DestroyWorld(WORLD);
 	}
 
-	void Simulator::OnComponentAdded(const std::string& componentLabel, Entity entity)
+	void Simulator::OnComponentAdded(TypeID componentTypeID, Entity entity)
 	{
-		BoxColliderComponent tag{};
-		if (m_Scene->IsPlaying() && componentLabel == Label(tag))
+		if (m_Scene->IsPlaying() && componentTypeID == GetTypeID<BoxColliderComponent>())
 			AddCollider(entity);
 	}
 
-	void Simulator::OnComponentRemoved(const std::string& componentLabel, Entity entity)
+	void Simulator::OnComponentRemoved(TypeID componentTypeID, Entity entity)
 	{
-		BoxColliderComponent tag{};
-		if (m_Scene->IsPlaying() && componentLabel == Label(tag))
+		if (m_Scene->IsPlaying() && componentTypeID == GetTypeID<BoxColliderComponent>())
 		{
 			UUID entityID = entity.GetUUID();
 			HW_CORE_ASSERT(m_BodyMap.contains(entityID), 

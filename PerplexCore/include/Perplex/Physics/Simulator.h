@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Perplex/Scene/SceneSystem.h>
+#include <Perplex/Core/TypeID.h>
 #include <Perplex/Core/Core.h>
 #include <Perplex/Core/Timestep.h>
 #include <Perplex/Core/UUID.h>
@@ -8,7 +9,6 @@
 
 #include <glm/fwd.hpp>
 
-#include <unordered_map>
 #include <cstdint>
 
 namespace Perplex
@@ -29,8 +29,8 @@ namespace Perplex
 		void OnSceneUpdate(Timestep ts) override;
 		void OnSceneStop() override;
 
-		void OnComponentAdded(const std::string& componentLabel, Entity entity) override;
-		void OnComponentRemoved(const std::string& componentLabel, Entity entity) override;
+		void OnComponentAdded(TypeID componentTypeID, Entity entity) override;
+		void OnComponentRemoved(TypeID componentTypeID, Entity entity) override;
 
 		void OnEntityDestroyed(Entity entity) override;
 

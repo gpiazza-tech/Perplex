@@ -15,6 +15,7 @@ namespace Perplex
 	class Scene;
 	class Entity;
 	class Component;
+	class TypeID;
 
 	void TryCallPerpixelStart(Entity entity, PerpixelInstance& instance);
 	void TryCallPerpixelUpdate(Timestep ts, Entity entity, PerpixelInstance& instance);
@@ -28,8 +29,8 @@ namespace Perplex
 		void OnSceneUpdate(Timestep ts) override;
 		void OnSceneStop() override;
 
-		void OnComponentAdded(const std::string& componentLabel, Entity entity) override;
-		void OnComponentRemoved(const std::string& componentLabel, Entity entity) override;
+		void OnComponentAdded(TypeID componentTypeID, Entity entity) override;
+		void OnComponentRemoved(TypeID componentTypeID, Entity entity) override;
 
 		std::vector<pixel>& GetPixels(UUID perpixelEntityID);
 		const std::vector<pixel>& GetPixels(UUID perpixelEntityID) const;

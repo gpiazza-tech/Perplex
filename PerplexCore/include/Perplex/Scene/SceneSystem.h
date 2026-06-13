@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Perplex/Core/Core.h>
+#include <Perplex/Core/TypeID.h>
 
 namespace Perplex
 {
@@ -23,8 +24,8 @@ namespace Perplex
 		virtual void OnEntityCreated(Entity entity);
 		virtual void OnEntityDestroyed(Entity entity);
 
-		virtual void OnComponentAdded(const std::string& componentLabel, Entity entity);
-		virtual void OnComponentRemoved(const std::string& componentLabel, Entity entity);
+		virtual void OnComponentAdded(TypeID componentTypeID, Entity entity);
+		virtual void OnComponentRemoved(TypeID componentTypeID, Entity entity);
 	protected:
 		Ref<Scene> m_Scene;
 	};

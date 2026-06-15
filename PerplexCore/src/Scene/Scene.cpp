@@ -42,18 +42,12 @@ namespace Perplex
 		Entity entity = ConstructEntity(name, uuid, parent);
 		entity.AddComponent<TransformComponent>();
 
-		for (SceneSystem* system : m_Systems)
-			system->OnEntityCreated(entity);
-
 		return entity;
 	}
 
 	Entity Scene::CreateAbstractEntity(const std::string& name, UUID uuid, UUID parent)
 	{
 		Entity entity = ConstructEntity(name, uuid, parent);
-
-		for (SceneSystem* system : m_Systems)
-			system->OnEntityCreated(entity);
 
 		return entity;
 	}
@@ -73,9 +67,6 @@ namespace Perplex
 		for (auto& componentKind : ComponentRegistry::GetAdditiveKinds())
 			if (componentKind.Has(entity) && !componentKind.Has(newEntity))
 				componentKind.Copy(entity, newEntity);
-
-		for (SceneSystem* system : m_Systems)
-			system->OnEntityCreated(newEntity);
 
 		// copy children
 		for (auto& childID : children)
@@ -127,9 +118,11 @@ namespace Perplex
 				if (!entityToDestroy.HasComponent<IDComponent>())
 					continue;
 
-				// Callback while entity is still valid
+				// Dispatch OnComponentRemoved callbacks
 				for (SceneSystem* system : m_Systems)
-					system->OnEntityDestroyed(entityToDestroy);
+					for (auto& componentKind : ComponentRegistry::GetAllKinds())
+						if (componentKind.Has(entityToDestroy) && componentKind.GetTypeID() == system->GetComponentTypeID())
+							system->OnComponentRemoved(entityToDestroy);
 
 				// Actually destroy entity
 				m_Hierarchy.Remove(entityToDestroy.GetUUID());

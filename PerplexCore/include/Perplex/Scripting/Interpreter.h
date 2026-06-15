@@ -1,12 +1,13 @@
 #pragma once
 
 #include <Perplex/Scene/SceneSystem.h>
+#include <Perplex/Scene/Components.h>
+#include <Perplex/Core/TypeID.h>
 #include <Perplex/Core/UUID.h>
 #include <Perplex/Core/Core.h>
 #include <Perplex/Core/Timestep.h>
 #include <Perplex/Assets/Asset.h>
 
-#include <vector>
 #include <unordered_map>
 
 namespace Perplex
@@ -22,12 +23,14 @@ namespace Perplex
 	public:
 		Interpreter(Ref<Scene> scene);
 
+		TypeID GetComponentTypeID() override { return GetTypeID<ScriptComponent>(); }
+
 		void OnSceneStart() override;
 		void OnSceneUpdate(Timestep ts) override;
 		void OnSceneStop() override;
 
-		void OnEntityCreated(Entity entity) override;
-		void OnEntityDestroyed(Entity entity) override;
+		void OnComponentAdded(Entity entity) override;
+		void OnComponentRemoved(Entity entity) override;
 
 		void OnScriptAssetReimported(Ref<Scene> scene, Asset asset);
 

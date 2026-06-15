@@ -1,6 +1,8 @@
 #pragma once
 
 #include <Perplex/Scene/SceneSystem.h>
+#include <Perplex/Scene/Components.h>
+#include <Perplex/Core/TypeID.h>
 #include <Perplex/Core/TypeID.h>
 #include <Perplex/Core/Core.h>
 #include <Perplex/Core/Timestep.h>
@@ -25,14 +27,14 @@ namespace Perplex
 		Simulator(Ref<Scene> scene);
 		~Simulator();
 
+		TypeID GetComponentTypeID() override { return GetTypeID<BoxColliderComponent>(); }
+
 		void OnSceneStart() override;
 		void OnSceneUpdate(Timestep ts) override;
 		void OnSceneStop() override;
 
-		void OnComponentAdded(TypeID componentTypeID, Entity entity) override;
-		void OnComponentRemoved(TypeID componentTypeID, Entity entity) override;
-
-		void OnEntityDestroyed(Entity entity) override;
+		void OnComponentAdded(Entity entity) override;
+		void OnComponentRemoved(Entity entity) override;
 
 		void SetVelocity(UUID entityID, glm::vec2 velocity);
 	private:

@@ -14,18 +14,17 @@ namespace Perplex
 	class SceneSystem
 	{
 	public:
-		SceneSystem(Ref<Scene> scene) : m_Scene(scene) {}
+		SceneSystem(Ref<Scene> scene) : m_Scene{ scene } {}
 		virtual ~SceneSystem() = default;
+
+		virtual TypeID GetComponentTypeID() = 0;
 
 		virtual void OnSceneStart();
 		virtual void OnSceneUpdate(Timestep ts);
 		virtual void OnSceneStop();
 
-		virtual void OnEntityCreated(Entity entity);
-		virtual void OnEntityDestroyed(Entity entity);
-
-		virtual void OnComponentAdded(TypeID componentTypeID, Entity entity);
-		virtual void OnComponentRemoved(TypeID componentTypeID, Entity entity);
+		virtual void OnComponentAdded(Entity entity);
+		virtual void OnComponentRemoved(Entity entity);
 	protected:
 		Ref<Scene> m_Scene;
 	};

@@ -64,22 +64,6 @@ namespace Perplex
 				InitScriptInstance(entity);
 			}
 		}
-
-		// Call Start
-		{
-			auto view = m_Scene->View<ScriptComponent>();
-			for (auto e : view)
-			{
-				Entity entity{ e, m_Scene.get() };
-
-				auto& sc = view.get<ScriptComponent>(e);
-				TagComponent& tag = entity.GetComponent<TagComponent>();
-				UUID entityID = entity.GetUUID();
-
-				std::unique_ptr<ScriptInstance>& instance = m_ScriptInstanceMap[entityID];
-				instance->TryCall("start");
-			}
-		}
 	}
 
 	void Interpreter::OnSceneUpdate(Timestep ts)
@@ -96,6 +80,12 @@ namespace Perplex
 				UUID entityID = entity.GetUUID();
 
 				std::unique_ptr<ScriptInstance>& instance = m_ScriptInstanceMap.at(entityID);
+
+				if (!instance->Started())
+				{
+					instance->SetStarted(true);
+					instance->TryCall("start");
+				}
 				instance->TryCall("update", ts.GetSeconds());
 			}
 		}
@@ -121,25 +111,18 @@ namespace Perplex
 		}
 	}
 
-	void Interpreter::OnEntityCreated(Entity entity)
+	void Interpreter::OnComponentAdded(Entity entity)
 	{
-		if (entity.HasComponent<ScriptComponent>())
-		{
+		if (m_Scene->IsPlaying() && entity.HasComponent<ScriptComponent>())
 			InitScriptInstance(entity);
-			UUID entityID = entity.GetUUID();
-
-			m_ScriptInstanceMap[entityID]->TryCall("start");
-		}
 	}
 
-	void Interpreter::OnEntityDestroyed(Entity entity)
+	void Interpreter::OnComponentRemoved(Entity entity)
 	{
 		UUID entityID = entity.GetUUID();
 
 		if (m_ScriptInstanceMap.contains(entityID))
-		{
 			m_ScriptInstanceMap.erase(entityID);
-		}
 	}
 
 	void Interpreter::OnScriptAssetReimported(Ref<Scene> scene, Asset asset)

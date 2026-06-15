@@ -12,9 +12,6 @@ namespace Perplex
 	void SceneSystem::OnSceneUpdate(Timestep ts) {}
 	void SceneSystem::OnSceneStop() {}
 
-	void SceneSystem::OnEntityCreated(Entity entity) {}
-	void SceneSystem::OnEntityDestroyed(Entity entity) {}
-
-	void SceneSystem::OnComponentAdded(TypeID componentTypeID, Entity entity) {}
-	void SceneSystem::OnComponentRemoved(TypeID componentTypeID, Entity entity) {}
+	void SceneSystem::OnComponentAdded(Entity entity) {}
+	void SceneSystem::OnComponentRemoved(Entity entity) {}
 }

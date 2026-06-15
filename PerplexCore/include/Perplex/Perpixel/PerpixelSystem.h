@@ -1,6 +1,8 @@
 #pragma once
 
 #include <Perplex/Core/Core.h>
+#include <Perplex/Scene/Components.h>
+#include <Perplex/Core/TypeID.h>
 #include <Perplex/Core/Timestep.h>
 #include <Perplex/Core/UUID.h>
 #include <Perplex/Scene/SceneSystem.h>
@@ -25,12 +27,14 @@ namespace Perplex
 	public:
 		PerpixelSystem(Ref<Scene> scene) : SceneSystem(scene) {}
 
+		TypeID GetComponentTypeID() override { return GetTypeID<PerpixelRendererComponent>(); }
+
 		void OnSceneStart() override;
 		void OnSceneUpdate(Timestep ts) override;
 		void OnSceneStop() override;
 
-		void OnComponentAdded(TypeID componentTypeID, Entity entity) override;
-		void OnComponentRemoved(TypeID componentTypeID, Entity entity) override;
+		void OnComponentAdded(Entity entity) override;
+		void OnComponentRemoved(Entity entity) override;
 
 		std::vector<pixel>& GetPixels(UUID perpixelEntityID);
 		const std::vector<pixel>& GetPixels(UUID perpixelEntityID) const;

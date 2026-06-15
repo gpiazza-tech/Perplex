@@ -58,10 +58,14 @@ namespace Perplex
 		}
 
 		void AddFunction(const ExternalFunction& function);
+
+		bool Started() const { return m_Started; }
+		void SetStarted(bool val) { m_Started = val; }
 	private:
 		CUnit m_Unit{};
 		UUID m_EntityID{ 0 };
 		Scene* m_SceneContext = nullptr;
+		bool m_Started{ false };
 
 		std::vector<ExternalFunction> m_ExternalFunctions = std::vector<ExternalFunction>();
 		std::vector<ScriptProperty> m_Properties = std::vector<ScriptProperty>();

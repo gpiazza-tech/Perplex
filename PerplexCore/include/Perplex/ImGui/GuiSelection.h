@@ -63,6 +63,8 @@ namespace Perplex
 				selectionRef.get() = value;
 		}
 
+		consteval T GetTag() { return T{}; }
+
 		std::vector<std::reference_wrapper<T>>::iterator begin() { return m_Refs.begin(); }
 		std::vector<std::reference_wrapper<T>>::iterator end() { return m_Refs.end(); }
 		std::vector<std::reference_wrapper<T>>::const_iterator begin() const { return m_Refs.begin(); }
@@ -72,4 +74,4 @@ namespace Perplex
 	};
 }
 
-#define PERPLEX_SUBSELECTION(selection, subType, subMember) selection.GetSubSelection<subType>([](auto& obj) -> subType& { return obj.subMember; })
+#define PERPLEX_SUBSELECTION(selection, subMember) selection.GetSubSelection<decltype(selection.GetTag().subMember)>([](auto& obj) -> decltype(selection.GetTag().subMember)& { return obj.subMember; })

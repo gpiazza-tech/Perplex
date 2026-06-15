@@ -72,5 +72,3 @@ namespace Perplex
 		return changed;
 	}
 }
-
-#define PERPLEX_DRAW_SUBSELECTION(selection, subType, subMember) PERPLEX_SUBSELECTION(selection, subType, subMember)

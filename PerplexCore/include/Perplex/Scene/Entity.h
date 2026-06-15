@@ -37,7 +37,8 @@ namespace Perplex
 
 			// OnComponentRemoved callbacks
 			for (SceneSystem* system : scene->m_Systems)
-				system->OnComponentRemoved(GetTypeID<T>(), *this);
+				if (system->GetComponentTypeID() == GetTypeID<T>())
+					system->OnComponentRemoved(*this);
 		}
 
 		template<typename T, typename ...Args>
@@ -50,7 +51,8 @@ namespace Perplex
 
 			// OnComponentAdded callbacks
 			for (SceneSystem* system : m_Scene->m_Systems)
-				system->OnComponentAdded(GetTypeID<T>(), *this);
+				if (system->GetComponentTypeID() == GetTypeID<T>())
+					system->OnComponentAdded(*this);
 
 			return component;
 		}

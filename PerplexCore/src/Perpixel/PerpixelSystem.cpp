@@ -84,31 +84,25 @@ namespace Perplex
 	}
 
 
-	void PerpixelSystem::OnComponentAdded(TypeID componentTypeID, Entity entity)
+	void PerpixelSystem::OnComponentAdded(Entity entity)
 	{
-		if (componentTypeID == GetTypeID<PerpixelRendererComponent>())
-		{
-			UUID entityID = entity.GetUUID();
-			m_PerpixelInstanceMap.insert(std::pair{ entityID, PerpixelInstance{} });
+		UUID entityID = entity.GetUUID();
+		m_PerpixelInstanceMap.insert(std::pair{ entityID, PerpixelInstance{} });
 
-			PerpixelInstance& perpixelInstance = m_PerpixelInstanceMap.at(entityID);
-			PerpixelRendererComponent& perpixelComponent = entity.GetComponent<PerpixelRendererComponent>();
+		PerpixelInstance& perpixelInstance = m_PerpixelInstanceMap.at(entityID);
+		PerpixelRendererComponent& perpixelComponent = entity.GetComponent<PerpixelRendererComponent>();
 
-			perpixelInstance.SetSpawnShape(perpixelComponent.Shape);
-			perpixelInstance.ResetPixels();
+		perpixelInstance.SetSpawnShape(perpixelComponent.Shape);
+		perpixelInstance.ResetPixels();
 
-			if (m_Scene->IsPlaying())
-				TryCallPerpixelStart(entity, perpixelInstance);
-		}
+		if (m_Scene->IsPlaying())
+			TryCallPerpixelStart(entity, perpixelInstance);
 	}
 
-	void PerpixelSystem::OnComponentRemoved(TypeID componentTypeID, Entity entity)
+	void PerpixelSystem::OnComponentRemoved(Entity entity)
 	{
-		if (componentTypeID == GetTypeID<PerpixelRendererComponent>())
-		{
-			UUID entityID = entity.GetUUID();
-			m_PerpixelInstanceMap.erase(entityID);
-		}
+		UUID entityID = entity.GetUUID();
+		m_PerpixelInstanceMap.erase(entityID);
 	}
 
 	std::vector<pixel>& PerpixelSystem::GetPixels(UUID perpixelEntityID)

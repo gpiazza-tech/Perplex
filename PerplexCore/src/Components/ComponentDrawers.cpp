@@ -2,6 +2,7 @@
 #include <Perplex/Components/ComponentDrawers.h>
 
 #include <Perplex/Scene/Components.h>
+#include <Perplex/Core/UUID.h>
 #include <Perplex/Assets/Asset.h>
 #include <Perplex/ImGui/GuiSelection.h>
 #include <Perplex/ImGui/PrimitiveDrawers.h>
@@ -12,7 +13,6 @@
 
 #include <imgui.h>
 #include <glm/fwd.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 #include <string.h>
 #include <string>
@@ -21,7 +21,7 @@ namespace Perplex
 {
 	void Draw(GuiSelection<IDComponent> component)
 	{
-		GuiSelection<UUID> ids = PERPLEX_SUBSELECTION(component, UUID, ID);
+		GuiSelection<UUID> ids = PERPLEX_SUBSELECTION(component, ID);
 		DrawSelection<UUID>(ids, [](UUID& value)
 			{
 				std::string strId = std::to_string(value);
@@ -31,7 +31,7 @@ namespace Perplex
 
 	void Draw(GuiSelection<TagComponent> component)
 	{
-		GuiSelection<std::string> tags = PERPLEX_SUBSELECTION(component, std::string, Tag);
+		GuiSelection<std::string> tags = PERPLEX_SUBSELECTION(component, Tag);
 		DrawSelection(tags, "Tag");
 	}
 
@@ -39,15 +39,15 @@ namespace Perplex
 	{
 		ImVec2 padding = { 1.0f, 1.0f };
 
-		GuiSelection<glm::vec3> position = PERPLEX_SUBSELECTION(component, glm::vec3, Position);
+		GuiSelection<glm::vec3> position = PERPLEX_SUBSELECTION(component, Position);
 		DrawSelection<glm::vec3>(position, [](glm::vec3& value) { DrawVec3Control("Position", value); return true; });
 		ImGui::Dummy(padding);
 
-		GuiSelection<glm::vec3> rotation = PERPLEX_SUBSELECTION(component, glm::vec3, Rotation);
+		GuiSelection<glm::vec3> rotation = PERPLEX_SUBSELECTION(component, Rotation);
 		DrawSelection<glm::vec3>(rotation, [](glm::vec3& value) { DrawVec3Control("Rotation", value); return true; });
 		ImGui::Dummy(padding);
 
-		GuiSelection<glm::vec3> scale = PERPLEX_SUBSELECTION(component, glm::vec3, Scale);
+		GuiSelection<glm::vec3> scale = PERPLEX_SUBSELECTION(component, Scale);
 		DrawSelection<glm::vec3>(scale, [](glm::vec3& value) { DrawVec3Control("Scale", value); return true; });
 		ImGui::Dummy(padding);
 	}
@@ -55,27 +55,27 @@ namespace Perplex
 	void Draw(GuiSelection<SpriteRendererComponent> component)
 	{
 		// Color
-		GuiSelection<Asset> spriteAsset = PERPLEX_SUBSELECTION(component, Asset, SpriteAsset);
+		GuiSelection<Asset> spriteAsset = PERPLEX_SUBSELECTION(component, SpriteAsset);
 		DrawSelection<Asset>(spriteAsset, [](Asset& value) { return DrawAssetField("Sprite", value, AssetType::SpriteAsset); });
 
-		DrawSelection<glm::vec4>(PERPLEX_SUBSELECTION(component, glm::vec4, Color), "Color");
+		DrawSelection<glm::vec4>(PERPLEX_SUBSELECTION(component, Color), "Color");
 
 		// Emission
-		GuiSelection<Asset> emissionAsset = PERPLEX_SUBSELECTION(component, Asset, EmissionSpriteAsset);
+		GuiSelection<Asset> emissionAsset = PERPLEX_SUBSELECTION(component, EmissionSpriteAsset);
 		DrawSelection<Asset>(emissionAsset, [](Asset& value) { return DrawAssetField("Emission Mask", value, AssetType::SpriteAsset); });
 
-		DrawSelection<float>(PERPLEX_SUBSELECTION(component, float, Emission), "Emission");
+		DrawSelection<float>(PERPLEX_SUBSELECTION(component, Emission), "Emission");
 	}
 
 	void Draw(GuiSelection<CameraComponent> component)
 	{
-		DrawSelection(PERPLEX_SUBSELECTION(component, bool, Primary), "Primary");
-		DrawSelection(PERPLEX_SUBSELECTION(component, float, Zoom), "Zoom");
-		DrawSelection(PERPLEX_SUBSELECTION(component, glm::vec4, Background), "Background");
-		DrawSelection(PERPLEX_SUBSELECTION(component, int, PixelsPerUnit), "Pixels Per Unit");
-		DrawSelection(PERPLEX_SUBSELECTION(component, bool, PixelPerfect), "Pixel Perfect");
+		DrawSelection(PERPLEX_SUBSELECTION(component, Primary), "Primary");
+		DrawSelection(PERPLEX_SUBSELECTION(component, Zoom), "Zoom");
+		DrawSelection(PERPLEX_SUBSELECTION(component, Background), "Background");
+		DrawSelection(PERPLEX_SUBSELECTION(component, PixelsPerUnit), "Pixels Per Unit");
+		DrawSelection(PERPLEX_SUBSELECTION(component, PixelPerfect), "Pixel Perfect");
 
-		GuiSelection<pxr::ScalingMode> scalingMode = PERPLEX_SUBSELECTION(component, pxr::ScalingMode, ScalingMode);
+		GuiSelection<pxr::ScalingMode> scalingMode = PERPLEX_SUBSELECTION(component, ScalingMode);
 		DrawSelection<pxr::ScalingMode>(scalingMode, [](pxr::ScalingMode& value)
 			{
 				Option scalingModeOptions[] =
@@ -93,7 +93,7 @@ namespace Perplex
 	{
 		ImGui::PushID(&component);
 
-		GuiSelection<Asset> scriptAsset = PERPLEX_SUBSELECTION(component, Asset, ScriptAsset);
+		GuiSelection<Asset> scriptAsset = PERPLEX_SUBSELECTION(component, ScriptAsset);
 		bool scriptAssetChanged = DrawSelection<Asset>(scriptAsset, [](Asset& value) { return DrawAssetField("Source", value, AssetType::ScriptAsset); });
 
 		if (scriptAssetChanged)
@@ -131,7 +131,7 @@ namespace Perplex
 
 	void Draw(GuiSelection<PerpixelRendererComponent> component)
 	{
-		GuiSelection<PerpixelShapeType> shapeType = PERPLEX_SUBSELECTION(component, PerpixelShapeType, Shape.Type);
+		GuiSelection<PerpixelShapeType> shapeType = PERPLEX_SUBSELECTION(component, Shape.Type);
 		DrawSelection<PerpixelShapeType>(shapeType, [](PerpixelShapeType& value)
 			{
 				Option shapeTypeOptions[] =
@@ -145,16 +145,16 @@ namespace Perplex
 
 		if (shapeType.Synced())
 		{
-			GuiSelection<Asset> colorAsset = PERPLEX_SUBSELECTION(component, Asset, Shape.Info.ColorAsset);
-			GuiSelection<Asset> emissionAsset = PERPLEX_SUBSELECTION(component, Asset, Shape.Info.EmissionAsset);
+			GuiSelection<Asset> colorAsset = PERPLEX_SUBSELECTION(component, Shape.Info.ColorAsset);
+			GuiSelection<Asset> emissionAsset = PERPLEX_SUBSELECTION(component, Shape.Info.EmissionAsset);
 
 			switch (shapeType.GetValue())
 			{
 			case PerpixelShapeType::Circle:
-				DrawSelection(PERPLEX_SUBSELECTION(component, float, Shape.Info.CircleRadius), "Radius");
+				DrawSelection(PERPLEX_SUBSELECTION(component, Shape.Info.CircleRadius), "Radius");
 				break;
 			case PerpixelShapeType::Rect:
-				DrawSelection(PERPLEX_SUBSELECTION(component, glm::vec2, Shape.Info.RectSize), "Size");
+				DrawSelection(PERPLEX_SUBSELECTION(component, Shape.Info.RectSize), "Size");
 				break;
 			case PerpixelShapeType::Sprite:
 				DrawSelection<Asset>(colorAsset, [](Asset& value) { return DrawAssetField("Color Asset", value, AssetType::SpriteAsset); });
@@ -165,25 +165,25 @@ namespace Perplex
 			}
 		}
 
-		DrawSelection(PERPLEX_SUBSELECTION(component, glm::vec4, Shape.Info.Color), "Color");
-		DrawSelection(PERPLEX_SUBSELECTION(component, float, Shape.Info.Emission), "Emission");
+		DrawSelection(PERPLEX_SUBSELECTION(component, Shape.Info.Color), "Color");
+		DrawSelection(PERPLEX_SUBSELECTION(component, Shape.Info.Emission), "Emission");
 	}
 
 	void Draw(GuiSelection<BoxColliderComponent> component)
 	{
-		DrawSelection(PERPLEX_SUBSELECTION(component, glm::vec2, Scale), "Scale");
+		DrawSelection(PERPLEX_SUBSELECTION(component, Scale), "Scale");
 	}
 
 	void Draw(GuiSelection<PhysicsBodyComponent> component)
 	{
-		DrawSelection(PERPLEX_SUBSELECTION(component, float, GravityScale), "Gravity Scale");
-		DrawSelection(PERPLEX_SUBSELECTION(component, float, Density), "Density");
-		DrawSelection(PERPLEX_SUBSELECTION(component, float, Friction), "Friction");
+		DrawSelection(PERPLEX_SUBSELECTION(component, GravityScale), "Gravity Scale");
+		DrawSelection(PERPLEX_SUBSELECTION(component, Density), "Density");
+		DrawSelection(PERPLEX_SUBSELECTION(component, Friction), "Friction");
 	}
 
 	void Draw(GuiSelection<SpriteAnimatorComponent> component)
 	{
-		GuiSelection<Asset> startSprite = PERPLEX_SUBSELECTION(component, Asset, AnimationAsset);
+		GuiSelection<Asset> startSprite = PERPLEX_SUBSELECTION(component, AnimationAsset);
 		DrawSelection<Asset>(startSprite, [](Asset& value) { return DrawAssetField("Animation Asset", value, AssetType::AnimationAsset); });
 	}
 }

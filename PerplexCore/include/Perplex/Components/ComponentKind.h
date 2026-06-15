@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Perplex/Core/TypeID.h>
 #include <Perplex/Components/ComponentLabelers.h>
 #include <Perplex/Components/ComponentDrawers.h>
 #include <Perplex/Components/ComponentSerializers.h>
@@ -30,6 +31,8 @@ namespace Perplex
 	public:
 		virtual std::unique_ptr<ComponentKindConcept> Clone() = 0;
 
+		virtual TypeID GetTypeID() = 0;
+
 		virtual void Add(Entity& entity) = 0;
 		virtual void Copy(Entity& from, Entity& to) = 0;
 		virtual void Remove(Entity& entity) = 0;
@@ -51,6 +54,8 @@ namespace Perplex
 		{
 			return std::make_unique<ComponentKindModel>(*this);
 		}
+
+		TypeID GetTypeID() override { return Perplex::GetTypeID<T>(); }
 
 		void Add(Entity& entity) override
 		{
@@ -112,6 +117,8 @@ namespace Perplex
 		template<typename T>
 		ComponentKind(T tag) : m_Pimpl{ std::make_unique<ComponentKindModel<T>>() } {}
 		ComponentKind(const ComponentKind& other) : m_Pimpl{ other.m_Pimpl->Clone() } {}
+
+		TypeID GetTypeID() const { return m_Pimpl->GetTypeID(); }
 
 		void Add(Entity& entity) const { m_Pimpl->Add(entity); }
 		void Copy(Entity& from, Entity& to) const { m_Pimpl->Copy(from, to); }

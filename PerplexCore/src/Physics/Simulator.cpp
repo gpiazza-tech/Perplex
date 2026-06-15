@@ -200,33 +200,18 @@ namespace Perplex
 		b2DestroyWorld(WORLD);
 	}
 
-	void Simulator::OnComponentAdded(TypeID componentTypeID, Entity entity)
+	void Simulator::OnComponentAdded(Entity entity)
 	{
-		if (m_Scene->IsPlaying() && componentTypeID == GetTypeID<BoxColliderComponent>())
+		if (m_Scene->IsPlaying())
 			AddCollider(entity);
 	}
 
-	void Simulator::OnComponentRemoved(TypeID componentTypeID, Entity entity)
+	void Simulator::OnComponentRemoved(Entity entity)
 	{
-		if (m_Scene->IsPlaying() && componentTypeID == GetTypeID<BoxColliderComponent>())
+		if (m_Scene->IsPlaying())
 		{
 			UUID entityID = entity.GetUUID();
 			HW_CORE_ASSERT(m_BodyMap.contains(entityID), 
-				"Simulator does not contain box collider for entity {}!", static_cast<uint64_t>(entityID));
-
-			b2BodyId bodyID = std::bit_cast<b2BodyId>(m_BodyMap.at(entityID));
-
-			m_BodyMap.erase_pair(entityID, std::bit_cast<uint64_t>(bodyID));
-			b2DestroyBody(bodyID);
-		}
-	}
-
-	void Simulator::OnEntityDestroyed(Entity entity)
-	{
-		if (m_Scene->IsPlaying() && entity.HasComponent<BoxColliderComponent>())
-		{
-			UUID entityID = entity.GetUUID();
-			HW_CORE_ASSERT(m_BodyMap.contains(entityID),
 				"Simulator does not contain box collider for entity {}!", static_cast<uint64_t>(entityID));
 
 			b2BodyId bodyID = std::bit_cast<b2BodyId>(m_BodyMap.at(entityID));

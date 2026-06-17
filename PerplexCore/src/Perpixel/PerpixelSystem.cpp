@@ -7,7 +7,7 @@
 #include <Perplex/Core/UUID.h>
 #include <Perplex/Scene/Scene.h>
 #include <Perplex/Scene/Entity.h>
-#include <Perplex/Scene/Components.h>
+#include <Perplex/Components/Components.h>
 #include <Perplex/Perpixel/PerpixelInstance.h>
 #include <Perplex/Scripting/Interpreter.h>
 #include <Perplex/Scripting/ScriptInstance.h>

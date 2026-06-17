@@ -13,6 +13,11 @@
 #include <imgui_internal.h>
 #include <glm/fwd.hpp>
 
+#include <format>
+#include <climits>
+#include <string>
+#include <vector>
+
 namespace Perplex
 {
 	void DrawType(void* value, PerplexTypes type)
@@ -210,6 +215,34 @@ namespace Perplex
 				}
 			}
 			ImGui::EndDragDropTarget();
+		}
+
+		return changed;
+	}
+
+	bool DrawAssetVector(std::vector<Asset>& vec, const char* label, AssetType assetType)
+	{
+		std::string labelStr{ label };
+		Draw(labelStr, "", false);
+
+		bool changed = false;
+
+		int size = static_cast<int>(vec.size());
+		changed |= Draw(size, "Size", 0, INT_MAX);
+		if (changed && size >= 0)
+			vec.resize(static_cast<size_t>(size));
+
+		if (BeginDropdown("Elements"))
+		{
+			for (size_t i{}; i < vec.size(); ++i)
+			{
+				auto& element = vec.at(i);
+
+				std::string indexStr = std::format("{}", i);
+				changed |= DrawAssetField(indexStr.c_str(), element, assetType);
+			}
+
+			EndDropdown();
 		}
 
 		return changed;

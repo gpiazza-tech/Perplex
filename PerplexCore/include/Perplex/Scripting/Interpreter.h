@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Perplex/Scene/SceneSystem.h>
-#include <Perplex/Scene/Components.h>
+#include <Perplex/Components/Components.h>
 #include <Perplex/Core/TypeID.h>
 #include <Perplex/Core/UUID.h>
 #include <Perplex/Core/Core.h>

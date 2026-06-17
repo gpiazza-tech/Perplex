@@ -5,7 +5,7 @@
 #include <Perplex/Core/Core.h>
 #include <Perplex/Scene/Scene.h>
 #include <Perplex/Scene/Entity.h>
-#include <Perplex/Scene/Components.h>
+#include <Perplex/Components/Components.h>
 #include <Perplex/Core/Timestep.h>
 #include <Perplex/Scripting/Interpreter.h>
 #include <Perplex/Scripting/ScriptInstance.h>

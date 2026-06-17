@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Perplex/Serialization/JsonHelper.h>
-#include <Perplex/Scene/Components.h>
+#include <Perplex/Components/Components.h>
 
 namespace Perplex
 {
@@ -15,6 +15,7 @@ namespace Perplex
 	PERPLEX_DEFINE_JSON_STRUCT(TransformComponent, Position, Rotation, Scale)
 
 	// Sprite Renderer
+	PERPLEX_DEFINE_JSON_STRUCT(Sprite, ColorAsset, EmissionAsset)
 	PERPLEX_DEFINE_JSON_STRUCT(SpriteRendererComponent, SpriteAsset, Color, EmissionSpriteAsset, Emission)
 
 	// Camera
@@ -35,7 +36,7 @@ namespace Perplex
 	PERPLEX_DEFINE_JSON_STRUCT(PerpixelRendererComponent, Shape)
 
 	// Sprite Animator
-	PERPLEX_DEFINE_JSON_STRUCT(SpriteAnimatorComponent, AnimationAsset)
+	PERPLEX_DEFINE_JSON_STRUCT(SpriteAnimatorComponent, Sprites, Speed, PlayOnStart)
 
 	// Misc
 	PERPLEX_DEFINE_JSON_STRUCT(EntityData, ID, Tag)

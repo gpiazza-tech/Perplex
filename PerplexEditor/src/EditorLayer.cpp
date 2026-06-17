@@ -55,16 +55,16 @@ namespace Perplex
 
         m_FrameMS = ts.GetMilliseconds();
 
+        m_ViewportPanel.OnUpdate();
+
         // Resizing
-        if (m_ViewportSize != *((glm::vec2*)&m_ViewportPanelSize))
-        {
+        if (m_ViewportPanel.IsResizing())
             OnResize();
-        }
 
         // Update
         if (m_SceneState == SceneState::Edit)
         {
-            if (m_ViewportFocused) { m_EditorCamera.OnUpdate(ts); }
+            if (m_ViewportPanel.IsFocused()) { m_EditorCamera.OnUpdate(ts); }
             // m_SceneRenderer.RenderEditor(m_ActiveScene, m_EditorCamera);
         }
         else if (m_SceneState == SceneState::Play)
@@ -73,21 +73,8 @@ namespace Perplex
             // m_SceneRenderer.Render(m_ActiveScene);
         }
 
-        /* Entity Selection
-        auto [mx, my] = ImGui::GetMousePos();
-        mx -= m_ViewportBounds[0].x;
-        my -= m_ViewportBounds[0].y;
-        glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
-        my = viewportSize.y - my;
-        int mouseX = (int)mx;
-        int mouseY = (int)my;
-
-        if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
-        {
-            int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
-            m_HoveredEntity = (pixelData == -1) ? Entity() : Entity((entt::entity)pixelData, m_ActiveScene.get());
-        }
-        */
+        glm::vec2 mousePos = m_SceneRenderer.ScreenToWorldPosition(m_ViewportPanel.GetMousePosition());
+        Input::SetMouseWorldPosition({ mousePos.x, mousePos.y });
     }
 
     void EditorLayer::OnImGuiRender()
@@ -115,8 +102,8 @@ namespace Perplex
         m_SceneHierarchyPanel.OnImGuiRender();
         m_ContentBrowserPanel.OnImGuiRender();
         m_PerpixelPanel.OnImGuiRender(m_ActiveScene, m_SceneHierarchyPanel.GetSelectedEntity());
+        m_ViewportPanel.OnImGuiRender(m_SceneRenderer.GetMainFramebufferTexture());
 
-        UI_Viewport();
         UI_Stats();
         UI_Toolbar();
 
@@ -216,7 +203,7 @@ namespace Perplex
             if (ImGui::Button("Load"))
             {
                 Asset sceneAsset = Asset(filepathString);
-                m_ActiveScene = sceneAsset.GetData<Scene>();
+                m_ActiveScene = sceneAsset.LoadData<Scene>();
 
                 OnSceneLoad();
                 ImGui::CloseCurrentPopup();
@@ -224,49 +211,6 @@ namespace Perplex
 
             ImGui::EndPopup();
         }
-    }
-
-    void EditorLayer::UI_Viewport()
-    {
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-        ImGui::Begin("ViewPort");
-        auto viewportOffset = ImGui::GetCursorPos();
-
-        m_ViewportPanelSize = ImGui::GetContentRegionAvail();
-
-        m_ViewportFocused = ImGui::IsWindowFocused();
-        m_ViewportHovered = ImGui::IsWindowHovered();
-        Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
-
-        uint32_t textureID = m_SceneRenderer.GetMainFramebufferTexture();
-        ImGui::Image(textureID, { m_ViewportSize.x, m_ViewportSize.y }, ImVec2(0, 1), ImVec2(1, 0));
-
-        if (ImGui::BeginDragDropTarget())
-        {
-            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
-            {
-                Asset payloadAsset = *(Asset*)payload->Data;
-                UI_Viewport_OnAssetDrop(payloadAsset);
-            }
-            ImGui::EndDragDropTarget();
-        }
-
-        auto windowSize = ImGui::GetWindowSize();
-        ImVec2 minBound = ImGui::GetWindowPos();
-        minBound.x += viewportOffset.x;
-        minBound.y += viewportOffset.y;
-
-        ImVec2 maxBound = { minBound.x + windowSize.x, minBound.y + windowSize.y - viewportOffset.y };
-        m_ViewportBounds[0] = { minBound.x, minBound.y };
-        m_ViewportBounds[1] = { maxBound.x, maxBound.y };
-
-        ImGui::End();
-        ImGui::PopStyleVar();
-    }
-
-    void EditorLayer::UI_Viewport_OnAssetDrop(Asset asset)
-    {
-        HW_CORE_INFO(asset.GetName().string());
     }
 
     void EditorLayer::UI_Stats()
@@ -340,10 +284,9 @@ namespace Perplex
 
     void EditorLayer::OnResize()
     {
-        m_ViewportSize = { m_ViewportPanelSize.x, m_ViewportPanelSize.y };
-
-        m_EditorCamera.OnResize(m_ViewportPanelSize.x, m_ViewportPanelSize.y);
-        m_SceneRenderer.Resize((int)m_ViewportSize.x, (int)m_ViewportSize.y);
+        const glm::vec2& viewportSize = m_ViewportPanel.GetSize();
+        m_EditorCamera.OnResize(viewportSize.x, viewportSize.y);
+        m_SceneRenderer.Resize((int)viewportSize.x, (int)viewportSize.y);
     }
 
     void EditorLayer::OnAssetImported(Asset asset)

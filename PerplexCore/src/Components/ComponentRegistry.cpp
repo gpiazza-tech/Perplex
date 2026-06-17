@@ -2,7 +2,7 @@
 #include <Perplex/Components/ComponentRegistry.h>
 
 #include <Perplex/Components/ComponentKind.h>
-#include <Perplex/Scene/Components.h>
+#include <Perplex/Components/Components.h>
 
 #include <vector>
 

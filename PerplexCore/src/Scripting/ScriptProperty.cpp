@@ -3,7 +3,7 @@
 
 #include <Perplex/Core/PerplexTypes.h>
 #include <Perplex/Assets/Asset.h>
-#include <Perplex/Scene/Components.h>
+#include <Perplex/Components/Components.h>
 #include <Perplex/ImGui/ImGuiUtilities.h>
 #include <Perplex/ImGui/PerplexDrawers.h>
 #include <Perplex/Serialization/JsonHelper.h>

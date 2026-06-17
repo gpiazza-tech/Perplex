@@ -2,7 +2,7 @@
 #include <Perplex/Scene/SceneRenderer.h>
 
 #include <Perplex/Scene/Scene.h>
-#include <Perplex/Scene/Components.h>
+#include <Perplex/Components/Components.h>
 #include <Perplex/Scene/Entity.h>
 #include <Perplex/Debug/Instrumentor.h>
 #include <Perplex/Scene/EditorCamera.h>
@@ -210,6 +210,16 @@ namespace Perplex
 
 		m_Width = width;
 		m_Height = height;
+	}
+
+	glm::vec2 SceneRenderer::ScreenToWorldPosition(const glm::vec2& screenPosition)
+	{
+		glm::vec4 screenPosVec4 = glm::vec4{ screenPosition.x, screenPosition.y, 0.0f, 0.0f };
+
+		// Multiplying converts from world to screen, so dividing converts from screen to world
+		screenPosVec4 = m_Camera.GetProjection() / screenPosVec4;
+
+		return glm::vec2{ screenPosVec4.x, screenPosVec4.y };
 	}
 
 	uint32_t SceneRenderer::GetMainFramebufferTexture()

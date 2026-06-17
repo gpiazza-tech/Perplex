@@ -1,6 +1,8 @@
 #pragma once
 
 #include "GuiSelection.h"
+#include <Perplex/Assets/Asset.h>
+#include <Perplex/Assets/AssetType.h>
 
 #include <glm/fwd.hpp>
 
@@ -8,10 +10,11 @@
 #include <memory>
 #include <vector>
 #include <type_traits>
+#include <format>
 
 namespace Perplex
 {
-	bool Draw(int& value, const char* label = "");
+	bool Draw(int& value, const char* label = "", int min = 0, int max = 0);
 	bool Draw(float& value, const char* label = "");
 	bool Draw(double& value, const char* label = "");
 	bool Draw(bool& value, const char* label = "");
@@ -19,6 +22,11 @@ namespace Perplex
 	bool Draw(glm::vec2& value, const char* label = "");
 	bool Draw(glm::vec3& value, const char* label = "");
 	bool Draw(glm::vec4& value, const char* label = "");
+
+	bool BeginDropdown(const char* label = "");
+	void EndDropdown();
+	void SameLine();
+	void DrawSpace(float space);
 
 	template<typename T, typename Getter, typename Setter>
 	bool Draw(Getter getter, Setter setter, const char* label = "")

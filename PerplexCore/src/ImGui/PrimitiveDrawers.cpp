@@ -14,9 +14,9 @@ namespace Perplex
 	constexpr float min = 0.0f;
 	constexpr float max = 0.0f;
 
-	bool Draw(int& value, const char* label)
+	bool Draw(int& value, const char* label, int min, int max)
 	{
-		return ImGui::DragInt(label, &value);
+		return ImGui::DragInt(label, &value, speed, min, max);
 	}
 
 	bool Draw(float& value, const char* label)
@@ -62,5 +62,25 @@ namespace Perplex
 	bool Draw(glm::vec4& value, const char* label)
 	{
 		return ImGui::DragFloat4(label, &value.x, speed, min, max, format);
+	}
+
+	bool BeginDropdown(const char* label)
+	{
+		return ImGui::TreeNodeEx(label, ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowOverlap, label);
+	}
+
+	void EndDropdown()
+	{
+		ImGui::TreePop();
+	}
+
+	void SameLine()
+	{
+		ImGui::SameLine();
+	}
+
+	void DrawSpace(float space)
+	{
+		ImGui::Dummy(ImVec2{ 0.0f, space });
 	}
 }

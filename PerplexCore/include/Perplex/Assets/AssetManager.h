@@ -20,6 +20,7 @@ namespace Perplex
 		static Asset Get(const std::filesystem::path& path);
 		static const std::filesystem::path& GetPath(Asset asset);
 		static Ref<void> GetData(Asset asset);
+		static Ref<void> LoadData(Asset asset);
 		static AssetType GetType(Asset asset);
 
 		static void SetAssetImportedCallback(const std::function<void(Asset)>& func);

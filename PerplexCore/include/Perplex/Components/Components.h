@@ -30,11 +30,23 @@
 
 namespace Perplex
 {
+	// Utility Structs
+
 	struct EntityData
 	{
 		UUID ID = 0;
 		std::string Tag = "";
 	};
+
+	struct Sprite
+	{
+		Asset ColorAsset;
+		Asset EmissionAsset;
+
+		friend bool operator==(const Sprite& lhs, const Sprite& rhs) { return lhs.ColorAsset == rhs.ColorAsset && lhs.EmissionAsset == rhs.EmissionAsset; }
+	};
+
+	// Components
 
 	struct IDComponent
 	{
@@ -149,7 +161,9 @@ namespace Perplex
 
 	struct SpriteAnimatorComponent
 	{
-		Asset AnimationAsset{};
+		float Speed{ 1.0f };
+		bool PlayOnStart{ true };
+		std::vector<Sprite> Sprites{};
 
 		SpriteAnimatorComponent() = default;
 		SpriteAnimatorComponent(const SpriteAnimatorComponent&) = default;

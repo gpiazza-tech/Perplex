@@ -19,12 +19,12 @@ namespace Perplex
 
 		virtual TypeID GetComponentTypeID() = 0;
 
-		virtual void OnSceneStart();
-		virtual void OnSceneUpdate(Timestep ts);
-		virtual void OnSceneStop();
+		virtual void OnSceneStart() = 0;
+		virtual void OnSceneUpdate(Timestep ts) = 0;
+		virtual void OnSceneStop() = 0;
 
-		virtual void OnComponentAdded(Entity entity);
-		virtual void OnComponentRemoved(Entity entity);
+		virtual void OnComponentAdded(Entity entity) = 0;
+		virtual void OnComponentRemoved(Entity entity) = 0;
 	protected:
 		Ref<Scene> m_Scene;
 	};

@@ -1,7 +1,7 @@
 #include <Perplex/pch.h>
 #include <Perplex/Components/ComponentDrawers.h>
 
-#include <Perplex/Scene/Components.h>
+#include <Perplex/Components/Components.h>
 #include <Perplex/Core/UUID.h>
 #include <Perplex/Assets/Asset.h>
 #include <Perplex/ImGui/GuiSelection.h>
@@ -14,8 +14,8 @@
 #include <imgui.h>
 #include <glm/fwd.hpp>
 
-#include <string.h>
 #include <string>
+#include <format>
 
 namespace Perplex
 {
@@ -183,7 +183,41 @@ namespace Perplex
 
 	void Draw(GuiSelection<SpriteAnimatorComponent> component)
 	{
-		GuiSelection<Asset> startSprite = PERPLEX_SUBSELECTION(component, AnimationAsset);
-		DrawSelection<Asset>(startSprite, [](Asset& value) { return DrawAssetField("Animation Asset", value, AssetType::AnimationAsset); });
+		DrawSelection(PERPLEX_SUBSELECTION(component, Speed), "Speed");
+		DrawSelection(PERPLEX_SUBSELECTION(component, PlayOnStart), "Play On Start");
+
+		DrawSelection<std::vector<Sprite>>(PERPLEX_SUBSELECTION(component, Sprites), [](std::vector<Sprite>& vec)
+			{
+				std::string label{ "Sprites" };
+				Draw(label, "", false);
+
+				bool changed = false;
+
+				int size = static_cast<int>(vec.size());
+				changed |= Draw(size, "Size", 0, INT_MAX);
+				if (changed && size >= 0)
+					vec.resize(static_cast<size_t>(size));
+
+				if (BeginDropdown("Elements"))
+				{
+					for (size_t i{}; i < vec.size(); ++i)
+					{
+						auto& sprite = vec.at(i);
+
+						std::string colorAssetLabel = std::format("Color {}", i + 1);
+						changed |= DrawAssetField(colorAssetLabel.c_str(), sprite.ColorAsset, AssetType::SpriteAsset);
+
+						std::string emissionAssetLabel = std::format("Emission {}", i + 1);
+						changed |= DrawAssetField(emissionAssetLabel.c_str(), sprite.EmissionAsset, AssetType::SpriteAsset);
+
+						DrawSpace(20.0f);
+					}
+
+					EndDropdown();
+				}
+
+				return changed;
+			});
+
 	}
 }

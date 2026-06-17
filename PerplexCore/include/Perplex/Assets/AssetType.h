@@ -11,8 +11,7 @@ namespace Perplex
 		SpriteAsset,
 		ScriptAsset,
 		SceneAsset,
-		PrefabAsset,
-		AnimationAsset
+		PrefabAsset
 	};
 
 	inline AssetType StringToAssetType(const std::string& str)

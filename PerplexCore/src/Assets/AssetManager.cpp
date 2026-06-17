@@ -155,6 +155,19 @@ namespace Perplex
 		return nullptr;
 	}
 
+	Ref<void> AssetManager::LoadData(Asset asset)
+	{
+		try
+		{
+			return Load(asset);
+		}
+		catch (std::exception e)
+		{
+			HW_CORE_ERROR("AssetManager: {0}", e.what());
+		}
+		return nullptr;
+	}
+
 	AssetType AssetManager::GetType(Asset asset)
 	{
 		if (s_TypeMap.find(asset) != s_TypeMap.end())

@@ -1,7 +1,7 @@
 #include <Perplex/pch.h>
 #include <Perplex/Components/ComponentLabelers.h>
 
-#include <Perplex/Scene/Components.h>
+#include <Perplex/Components/Components.h>
 
 #include <string>
 

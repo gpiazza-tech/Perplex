@@ -4,7 +4,7 @@
 #include <Perplex/Scene/EntityNode.h>
 #include <Perplex/Scene/Scene.h>
 #include <Perplex/Scene/SceneHierarchy.h>
-#include <Perplex/Scene/Components.h>
+#include <Perplex/Components/Components.h>
 #include <Perplex/Core/UUID.h>
 
 #include <imgui.h>

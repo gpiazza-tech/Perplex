@@ -1,4 +1,5 @@
 #include "perplex_bool.h"
+#include "perplex_math.h"
 
 // Mouse codes from glfw3.h
 #define MOUSE_BUTTON_1         0
@@ -139,3 +140,5 @@
 #define KEY_MENU               348
 
 __declspec(dllimport) bool key_pressed(int code);
+__declspec(dllimport) float get_mouse_world_pos_x();
+__declspec(dllimport) float get_mouse_world_pos_y();

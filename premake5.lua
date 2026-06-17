@@ -71,7 +71,8 @@ project "PerplexRenderer"
 
     buildoptions
     {
-        "/execution-charset:utf-8"
+        "/execution-charset:utf-8",
+        "/GR-"
     }
 
     filter "system:windows"
@@ -142,7 +143,8 @@ project "PerplexCore"
 
     buildoptions
     {
-        "/execution-charset:utf-8"
+        "/execution-charset:utf-8",
+        "/GR-"
     }
 
     filter "system:windows"
@@ -208,7 +210,8 @@ project "PerplexEditor"
 
     buildoptions
     {
-        "/execution-charset:utf-8"
+        "/execution-charset:utf-8",
+        "/GR-"
     }
 
     pchheader "pch.h"
@@ -281,7 +284,8 @@ project "PerplexRuntime"
 
     buildoptions
     {
-        "/execution-charset:utf-8"
+        "/execution-charset:utf-8",
+        "/GR-"
     }
 
     filter "system:windows"

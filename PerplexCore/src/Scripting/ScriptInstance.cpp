@@ -9,7 +9,7 @@
 #include <Perplex/Core/Project.h>
 #include <Perplex/Scene/Scene.h>
 #include <Perplex/Scene/Entity.h>
-#include <Perplex/Scene/Components.h>
+#include <Perplex/Components/Components.h>
 #include <Perplex/Scripting/Interpreter.h>
 #include <Perplex/Physics/Simulator.h>
 #include <Perplex/Audio/AudioEngine.h>
@@ -21,6 +21,8 @@
 
 namespace Perplex
 {
+	static float get_mouse_world_pos_x() { return Input::GetMouseWorldPosition().first; }
+	static float get_mouse_world_pos_y() { return Input::GetMouseWorldPosition().second; }
 	static glm::vec3* get_position_ptr(Scene* scene, UUID uuid) { return &scene->GetEntity(uuid).GetComponent<TransformComponent>().Position; }
 	static glm::vec3* get_rotation_ptr(Scene* scene, UUID uuid) { return &scene->GetEntity(uuid).GetComponent<TransformComponent>().Rotation; }
 	static glm::vec3* get_scale_ptr(Scene* scene, UUID uuid) { return &scene->GetEntity(uuid).GetComponent<TransformComponent>().Scale; }
@@ -131,6 +133,9 @@ namespace Perplex
 		m_Unit.AddSymbol("this", &m_EntityID);
 
 		// Bind host functions
+		m_Unit.AddSymbol("get_mouse_world_pos_x", get_mouse_world_pos_x);
+		m_Unit.AddSymbol("get_mouse_world_pos_y", get_mouse_world_pos_y);
+
 		m_Unit.AddSymbol("get_position_ptr", get_position_ptr);
 		m_Unit.AddSymbol("get_rotation_ptr", get_rotation_ptr);
 		m_Unit.AddSymbol("get_scale_ptr", get_scale_ptr);

@@ -26,4 +26,6 @@ namespace Perplex
 		Draw(cpy, label);
 		value = cpy;
 	}
+
+	bool DrawAssetVector(std::vector<Asset>& vec, const char* label, AssetType assetType);
 }

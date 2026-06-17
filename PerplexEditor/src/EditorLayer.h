@@ -6,6 +6,7 @@
 #include "Panels/ContentBrowserPanel.h"
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/PerpixelPanel.h"
+#include "Panels/ViewportPanel.h"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
@@ -37,8 +38,6 @@ namespace Perplex
 		void UI_MenuBar();
 		void UI_Popups();
 
-		void UI_Viewport();
-		void UI_Viewport_OnAssetDrop(Asset asset);
 		void UI_Stats();
 		void UI_Toolbar();
 
@@ -57,16 +56,11 @@ namespace Perplex
 		AudioEngine m_AudioEngine{};
 		Ref<Scene> m_ActiveScene{};
 
-		bool m_ViewportFocused = false;
-		bool m_ViewportHovered = false;
-		ImVec2 m_ViewportPanelSize = ImVec2(1.0f, 1.0f);
-		glm::vec2 m_ViewportSize = glm::vec2(1.0f, 1.0f);
-		glm::vec2 m_ViewportBounds[2]{};
-
 		EditorCamera m_EditorCamera{};
 		
 		// Panels
 		Dockspace m_Dockspace{};
+		ViewportPanel m_ViewportPanel{};
 		SceneHierarchyPanel m_SceneHierarchyPanel{};
 		ContentBrowserPanel m_ContentBrowserPanel{};
 		PerpixelPanel m_PerpixelPanel{};

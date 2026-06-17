@@ -15,6 +15,9 @@ namespace Perplex
 	float Input::s_OldMousePosX = 0;
 	float Input::s_OldMousePosY = 0;
 
+	float Input::s_MouseWorldPosX = 0;
+	float Input::s_MouseWorldPosY = 0;
+
 	bool Input::IsKeyPressed(int keycode)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
@@ -27,13 +30,31 @@ namespace Perplex
 		auto state = glfwGetMouseButton(window, button);
 		return state == GLFW_PRESS;
 	}
+
+	std::pair<int, int> Input::GetMousePixelPosition()
+	{
+		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+		double xpos, ypos;
+		glfwGetCursorPos(window, &xpos, &ypos);
+		int width, height;
+		glfwGetWindowSize(window, &width, &height);
+
+		return { static_cast<int>(xpos), height - static_cast<int>(ypos) };
+	}
+
 	std::pair<float, float> Input::GetMousePosition()
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 		double xpos, ypos;
 		glfwGetCursorPos(window, &xpos, &ypos);
+		int width, height;
+		glfwGetWindowSize(window, &width, &height);
 
-		return { (float)xpos, (float)ypos };
+		ypos = height - ypos;
+		xpos = xpos / width * 2.0 - 1.0;
+		ypos = ypos / height * 2.0 - 1.0;
+
+		return { static_cast<float>(xpos), static_cast<float>(ypos) };
 	}
 
 	std::pair<float, float> Input::GetMouseDelta()

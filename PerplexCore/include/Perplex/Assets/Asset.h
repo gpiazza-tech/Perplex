@@ -5,8 +5,11 @@
 #include <Perplex/Core/UUID.h>
 #include <Perplex/Assets/AssetManager.h>
 
+#include <nlohmann/json_fwd.hpp>
+
 #include <filesystem>
 #include <cstdint>
+#include <memory>
 
 namespace Perplex
 {
@@ -32,6 +35,18 @@ namespace Perplex
 		Ref<const T> GetData() const
 		{
 			return std::static_pointer_cast<const T>(AssetManager::GetData(m_Handler));
+		}
+
+		template<typename T>
+		Ref<T> LoadData()
+		{
+			return std::static_pointer_cast<T>(AssetManager::LoadData(m_Handler));
+		}
+
+		template<typename T>
+		Ref<const T> LoadData() const
+		{
+			return std::static_pointer_cast<const T>(AssetManager::LoadData(m_Handler));
 		}
 		
 		operator UUID() const { return m_Handler; };

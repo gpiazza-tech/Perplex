@@ -24,9 +24,10 @@
 #include <Perplex/ImGui/PrimitiveDrawers.h>
 #include <Perplex/ImGui/PerplexDrawers.h>
 
+#include <Perplex/Components/Components.h>
+
 #include <Perplex/Scene/Scene.h>
 #include <Perplex/Scene/Entity.h>
-#include <Perplex/Scene/Components.h>
 #include <Perplex/Scene/SceneSerializer.h>
 #include <Perplex/Scene/EditorCamera.h>
 #include <Perplex/Scene/SceneRenderer.h>

@@ -22,6 +22,7 @@ namespace Perplex
 	bool Draw(glm::vec2& value, const char* label = "");
 	bool Draw(glm::vec3& value, const char* label = "");
 	bool Draw(glm::vec4& value, const char* label = "");
+	bool DrawColor(glm::vec4& value, const char* label = "");
 
 	bool BeginDropdown(const char* label = "");
 	void EndDropdown();

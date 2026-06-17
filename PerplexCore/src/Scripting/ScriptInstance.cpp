@@ -36,6 +36,34 @@ namespace Perplex
 	static Sound* start_loop(const char* filepath) { return AudioEngine::Get().StartLoop(filepath); }
 	static void end_loop(Sound* sound) { return AudioEngine::Get().EndLoop(sound); }
 
+	static float get_sprite_width(Scene* scene, UUID uuid)
+	{
+		Entity entity = scene->GetEntity(uuid);
+		if (!entity || !entity.HasComponent<SpriteRendererComponent>() || !entity.HasComponent<TransformComponent>())
+		{
+			HW_CORE_ERROR("{0} does not have a SpriteComponent or TransformComponent!", entity.GetTag());
+			return 0.0f;
+		}
+
+		Ref<pxr::Sprite> colorSprite = entity.GetComponent<SpriteRendererComponent>().SpriteAsset.GetData<pxr::Sprite>();
+		return (colorSprite ? colorSprite->ScaleFactorX : 1.0f / 16.0f) * entity.GetComponent<TransformComponent>().Scale.x;
+	}
+
+	static float get_sprite_height(Scene* scene, UUID uuid)
+	{
+		Entity entity = scene->GetEntity(uuid);
+		if (!entity || !entity.HasComponent<SpriteRendererComponent>() || !entity.HasComponent<TransformComponent>())
+		{
+			HW_CORE_ERROR("{0} does not have a SpriteComponent or TransformComponent!", entity.GetTag());
+			return 0.0f;
+		}
+
+		Ref<pxr::Sprite> colorSprite = entity.GetComponent<SpriteRendererComponent>().SpriteAsset.GetData<pxr::Sprite>();
+		return (colorSprite ? colorSprite->ScaleFactorY : 1.0f / 16.0f) * entity.GetComponent<TransformComponent>().Scale.y;
+	}
+
+	static glm::vec4* get_color_ptr(Scene* scene, UUID uuid) { return &scene->GetEntity(uuid).GetComponent<SpriteRendererComponent>().Color; }
+
 	static void try_call(Scene* scene, UUID uuid, const char* funcName)
 	{
 		ScriptInstance* instance = scene->GetSystem<Interpreter>().GetInstance(uuid);
@@ -136,6 +164,10 @@ namespace Perplex
 		m_Unit.AddSymbol("get_mouse_world_pos_x", get_mouse_world_pos_x);
 		m_Unit.AddSymbol("get_mouse_world_pos_y", get_mouse_world_pos_y);
 
+		m_Unit.AddSymbol("get_sprite_width", get_sprite_width);
+		m_Unit.AddSymbol("get_sprite_height", get_sprite_height);
+		m_Unit.AddSymbol("get_color_ptr", get_color_ptr);
+
 		m_Unit.AddSymbol("get_position_ptr", get_position_ptr);
 		m_Unit.AddSymbol("get_rotation_ptr", get_rotation_ptr);
 		m_Unit.AddSymbol("get_scale_ptr", get_scale_ptr);
@@ -146,6 +178,7 @@ namespace Perplex
 		m_Unit.AddSymbol("console_error", console_error);
 
 		m_Unit.AddSymbol("key_pressed", Input::IsKeyPressed);
+		m_Unit.AddSymbol("mouse_button_pressed", Input::IsMouseButtonPressed);
 		m_Unit.AddSymbol("degrees", degrees);
 		m_Unit.AddSymbol("radians", radians);
 

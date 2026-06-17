@@ -1,3 +1,5 @@
+#pragma once
+
 #include "perplex_bool.h"
 #include "perplex_math.h"
 
@@ -7,8 +9,30 @@
 #define PROPERTY
 #endif
 
+#ifndef PX_EXTERN
+#define PX_EXTERN __declspec(dllimport)
+#endif
+
 typedef unsigned long long Entity;
 typedef unsigned long long PrefabAsset;
+
+struct Vec4
+{
+	union { float x, r; };
+	union { float y, g; };
+	union { float z, b; };
+	union { float w, a; };
+};
+
+struct Vec4 vec4_create(float x, float y, float z, float w)
+{
+	struct Vec4 vec4;
+	vec4.x = x;
+	vec4.y = y;
+	vec4.z = z;
+	vec4.w = w;
+	return vec4;
+}
 
 struct Vec3
 {
@@ -42,41 +66,49 @@ struct Vec2 vec2_create(float x, float y)
 
 typedef void* Scene;
 
-__declspec(dllimport) Scene scene;
-__declspec(dllimport) Entity this;
+PX_EXTERN Scene scene;
+PX_EXTERN Entity this;
 
-__declspec(dllimport) void console_trace(char* msg);
-__declspec(dllimport) void console_info(char* msg);
-__declspec(dllimport) void console_warn(char* msg);
-__declspec(dllimport) void console_error(char* msg);
+PX_EXTERN float get_sprite_width(Scene _scene, Entity e);
+PX_EXTERN float get_sprite_height(Scene _scene, Entity e);
+PX_EXTERN struct Vec4* get_color_ptr(Scene s, Entity e);
 
-__declspec(dllimport) struct Vec3* get_position_ptr(Scene s, Entity e);
-__declspec(dllimport) struct Vec3* get_rotation_ptr(Scene s, Entity e);
-__declspec(dllimport) struct Vec3* get_scale_ptr(Scene s, Entity e);
+PX_EXTERN void console_trace(char* msg);
+PX_EXTERN void console_info(char* msg);
+PX_EXTERN void console_warn(char* msg);
+PX_EXTERN void console_error(char* msg);
 
-__declspec(dllimport) float degrees(float rad);
-__declspec(dllimport) float radians(float deg);
+PX_EXTERN struct Vec3* get_position_ptr(Scene s, Entity e);
+PX_EXTERN struct Vec3* get_rotation_ptr(Scene s, Entity e);
+PX_EXTERN struct Vec3* get_scale_ptr(Scene s, Entity e);
 
-__declspec(dllimport) void try_call(Scene s, Entity e, char* funcName);
+PX_EXTERN float degrees(float rad);
+PX_EXTERN float radians(float deg);
 
-__declspec(dllimport) Entity _spawn(Scene _scene, PrefabAsset _prefab);
-__declspec(dllimport) void _destroy(Scene _scene, Entity _entity);
-__declspec(dllimport) void _destroy_delay(Scene _scene, Entity _entity, float delay);
-__declspec(dllimport) void _set_velocity(Scene _scene, Entity _entity, struct Vec2 _velocity);
-__declspec(dllimport) void _to_perpixel(Scene _scene, Entity _entity);
+PX_EXTERN void try_call(Scene s, Entity e, char* funcName);
+
+PX_EXTERN Entity _spawn(Scene _scene, PrefabAsset _prefab);
+PX_EXTERN void _destroy(Scene _scene, Entity _entity);
+PX_EXTERN void _destroy_delay(Scene _scene, Entity _entity, float delay);
+PX_EXTERN void _set_velocity(Scene _scene, Entity _entity, struct Vec2 _velocity);
+PX_EXTERN void _to_perpixel(Scene _scene, Entity _entity);
 
 typedef void* Sound;
-__declspec(dllimport) void play_sound(const char* filepath);
-__declspec(dllimport) Sound start_loop(const char* filepath);
-__declspec(dllimport) void end_loop(Sound sound);
+PX_EXTERN void play_sound(const char* filepath);
+PX_EXTERN Sound start_loop(const char* filepath);
+PX_EXTERN void end_loop(Sound sound);
 
 #define get_position(e) (*get_position_ptr(scene, e))
 #define get_rotation(e) (*get_rotation_ptr(scene, e))
 #define get_scale(e) (*get_scale_ptr(scene, e))
 
+#define get_color(e) (*get_color_ptr(scene, e))
+
 #define position (*get_position_ptr(scene, this))
 #define rotation (*get_rotation_ptr(scene, this))
 #define scale (*get_scale_ptr(scene, this))
+
+#define color (*get_color_ptr(scene, this))
 
 #define call(entity, funcName) (try_call(scene, entity, funcName))
 

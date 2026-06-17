@@ -1,3 +1,6 @@
+#pragma once
+
+#include "perplex.h"
 #include "perplex_bool.h"
 #include "perplex_math.h"
 
@@ -139,6 +142,7 @@
 #define KEY_RIGHT_SUPER        347
 #define KEY_MENU               348
 
-__declspec(dllimport) bool key_pressed(int code);
-__declspec(dllimport) float get_mouse_world_pos_x();
-__declspec(dllimport) float get_mouse_world_pos_y();
+PX_EXTERN bool key_pressed(int code);
+PX_EXTERN bool mouse_button_pressed(int code);
+PX_EXTERN float get_mouse_world_pos_x();
+PX_EXTERN float get_mouse_world_pos_y();

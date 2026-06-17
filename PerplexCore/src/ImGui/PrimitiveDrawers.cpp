@@ -64,6 +64,11 @@ namespace Perplex
 		return ImGui::DragFloat4(label, &value.x, speed, min, max, format);
 	}
 
+	bool DrawColor(glm::vec4& value, const char* label)
+	{
+		return ImGui::ColorEdit4(label, &value.r);
+	}
+
 	bool BeginDropdown(const char* label)
 	{
 		return ImGui::TreeNodeEx(label, ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowOverlap, label);

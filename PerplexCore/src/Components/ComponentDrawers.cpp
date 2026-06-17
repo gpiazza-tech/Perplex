@@ -58,7 +58,7 @@ namespace Perplex
 		GuiSelection<Asset> spriteAsset = PERPLEX_SUBSELECTION(component, SpriteAsset);
 		DrawSelection<Asset>(spriteAsset, [](Asset& value) { return DrawAssetField("Sprite", value, AssetType::SpriteAsset); });
 
-		DrawSelection<glm::vec4>(PERPLEX_SUBSELECTION(component, Color), "Color");
+		DrawSelection<glm::vec4>(PERPLEX_SUBSELECTION(component, Color), [](glm::vec4& val) { return DrawColor(val, "Color"); });
 
 		// Emission
 		GuiSelection<Asset> emissionAsset = PERPLEX_SUBSELECTION(component, EmissionSpriteAsset);
@@ -71,7 +71,7 @@ namespace Perplex
 	{
 		DrawSelection(PERPLEX_SUBSELECTION(component, Primary), "Primary");
 		DrawSelection(PERPLEX_SUBSELECTION(component, Zoom), "Zoom");
-		DrawSelection(PERPLEX_SUBSELECTION(component, Background), "Background");
+		DrawSelection<glm::vec4>(PERPLEX_SUBSELECTION(component, Background), [](glm::vec4& val) { return DrawColor(val, "Background"); });
 		DrawSelection(PERPLEX_SUBSELECTION(component, PixelsPerUnit), "Pixels Per Unit");
 		DrawSelection(PERPLEX_SUBSELECTION(component, PixelPerfect), "Pixel Perfect");
 
@@ -109,20 +109,15 @@ namespace Perplex
 
 		ImGui::Dummy(ImVec2(0.0f, 20.0f));
 
-		if (scriptAsset.Size() == 1)
+		if (component.Size() == 1)
 		{
-			Ref<ScriptData> scriptData = scriptAsset.At(0).GetData<ScriptData>();
+			std::vector<ScriptProperty>& properties = component.At(0).Properties;
 
-			if (scriptData)
+			for (auto& property : properties)
 			{
-				std::vector<ScriptProperty>& properties = scriptData->Properties;
-
-				for (auto& property : properties)
-				{
-					ImGui::PushID(property.GetPtr());
-					property.DrawGui();
-					ImGui::PopID();
-				}
+				ImGui::PushID(property.GetPtr());
+				property.DrawGui();
+				ImGui::PopID();
 			}
 		}
 
@@ -165,7 +160,7 @@ namespace Perplex
 			}
 		}
 
-		DrawSelection(PERPLEX_SUBSELECTION(component, Shape.Info.Color), "Color");
+		DrawSelection<glm::vec4>(PERPLEX_SUBSELECTION(component, Shape.Info.Color), [](glm::vec4& val) { return DrawColor(val, "Color"); });
 		DrawSelection(PERPLEX_SUBSELECTION(component, Shape.Info.Emission), "Emission");
 	}
 

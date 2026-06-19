@@ -7,6 +7,7 @@
 #include <Perplex/Components/ComponentDrawers.h>
 #include <Perplex/Components/ComponentKind.h>
 #include <Perplex/Components/ComponentRegistry.h>
+#include <Perplex/Scene/SceneManager.h>
 
 #include <imgui/imgui.h>
 #include <cstdint>
@@ -15,23 +16,15 @@
 
 namespace Perplex
 {
-	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
-		: m_SelectedNodes(0)
-	{
-		SetContext(scene);
-	}
-
-	void SceneHierarchyPanel::SetContext(const Ref<Scene>& context)
-	{
-		m_Context = context;
-		m_SelectedNodes.clear();
-	}
-
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
+		if (SceneManager::Get().JustLoaded())
+			m_SelectedNodes.clear();
+
 		ImGui::Begin("Scene Hierarchy");
 
-		SceneHierarchy& hierarchy = m_Context->GetHierarchy();
+		Ref<Scene> scene = SceneManager::Get().ActiveScene();
+		SceneHierarchy& hierarchy = scene->GetHierarchy();
 
 		// Draw Nodes
 		const std::vector<UUID>& rootEntities = hierarchy.GetRoot().ChildIDs;
@@ -46,14 +39,14 @@ namespace Perplex
 		if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
 		{
 			if (ImGui::MenuItem("Create Entity"))
-				m_Context->CreateEntity("Entity");
+				scene->CreateEntity("Entity");
 			if (ImGui::MenuItem("Create Abstract Entity"))
-				m_Context->CreateAbstractEntity("Abstract Entity");
+				scene->CreateAbstractEntity("Abstract Entity");
 			if (m_CopiedNodes.size() > 0 && ImGui::MenuItem("Paste"))
 			{
 				UUID selectedNode = m_SelectedNodes.empty() ? UUID{ 0 } : m_SelectedNodes[0];
 				for (auto& copiedNode : m_CopiedNodes)
-					m_Context->CopyEntity(m_Context->GetEntity(copiedNode), selectedNode);
+					scene->CopyEntity(scene->GetEntity(copiedNode), selectedNode);
 			}
 
 			ImGui::EndPopup();
@@ -69,7 +62,7 @@ namespace Perplex
 				std::vector<Entity> selection;
 
 				for (auto& node : m_SelectedNodes)
-					selection.emplace_back(m_Context->GetEntity(node));
+					selection.emplace_back(scene->GetEntity(node));
 
 				DrawComponents(selection);
 			}
@@ -85,7 +78,7 @@ namespace Perplex
 					{
 						for (auto& id : m_SelectedNodes)
 						{
-							Entity entity = m_Context->GetEntity(id);
+							Entity entity = scene->GetEntity(id);
 							if (!componentKind.Has(entity))
 								componentKind.Add(entity);
 						}
@@ -116,9 +109,10 @@ namespace Perplex
 
 	void SceneHierarchyPanel::DrawEntityNode(const EntityNode& node)
 	{
-		SceneHierarchy& hierarchy = m_Context->GetHierarchy();
+		Ref<Scene> scene = SceneManager::Get().ActiveScene();
+		SceneHierarchy& hierarchy = scene->GetHierarchy();
 
-		Entity entity = m_Context->GetEntity(node.ID);
+		Entity entity = scene->GetEntity(node.ID);
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 		const std::vector<UUID>& childIDs = node.ChildIDs;
 
@@ -187,7 +181,7 @@ namespace Perplex
 
 		if (deleteEntity)
 		{
-			m_Context->DestroyEntity(entity);
+			scene->DestroyEntity(entity);
 			m_SelectedNodes.clear();
 		}
 	}

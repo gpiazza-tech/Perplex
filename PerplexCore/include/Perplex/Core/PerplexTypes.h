@@ -40,6 +40,8 @@ namespace Perplex
 				return PerplexTypes::Entity;
 			else if (cType == "PrefabAsset")
 				return PerplexTypes::Asset;
+			else if (cType == "SceneAsset")
+				return PerplexTypes::Asset;
 			else 
 				return PerplexTypes::None;
 		}

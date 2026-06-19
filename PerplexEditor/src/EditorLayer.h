@@ -28,7 +28,6 @@ namespace Perplex
 	private:
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 
-		void OnSceneLoad();
 		void OnScenePlay();
 		void OnSceneStop();
 
@@ -52,9 +51,7 @@ namespace Perplex
 		float m_FPS = 0.0f;
 
 		SceneRenderer m_SceneRenderer{ 1, 1, 16 };
-
 		AudioEngine m_AudioEngine{};
-		Ref<Scene> m_ActiveScene{};
 
 		EditorCamera m_EditorCamera{};
 		

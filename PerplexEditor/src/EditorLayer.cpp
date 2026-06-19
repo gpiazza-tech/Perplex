@@ -2,6 +2,7 @@
 #include "EditorLayer.h"
 
 #include <Perplex/Perpixel/PerpixelSystem.h>
+#include <Perplex/Scene/SceneManager.h>
 
 #include <glm/fwd.hpp>
 #include <imgui/imgui.h>
@@ -25,9 +26,7 @@ namespace Perplex
         HW_PROFILE_FUNCTION();
 
         m_Dockspace = Dockspace();
-
         m_EditorCamera = EditorCamera();
-
         m_AssetsPath = Application::Get().GetCurrentProject().GetAssetsPath();
 
         // Set Asset imported callback
@@ -36,10 +35,10 @@ namespace Perplex
         m_PlayIcon = CreateRef<pxr::TextureBuffer>(m_AssetsPath / "textures/play_icon.png");
         m_StopIcon = CreateRef<pxr::TextureBuffer>(m_AssetsPath / "textures/pause_icon.png");
 
-        m_ActiveScene = CreateRef<Scene>();
+        Ref<Scene> emptyScene = CreateRef<Scene>();
 
-        m_ActiveScene->CreateAbstractEntity("Placeholder");
-        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+        emptyScene->CreateAbstractEntity("Placeholder");
+        SceneManager::Get().LoadScene(emptyScene);
 
         ImGuiUtilities::SetGlobalStyles();
     }
@@ -69,26 +68,30 @@ namespace Perplex
         }
         else if (m_SceneState == SceneState::Play)
         {
-            m_ActiveScene->Update(ts);
+            SceneManager::Get().ActiveScene()->Update(ts);
             // m_SceneRenderer.Render(m_ActiveScene);
         }
 
         glm::vec2 mousePos = m_SceneRenderer.ScreenToWorldPosition(m_ViewportPanel.GetMousePosition());
         Input::SetMouseWorldPosition({ mousePos.x, mousePos.y });
+
+        SceneManager::Get().OnUpdateEnd();
     }
 
     void EditorLayer::OnImGuiRender()
     {
         HW_PROFILE_FUNCTION();
 
+        Ref<Scene> activeScene = SceneManager::Get().ActiveScene();
+
         // Scene
         switch (m_SceneState)
         {
         case SceneState::Edit:
-            m_SceneRenderer.RenderEditor(m_ActiveScene, m_EditorCamera);
+            m_SceneRenderer.RenderEditor(activeScene, m_EditorCamera);
             break;
         case SceneState::Play:
-            m_SceneRenderer.Render(m_ActiveScene);
+            m_SceneRenderer.Render(activeScene);
             break;
         default:
             break;
@@ -101,7 +104,7 @@ namespace Perplex
 
         m_SceneHierarchyPanel.OnImGuiRender();
         m_ContentBrowserPanel.OnImGuiRender();
-        m_PerpixelPanel.OnImGuiRender(m_ActiveScene, m_SceneHierarchyPanel.GetSelectedEntity());
+        m_PerpixelPanel.OnImGuiRender(activeScene, m_SceneHierarchyPanel.GetSelectedEntity());
         m_ViewportPanel.OnImGuiRender(m_SceneRenderer.GetMainFramebufferTexture());
 
         UI_Stats();
@@ -179,8 +182,7 @@ namespace Perplex
 
             if (ImGui::Button("Save"))
             {
-                SceneSerializer::Serialize(m_ActiveScene, filepathString);
-
+                SceneManager::Get().SaveScene(filepath);
                 ImGui::CloseCurrentPopup();
             }
 
@@ -203,9 +205,8 @@ namespace Perplex
             if (ImGui::Button("Load"))
             {
                 Asset sceneAsset = Asset(filepathString);
-                m_ActiveScene = sceneAsset.LoadData<Scene>();
+                SceneManager::Get().LoadScene(sceneAsset);
 
-                OnSceneLoad();
                 ImGui::CloseCurrentPopup();
             }
 
@@ -257,21 +258,12 @@ namespace Perplex
         ImGui::PopStyleColor(3);
     }
 
-    void EditorLayer::OnSceneLoad()
-    {
-        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-        OnResize();
-
-        if (m_SceneState == SceneState::Play)
-            OnScenePlay();
-    }
-
     void EditorLayer::OnScenePlay()
     {
         ImGuiUtilities::SetRuntimeStyles();
 
         m_SceneState = SceneState::Play;
-        m_ActiveScene->Start();
+        SceneManager::Get().ActiveScene()->Start();
     }
 
     void EditorLayer::OnSceneStop()
@@ -279,7 +271,7 @@ namespace Perplex
         ImGuiUtilities::SetEditorStyles();
 
         m_SceneState = SceneState::Edit;
-        m_ActiveScene->Stop();
+        SceneManager::Get().ActiveScene()->Stop();
     }
 
     void EditorLayer::OnResize()

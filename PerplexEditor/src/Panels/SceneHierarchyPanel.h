@@ -13,11 +13,6 @@ namespace Perplex
 	class SceneHierarchyPanel
 	{
 	public:
-		SceneHierarchyPanel() = default;
-		SceneHierarchyPanel(const Ref<Scene>& scene);
-
-		void SetContext(const Ref<Scene>& context);
-
 		void OnImGuiRender();
 		UUID GetSelectedEntity();
 	public:
@@ -25,12 +20,11 @@ namespace Perplex
 	private:
 		void DrawEntityNode(const EntityNode& node);
 		void DrawComponents(std::vector<Entity>& entitySelection);
-	
+
 		void SetSelectedEntity(UUID entity);
 	private:
-		Ref<Scene> m_Context;
-		UUID m_HoveredNode = 0;
-		std::vector<UUID> m_SelectedNodes;
-		std::vector<UUID> m_CopiedNodes;
+		UUID m_HoveredNode{};
+		std::vector<UUID> m_SelectedNodes{};
+		std::vector<UUID> m_CopiedNodes{};
 	};
 }

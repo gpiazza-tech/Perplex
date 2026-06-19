@@ -1,6 +1,7 @@
 #include <Perplex/pch.h>
 #include <Perplex/Scene/Scene.h>
 
+#include <Perplex/Core/Core.h>
 #include <Perplex/Scene/SceneSystem.h>
 #include <Perplex/Scene/Entity.h>
 #include <Perplex/Scene/SceneHierarchy.h>

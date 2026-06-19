@@ -15,14 +15,10 @@
 namespace Perplex
 {
 	Entity::Entity(entt::entity handle, Scene* scene)
-		: m_EntityHandle(handle), m_Scene(scene)
-	{
-	}
+		: m_EntityHandle(handle), m_Scene(scene) {}
 
 	Entity::Entity(Scene* scene)
-		: m_EntityHandle(scene->CreateEntity().m_EntityHandle), m_Scene(scene)
-	{
-	}
+		: m_EntityHandle(scene->CreateEntity().m_EntityHandle), m_Scene(scene) {}
 
 	UUID Entity::GetUUID() { return GetComponent<IDComponent>().ID; }
 	std::string Entity::GetTag() { return HasComponent<TagComponent>() ? GetComponent<TagComponent>().Tag : "NULL_TAG"; }

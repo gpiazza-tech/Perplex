@@ -15,6 +15,7 @@
 
 typedef unsigned long long Entity;
 typedef unsigned long long PrefabAsset;
+typedef unsigned long long SceneAsset;
 
 struct Vec4
 {
@@ -97,6 +98,8 @@ typedef void* Sound;
 PX_EXTERN void play_sound(const char* filepath);
 PX_EXTERN Sound start_loop(const char* filepath);
 PX_EXTERN void end_loop(Sound sound);
+
+PX_EXTERN void load_scene(SceneAsset sceneAsset);
 
 #define get_position(e) (*get_position_ptr(scene, e))
 #define get_rotation(e) (*get_rotation_ptr(scene, e))

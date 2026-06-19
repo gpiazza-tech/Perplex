@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ScriptProperty.h"
 #include "CUnit.h"
 #include <Perplex/Core/UUID.h>
+#include <Perplex/Core/Core.h>
 
 #include <string>
 #include <utility>
@@ -64,7 +64,7 @@ namespace Perplex
 	private:
 		CUnit m_Unit{};
 		UUID m_EntityID{ 0 };
-		Scene* m_SceneContext = nullptr;
+		Scene* m_SceneContext{ nullptr };
 		bool m_Started{ false };
 
 		std::vector<ExternalFunction> m_ExternalFunctions = std::vector<ExternalFunction>();

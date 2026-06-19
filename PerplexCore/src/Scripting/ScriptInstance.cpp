@@ -13,6 +13,7 @@
 #include <Perplex/Scripting/Interpreter.h>
 #include <Perplex/Physics/Simulator.h>
 #include <Perplex/Audio/AudioEngine.h>
+#include <Perplex/Scene/SceneManager.h>
 
 #include <glm/glm.hpp>
 #include <glm/fwd.hpp>
@@ -35,6 +36,7 @@ namespace Perplex
 	static void play_sound(const char* filepath) { AudioEngine::Get().PlaySound(filepath); }
 	static Sound* start_loop(const char* filepath) { return AudioEngine::Get().StartLoop(filepath); }
 	static void end_loop(Sound* sound) { return AudioEngine::Get().EndLoop(sound); }
+	static void load_scene(Asset asset) { SceneManager::Get().LoadScene(asset); };
 
 	static float get_sprite_width(Scene* scene, UUID uuid)
 	{
@@ -194,6 +196,8 @@ namespace Perplex
 		m_Unit.AddSymbol("play_sound", play_sound);
 		m_Unit.AddSymbol("start_loop", start_loop);
 		m_Unit.AddSymbol("end_loop", end_loop);
+
+		m_Unit.AddSymbol("load_scene", load_scene);
 
 		for (auto& externalFunctions : m_ExternalFunctions)
 			m_Unit.AddSymbol(externalFunctions.Name.c_str(), externalFunctions.Ptr);

@@ -27,7 +27,7 @@ namespace Perplex
 
 		for (auto entityHandler : scene->m_Registry.view<IDComponent>())
 		{
-			Entity entity = Entity(entityHandler, scene.get());
+			Entity entity = Entity{ entityHandler, scene.get() };
 			nlohmann::json& entityJson = sceneJson["Entities"][entity.GetTag() + " - " + std::to_string(entity.GetUUID())];
 			SerializeEntity(entityJson, entity);
 		}

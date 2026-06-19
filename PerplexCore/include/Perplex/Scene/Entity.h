@@ -29,14 +29,11 @@ namespace Perplex
 		{
 			HW_CORE_ASSERT(HasComponent<T>(), "Tried to remove non-existent component type '{0}' on entity '{1}'", Label((T&)(T{})).c_str(), GetTag().c_str());
 
-			entt::entity handle = m_EntityHandle;
-			Scene* scene = m_Scene;
-
 			// Remove actual component
-			scene->m_Registry.remove<T>(handle);
+			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 
 			// OnComponentRemoved callbacks
-			for (SceneSystem* system : scene->m_Systems)
+			for (SceneSystem* system : m_Scene->m_Systems)
 				if (system->GetComponentTypeID() == GetTypeID<T>())
 					system->OnComponentRemoved(*this);
 		}
@@ -87,6 +84,6 @@ namespace Perplex
 		bool operator!=(const Entity& other) const;
 	private:
 		entt::entity m_EntityHandle{ entt::null };
-		Scene* m_Scene = nullptr;
+		Scene* m_Scene{};
 	};
 }

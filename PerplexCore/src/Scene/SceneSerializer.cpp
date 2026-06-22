@@ -72,7 +72,7 @@ namespace Perplex
 	void SceneSerializer::DeserializeEntity(const nlohmann::json& json, Entity& entity)
 	{
 		for (auto& componentKind : ComponentRegistry::GetAdditiveKinds())
-			if (json.contains(componentKind.Label()))
+			if (json.contains(componentKind.GetTypeName()))
 				componentKind.FromJson(json, entity);
 	}
 }

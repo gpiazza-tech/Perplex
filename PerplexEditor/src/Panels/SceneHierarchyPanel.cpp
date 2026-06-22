@@ -74,7 +74,8 @@ namespace Perplex
 			{
 				for (auto& componentKind : ComponentRegistry::GetAdditiveKinds())
 				{
-					if (ImGui::MenuItem(componentKind.Label().c_str()))
+					std::string componentLabel{ componentKind.GetTypeName() };
+					if (ImGui::MenuItem(componentLabel.c_str()))
 					{
 						for (auto& id : m_SelectedNodes)
 						{
@@ -132,7 +133,7 @@ namespace Perplex
 			m_HoveredNode = node.ID;
 
 		// always selects on left click, selects on right click only when there is no current selection
-		if (hovered && (ImGui::IsMouseReleased(0) || (ImGui::IsMouseReleased(1) && m_SelectedNodes.empty())))
+		if (hovered && (ImGui::IsMouseReleased(ImGuiMouseButton_Left) || (ImGui::IsMouseReleased(ImGuiMouseButton_Right) && m_SelectedNodes.empty())))
 		{
 			if (ImGui::GetIO().KeyCtrl)
 				m_SelectedNodes.emplace_back(node.ID);
@@ -195,7 +196,7 @@ namespace Perplex
 				return SceneHierarchyPanel::DrawComponentStatus::None;
 		}
 
-		std::string componentLabel = kind.Label();
+		std::string componentLabel{ kind.GetTypeName() };
 		bool open = ImGui::TreeNodeEx(componentLabel.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowOverlap, componentLabel.c_str());
 		bool removeComponent = false;
 

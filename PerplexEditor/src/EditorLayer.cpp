@@ -1,8 +1,8 @@
 #include <pch.h>
 #include "EditorLayer.h"
 
-#include <Perplex/Perpixel/PerpixelSystem.h>
 #include <Perplex/Scene/SceneManager.h>
+#include <Perplex/Core/Parser.h>
 
 #include <glm/fwd.hpp>
 #include <imgui/imgui.h>
@@ -133,85 +133,43 @@ namespace Perplex
 
     void EditorLayer::UI_MenuBar()
     {
-        static bool savePopup = false;
-        static bool loadPopup = false;
-
         // MENU BAR
         if (ImGui::BeginMenuBar())
         {
             if (ImGui::BeginMenu("File"))
             {
-                if (ImGui::MenuItem("Exit")) { Application::Get().Close(); }
-                if (ImGui::MenuItem("Save")) { savePopup = true; }
-                if (ImGui::MenuItem("Load")) { loadPopup = true; }
+                if (ImGui::MenuItem("Exit"))
+                {
+                    Application::Get().Close();
+                }
+
+                if (ImGui::MenuItem("Save"))
+                {
+                    static fs::path filepath = m_AssetsPath / "scenes/scene.pxs";
+                    m_SavePopup.Open(filepath.string(), [](const std::string& newStr)
+                        {
+                            SceneManager::Get().SaveScene(fs::path{ newStr });
+                            ImGui::CloseCurrentPopup();
+                        });
+                }
+
+                if (ImGui::MenuItem("Load"))
+                {
+                    static fs::path filepath = m_AssetsPath / "scenes/scene.pxs";
+                    m_LoadPopup.Open(filepath.string(), [](const std::string& newStr) 
+                        {
+                            Asset sceneAsset = Asset(fs::path{ newStr });
+                            SceneManager::Get().LoadScene(sceneAsset);
+                        });
+                }
 
                 ImGui::EndMenu();
             }
             ImGui::EndMenuBar();
         }
 
-        // POPUPS
-        if (savePopup)
-        {
-            ImGui::OpenPopup("Save Scene");
-            savePopup = false;
-        }
-        if (loadPopup)
-        {
-            ImGui::OpenPopup("Load Scene");
-            loadPopup = false;
-        }
-
-        UI_Popups();
-    }
-
-    void EditorLayer::UI_Popups()
-    {
-        if (ImGui::BeginPopupModal("Save Scene"))
-        {
-            static fs::path filepath = m_AssetsPath / "scenes/scene.pxs";
-            std::string filepathString = filepath.string();
-
-            char buffer[64];
-            memset(buffer, 0, sizeof(buffer));
-            strcpy_s(buffer, sizeof(buffer), filepathString.c_str());
-            if (ImGui::InputText("path", buffer, sizeof(buffer)))
-            {
-                filepath = std::string(buffer);
-            }
-
-            if (ImGui::Button("Save"))
-            {
-                SceneManager::Get().SaveScene(filepath);
-                ImGui::CloseCurrentPopup();
-            }
-
-            ImGui::EndPopup();
-        }
-
-        if (ImGui::BeginPopupModal("Load Scene"))
-        {
-            static fs::path filepath = m_AssetsPath / "scenes/scene.pxs";
-            std::string filepathString = filepath.string();
-
-            char buffer[64];
-            memset(buffer, 0, sizeof(buffer));
-            strcpy_s(buffer, sizeof(buffer), filepathString.c_str());
-            if (ImGui::InputText("path", buffer, sizeof(buffer)))
-            {
-                filepath = std::string(buffer);
-            }
-
-            if (ImGui::Button("Load"))
-            {
-                Asset sceneAsset = Asset(filepathString);
-                SceneManager::Get().LoadScene(sceneAsset);
-
-                ImGui::CloseCurrentPopup();
-            }
-
-            ImGui::EndPopup();
-        }
+        m_SavePopup.Update();
+        m_LoadPopup.Update();
     }
 
     void EditorLayer::UI_Stats()

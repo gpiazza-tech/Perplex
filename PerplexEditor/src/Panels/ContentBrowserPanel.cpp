@@ -2,6 +2,7 @@
 #include "ContentBrowserPanel.h"
 
 #include <Perplex/Perplex.h>
+#include <Perplex/Platform/SystemUtils.h>
 #include <pxr/pxr.h>
 
 #include <imgui/imgui.h>
@@ -15,7 +16,7 @@ namespace Perplex
 	namespace fs = std::filesystem;
 
 	ContentBrowserPanel::ContentBrowserPanel()
-		: m_AssetsPath(Application::Get().GetCurrentProject().GetAssetsPath()), m_CurrentDirectory(m_AssetsPath)
+		: m_AssetsPath(Application::Get().GetCurrentProject().GetAssetsPath()), m_CurrentDirectory(m_AssetsPath), m_RenameFilePopup{ "Rename File" }
 	{
 		m_DirectoryIcon = CreateRef<pxr::TextureBuffer>(m_AssetsPath / "textures/folder_icon.png");
 		m_FileIcon = CreateRef<pxr::TextureBuffer>(m_AssetsPath / "textures/file_icon.png");
@@ -40,7 +41,37 @@ namespace Perplex
 			ImGui::EndDragDropTarget();
 		}
 
-		if (m_CurrentDirectory != std::filesystem::path(m_AssetsPath))
+		// Popup Menu
+		if (ImGui::BeginPopupContextWindow("Global Popup Menu", ImGuiPopupPositionPolicy_ComboBox | ImGuiPopupFlags_NoOpenOverItems))
+		{
+			if (ImGui::MenuItem("Open in File Explorer"))
+				OpenFilesystemGui(NativePath(m_CurrentDirectory));
+
+			if (ImGui::BeginMenu("Create"))
+			{
+				const Project& project = Application::Get().GetCurrentProject();
+				fs::path templateFiles = project.EngineRes("template_files");
+
+				for (auto& directoryEntry : fs::directory_iterator{ templateFiles })
+				{
+					if (directoryEntry.is_directory())
+						continue;
+
+					fs::path path = directoryEntry.path();
+					std::string fileName = path.stem().string();
+
+					if (ImGui::MenuItem(fileName.c_str()))
+						fs::copy_file(path, m_CurrentDirectory / path.filename());
+				}
+
+				ImGui::EndMenu();
+			}
+
+			ImGui::EndPopup();
+		}
+
+		// Back arrow
+		if (m_CurrentDirectory != fs::path(m_AssetsPath))
 		{
 			ImTextureRef arrowTextureRef = ImTextureRef(m_BackArrowIcon->GetID());
 
@@ -50,6 +81,7 @@ namespace Perplex
 			}
 		}
 
+		// File browser
 		float iconSize = 100.0f;
 		float padding = 10.0f;
 		float cellSize = iconSize + padding;
@@ -63,8 +95,9 @@ namespace Perplex
 		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
 		{
 			if (directoryEntry.path().extension() == ".meta") continue;
+			const fs::path& path = directoryEntry.path();
+			ImGui::PushID(path.string().c_str());
 
-			const auto& path = directoryEntry.path();
 			auto relativePath = std::filesystem::relative(path, m_AssetsPath);
 			std::string filenameString = relativePath.filename().string();
 
@@ -83,12 +116,28 @@ namespace Perplex
 
 			ImGui::PopStyleColor();
 
+			// Directory Popup Menu
+			if (ImGui::BeginPopupContextItem("Directory Popup Menu", ImGuiPopupPositionPolicy_ComboBox))
+			{
+				if (ImGui::MenuItem("Rename"))
+					m_RenameFilePopup.Open(path.stem().string(), [path](const std::string& newStr) 
+						{ 
+							fs::path newPath{ path.parent_path() / std::string{ newStr + path.extension().string() } };
+							std::filesystem::rename(path, newPath);
+						});
+
+				ImGui::EndPopup();
+			}
+
+			// Open when double clicked
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
 				if (directoryEntry.is_directory())
 					m_CurrentDirectory /= path.filename();
 				else
 				{
+					// WINDOWS ONLY
+
 					std::string command = "start " + path.string();
 					std::system(command.c_str());
 				}
@@ -96,7 +145,10 @@ namespace Perplex
 			ImGui::TextWrapped(filenameString.c_str());
 
 			ImGui::NextColumn();
+			ImGui::PopID();
 		}
+
+		m_RenameFilePopup.Update();
 
 		ImGui::Columns(1);
 

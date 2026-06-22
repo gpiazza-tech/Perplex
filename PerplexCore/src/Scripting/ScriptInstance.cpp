@@ -20,6 +20,8 @@
 
 #include <string>
 
+#define COMPONENT_REMOVER_SYMBOL(x) m_Unit.AddSymbol("Remove"#x, +[](Scene* scene, UUID uuid) { scene->GetEntity(uuid).RemoveComponent<x>(); })
+
 namespace Perplex
 {
 	static float get_mouse_world_pos_x() { return Input::GetMouseWorldPosition().first; }
@@ -27,16 +29,7 @@ namespace Perplex
 	static glm::vec3* get_position_ptr(Scene* scene, UUID uuid) { return &scene->GetEntity(uuid).GetComponent<TransformComponent>().Position; }
 	static glm::vec3* get_rotation_ptr(Scene* scene, UUID uuid) { return &scene->GetEntity(uuid).GetComponent<TransformComponent>().Rotation; }
 	static glm::vec3* get_scale_ptr(Scene* scene, UUID uuid) { return &scene->GetEntity(uuid).GetComponent<TransformComponent>().Scale; }
-	static void console_trace(const char* msg) { HW_TRACE(msg); }
-	static void console_info(const char* msg) { HW_INFO(msg); }
-	static void console_warn(const char* msg) { HW_WARN(msg); }
-	static void console_error(const char* msg) { HW_ERROR(msg); }
-	static float degrees(float rad) { return glm::degrees(rad); }
-	static float radians(float deg) { return glm::radians(deg); }
 	static void play_sound(const char* filepath) { AudioEngine::Get().PlaySound(filepath); }
-	static Sound* start_loop(const char* filepath) { return AudioEngine::Get().StartLoop(filepath); }
-	static void end_loop(Sound* sound) { return AudioEngine::Get().EndLoop(sound); }
-	static void load_scene(Asset asset) { SceneManager::Get().LoadScene(asset); };
 
 	static float get_sprite_width(Scene* scene, UUID uuid)
 	{
@@ -95,20 +88,9 @@ namespace Perplex
 		return static_cast<long long>(newEntityID);
 	}
 
-	static void _destroy(Scene* scene, UUID entity)
-	{
-		scene->DestroyEntity(scene->GetEntity(entity));
-	}
-
-	static void _destroy_delay(Scene* scene, UUID entity, float delay)
-	{
-		scene->DestroyEntity(scene->GetEntity(entity), delay);
-	}
-
-	static void _set_velocity(Scene* scene, UUID entity, glm::vec2 velocity)
-	{
-		scene->GetSystem<Simulator>().SetVelocity(entity, velocity);
-	}
+	static void _destroy(Scene* scene, UUID entity) { scene->DestroyEntity(scene->GetEntity(entity)); }
+	static void _destroy_delay(Scene* scene, UUID entity, float delay) { scene->DestroyEntity(scene->GetEntity(entity), delay); }
+	static void _set_velocity(Scene* scene, UUID entity, glm::vec2 velocity) { scene->GetSystem<Simulator>().SetVelocity(entity, velocity); }
 
 	static void _to_perpixel(Scene* scene, UUID entityID)
 	{
@@ -174,15 +156,15 @@ namespace Perplex
 		m_Unit.AddSymbol("get_rotation_ptr", get_rotation_ptr);
 		m_Unit.AddSymbol("get_scale_ptr", get_scale_ptr);
 
-		m_Unit.AddSymbol("console_trace", console_trace);
-		m_Unit.AddSymbol("console_info", console_info);
-		m_Unit.AddSymbol("console_warn", console_warn);
-		m_Unit.AddSymbol("console_error", console_error);
+		m_Unit.AddSymbol("console_trace", +[](const char* msg) { HW_TRACE(msg); });
+		m_Unit.AddSymbol("console_info", +[](const char* msg) { HW_INFO(msg); });
+		m_Unit.AddSymbol("console_warn", +[](const char* msg) { HW_WARN(msg); });
+		m_Unit.AddSymbol("console_error", +[](const char* msg) { HW_ERROR(msg); });
 
 		m_Unit.AddSymbol("key_pressed", Input::IsKeyPressed);
 		m_Unit.AddSymbol("mouse_button_pressed", Input::IsMouseButtonPressed);
-		m_Unit.AddSymbol("degrees", degrees);
-		m_Unit.AddSymbol("radians", radians);
+		m_Unit.AddSymbol("degrees", +[](float rad) { return glm::degrees(rad); });
+		m_Unit.AddSymbol("radians", +[](float deg) { return glm::radians(deg); });
 
 		m_Unit.AddSymbol("try_call", try_call);
 
@@ -193,11 +175,13 @@ namespace Perplex
 
 		m_Unit.AddSymbol("_to_perpixel", _to_perpixel);
 
-		m_Unit.AddSymbol("play_sound", play_sound);
-		m_Unit.AddSymbol("start_loop", start_loop);
-		m_Unit.AddSymbol("end_loop", end_loop);
+		m_Unit.AddSymbol("play_sound", +[](const char* filepath) { AudioEngine::Get().PlaySound(filepath); });
+		m_Unit.AddSymbol("start_loop", +[](const char* filepath) { return AudioEngine::Get().StartLoop(filepath); });
+		m_Unit.AddSymbol("end_loop", +[](Sound* sound) { return AudioEngine::Get().EndLoop(sound); });
 
-		m_Unit.AddSymbol("load_scene", load_scene);
+		m_Unit.AddSymbol("load_scene", +[](Asset asset) { SceneManager::Get().LoadScene(asset); });
+
+		COMPONENT_REMOVER_SYMBOL(TransformComponent);
 
 		for (auto& externalFunctions : m_ExternalFunctions)
 			m_Unit.AddSymbol(externalFunctions.Name.c_str(), externalFunctions.Ptr);

@@ -7,6 +7,7 @@
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/PerpixelPanel.h"
 #include "Panels/ViewportPanel.h"
+#include <Perplex/ImGui/StringPopup.h>
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
@@ -35,7 +36,6 @@ namespace Perplex
 
 		// UI Panels
 		void UI_MenuBar();
-		void UI_Popups();
 
 		void UI_Stats();
 		void UI_Toolbar();
@@ -61,6 +61,9 @@ namespace Perplex
 		SceneHierarchyPanel m_SceneHierarchyPanel{};
 		ContentBrowserPanel m_ContentBrowserPanel{};
 		PerpixelPanel m_PerpixelPanel{};
+
+		StringPopup m_SavePopup{ "Save Scene" };
+		StringPopup m_LoadPopup{ "Load Scene" };
 
 		enum class SceneState
 		{

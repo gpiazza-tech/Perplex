@@ -39,7 +39,7 @@ namespace Perplex
 	PERPLEX_DEFINE_JSON_STRUCT(SpriteAnimatorComponent, Sprites, Speed, PlayOnStart)
 
 	// Text Renderer
-	PERPLEX_DEFINE_JSON_STRUCT(TextComponent, FontAsset, Text, Color, Emission)
+	PERPLEX_DEFINE_JSON_STRUCT(TextComponent, FontAsset, Text, Color, Emission, HorizontalAlignment, VerticalAlignment, HorizontalSpacing, VerticalSpacing)
 
 	// Misc
 	PERPLEX_DEFINE_JSON_STRUCT(EntityData, ID, Tag)

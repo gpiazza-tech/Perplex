@@ -10,9 +10,13 @@
 #include <Perplex/Assets/Asset.h>
 #include <Perplex/Perpixel/PerpixelSystem.h>
 #include <Perplex/Text/FontData.h>
+#include <Perplex/Text/Alignment.h>
+#include <Perplex/Parsing/Parser.h>
 #include <c/perplex_math.h>
 
 #include <glm/glm.hpp>
+
+#include <string_view>
 
 namespace Perplex
 {
@@ -231,16 +235,34 @@ namespace Perplex
 		{
 			Ref<const FontData> fontData = text.FontAsset.GetData<FontData>();
 
-			glm::vec3 currentPos{ tc.Position };
+			glm::vec3 curser{ tc.Position };
+			float newLinePosX{ tc.Position.x };
+			std::vector<std::string_view> lines = ParseLines(text.Text);
 
-			for (char c : text.Text)
+			for (const auto& line : lines)
 			{
-				const FontGlyph& glyph = fontData->Glyphs.at(c);
-				glm::vec3 glyphPos{ currentPos.x + glyph.OffsetX / 16.0f, currentPos.y + glyph.OffsetY / 16.0f, currentPos.y };
+				float lineWidth{};
+				for (size_t i{ 1 }; i < line.length(); ++i)
+					lineWidth += fontData->Glyphs.at(line.at(i)).Stride / 16.0f + text.HorizontalSpacing;
 
-				pxr::Renderer::DrawQuad(glyphPos, tc.Scale, glyph.Sprite, glyph.Sprite, text.Color, text.Emission, true);
+				// Alignment
+				if (text.HorizontalAlignment == HorizontalAlignment::Center)
+					curser.x -= lineWidth / 2.0f;
+				else if (text.HorizontalAlignment == HorizontalAlignment::Right)
+					curser.x -= lineWidth;
 
-				currentPos.x += glyph.Stride / 16.0f;
+				// Render line
+				for (char c : line)
+				{
+					const FontGlyph& glyphToRender = fontData->Glyphs.at(c);
+					glm::vec3 glyphPos{ curser.x + glyphToRender.OffsetX / 16.0f, curser.y + glyphToRender.OffsetY / 16.0f, curser.y };
+					pxr::Renderer::DrawQuad(glyphPos, tc.Scale, glyphToRender.Sprite, glyphToRender.Sprite, text.Color, text.Emission, true);
+					curser.x += glyphToRender.Stride / 16.0f + text.HorizontalSpacing;
+				}
+
+				// Setup next line
+				curser.x = newLinePosX;
+				curser.y = curser.y - fontData->LineHeight / 16.0f - text.VerticalSpacing;
 			}
 		}
 	}

@@ -226,5 +226,37 @@ namespace Perplex
 
 		DrawSelection<glm::vec4>(PERPLEX_SUBSELECTION(component, Color), [](glm::vec4& val) { return DrawColor(val, "Color"); });
 		DrawSelection<float>(PERPLEX_SUBSELECTION(component, Emission), "Emission");
+
+		DrawSpace(20.0f);
+
+		GuiSelection<HorizontalAlignment> horizontalAlignment = PERPLEX_SUBSELECTION(component, HorizontalAlignment);
+		DrawSelection<HorizontalAlignment>(horizontalAlignment, [](HorizontalAlignment& value)
+			{
+				Option alignmentOptions[] =
+				{
+					{ "Left", (int)HorizontalAlignment::Left },
+					{ "Center", (int)HorizontalAlignment::Center },
+					{ "Right", (int)HorizontalAlignment::Right },
+				};
+				return DrawOptions("Horizontal Alignment", (int&)value, alignmentOptions, 3);
+			});
+
+		/* Vertical Alignment not implemented
+		
+		GuiSelection<VerticalAlignment> verticalAlignment = PERPLEX_SUBSELECTION(component, VerticalAlignment);
+		DrawSelection<VerticalAlignment>(verticalAlignment, [](VerticalAlignment& value)
+			{
+				Option alignmentOptions[] =
+				{
+					{ "Top", (int)VerticalAlignment::Top },
+					{ "Middle", (int)VerticalAlignment::Middle },
+					{ "Bottom", (int)VerticalAlignment::Bottom },
+				};
+				return DrawOptions("Vertical Alignment", (int&)value, alignmentOptions, 3);
+			});
+		*/
+
+		DrawSelection<float>(PERPLEX_SUBSELECTION(component, HorizontalSpacing), "Horizontal Spacing");
+		DrawSelection<float>(PERPLEX_SUBSELECTION(component, VerticalSpacing), "Vertical Spacing");
 	}
 }

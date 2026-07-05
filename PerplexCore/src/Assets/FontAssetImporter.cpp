@@ -20,7 +20,8 @@ namespace Perplex
 
 		const BDFInfo& bdfInfo = bdfInfoOpt.value();
 		Ref<FontData> fontData = CreateRef<FontData>();
-		
+		fontData->LineHeight = bdfInfo.Header.FontBoundingBox.Height;
+
 		for (const auto& bdfGlyph : bdfInfo.Glyphs)
 		{
 			if (bdfGlyph.GlyphBuffer.GetWidth() > 0 && bdfGlyph.GlyphBuffer.GetHeight() > 0)

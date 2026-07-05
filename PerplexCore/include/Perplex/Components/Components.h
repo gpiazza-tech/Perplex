@@ -4,6 +4,7 @@
 #include <Perplex/Assets/Asset.h>
 #include <Perplex/Scripting/ScriptData.h>
 #include <Perplex/Perpixel/PerpixelSpawnShape.h>
+#include <Perplex/Text/Alignment.h>
 #include <pxr/pxr.h>
 
 #include <glm/glm.hpp>
@@ -174,6 +175,11 @@ namespace Perplex
 		std::string Text{};
 		glm::vec4 Color = glm::vec4{ 1.0f };
 		float Emission = 0.0f;
+
+		HorizontalAlignment HorizontalAlignment{};
+		VerticalAlignment VerticalAlignment{};
+		float HorizontalSpacing{};
+		float VerticalSpacing{};
 
 		TextComponent() = default;
 		TextComponent(const TextComponent&) = default;

@@ -16,6 +16,7 @@ namespace Perplex
 
 	struct FontData
 	{
+		int LineHeight{};
 		std::unordered_map<char, FontGlyph> Glyphs{};
 	};
 }

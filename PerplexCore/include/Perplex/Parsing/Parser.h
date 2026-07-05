@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace Perplex
 {
@@ -31,6 +32,11 @@ namespace Perplex
 		}
 	}
 
+	inline constexpr std::string_view FirstLine(std::string_view str)
+	{
+		return str.substr(0, str.find('\n'));
+	}
+
 	inline bool IsUppercase(char c)
 	{
 		return c >= 'A' && c <= 'Z';
@@ -51,6 +57,21 @@ namespace Perplex
 	inline void ToHumanCase(std::string& str)
 	{
 		// ReplaceAll(str, "ns", "NS");
+	}
+
+	inline std::vector<std::string_view> ParseLines(std::string_view string)
+	{
+		std::vector<std::string_view> lines{};
+
+		while (string.find('\n') != std::string_view::npos)
+		{
+			lines.emplace_back(FirstLine(string));
+			string = string.substr(string.find('\n') + 1, string.length());
+		}
+
+		// last line
+		lines.emplace_back(FirstLine(string));
+		return lines;
 	}
 
 	template<typename T>

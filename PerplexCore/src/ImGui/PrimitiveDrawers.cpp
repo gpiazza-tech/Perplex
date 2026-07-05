@@ -69,6 +69,12 @@ namespace Perplex
 		return ImGui::ColorEdit4(label, &value.r);
 	}
 
+	bool DrawMultilineText(std::string& value, const char* label, float height)
+	{
+		ImVec2 size{ ImGui::GetContentRegionAvail().x - 50.0f, height };
+		return ImGui::InputTextMultiline(label, &value, size);
+	}
+
 	bool BeginDropdown(const char* label)
 	{
 		return ImGui::TreeNodeEx(label, ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowOverlap, label);

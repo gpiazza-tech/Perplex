@@ -10,6 +10,7 @@
 #include <Perplex/Assets/ScriptAssetImporter.h>
 #include <Perplex/Assets/SceneAssetImporter.h>
 #include <Perplex/Assets/PrefabAssetImporter.h>
+#include <Perplex/Assets/FontAssetImporter.h>
 
 #include <Perplex/Core/Application.h>
 #include <Perplex/Core/Project.h>
@@ -44,6 +45,7 @@ namespace Perplex
 		s_Importers.push_back(std::make_unique<ScriptAssetImporter>());
 		s_Importers.push_back(std::make_unique<SceneAssetImporter>());
 		s_Importers.push_back(std::make_unique<PrefabAssetImporter>());
+		s_Importers.push_back(std::make_unique<FontAssetImporter>());
 
 		// Loop over all asset files in project
 		for (const auto& entry : fs::recursive_directory_iterator(s_AssetsPath))
@@ -189,9 +191,9 @@ namespace Perplex
 	{
 		// If there is only 1 reference, it must be owned by the 
 		// AssetManager, so we can safely unload the resource.
-		if (s_DataMap[asset].use_count() == 1)
-		{
-			Unload(asset);
-		}
+		//if (s_DataMap[asset].use_count() == 1)
+		//{
+		//	Unload(asset);
+		//}
 	}
 }

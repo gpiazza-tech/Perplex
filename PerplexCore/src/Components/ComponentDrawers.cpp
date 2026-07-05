@@ -215,4 +215,16 @@ namespace Perplex
 			});
 
 	}
+
+	void Draw(GuiSelection<TextComponent> component)
+	{
+		GuiSelection<Asset> spriteAsset = PERPLEX_SUBSELECTION(component, FontAsset);
+		DrawSelection<Asset>(spriteAsset, [](Asset& value) { return DrawAssetField("Font Asset", value, AssetType::FontAsset); });
+		
+		GuiSelection<std::string> text = PERPLEX_SUBSELECTION(component, Text);
+		DrawSelection<std::string>(text, [](std::string& value) { return DrawMultilineText(value, "Text", 50.0f); });
+
+		DrawSelection<glm::vec4>(PERPLEX_SUBSELECTION(component, Color), [](glm::vec4& val) { return DrawColor(val, "Color"); });
+		DrawSelection<float>(PERPLEX_SUBSELECTION(component, Emission), "Emission");
+	}
 }

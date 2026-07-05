@@ -17,14 +17,13 @@
 
 /*
 *	-----------------------------------------------
-*	A new component type can be added in FIVE STEPS
+*	A new component type can be added in FOUR STEPS
 *	-----------------------------------------------
 * 
 *	1.	Define Struct	- Define the struct in this file, including default and copy constructors
-*	2.	Label Function	- Create a free function in ComponentLabelers with signature Label(NewComponentType&)
-*	3.	Draw Function	- Create a free function in ComponentDrawers with signature Draw(GuiSelection<NewComponentType>)
-*	4.	Serialization	- Add an entry to ComponentSerializers.h using the PERPLEX_DEFINE_JSON_STRUCT macro
-*	5.	Add to Registry	- Add a ComponentKind entry to the appropriate group in ComponentRegistry.cpp
+*	2.	Draw Function	- Create a free function in ComponentDrawers with signature Draw(GuiSelection<NewComponentType>)
+*	3.	Serialization	- Add an entry to ComponentSerializers.h using the PERPLEX_DEFINE_JSON_STRUCT macro
+*	4.	Add to Registry	- Add a ComponentKind entry to the appropriate group in ComponentRegistry.cpp
 * 
 */
 
@@ -167,5 +166,16 @@ namespace Perplex
 
 		SpriteAnimatorComponent() = default;
 		SpriteAnimatorComponent(const SpriteAnimatorComponent&) = default;
+	};
+
+	struct TextComponent
+	{
+		Asset FontAsset{};
+		std::string Text{};
+		glm::vec4 Color = glm::vec4{ 1.0f };
+		float Emission = 0.0f;
+
+		TextComponent() = default;
+		TextComponent(const TextComponent&) = default;
 	};
 }

@@ -27,7 +27,7 @@ namespace Perplex
 		style.FrameRounding = 3.0f;
 		style.Colors[ImGuiCol_Text] = pop;
 		style.Colors[ImGuiCol_TextDisabled] = pop;
-		style.Colors[ImGuiCol_TextSelectedBg] = pop;
+		style.Colors[ImGuiCol_TextSelectedBg] = Multiply(light, 2.0f);
 		style.Colors[ImGuiCol_WindowBg] = dark;
 		style.Colors[ImGuiCol_PopupBg] = dark;
 		style.Colors[ImGuiCol_Border] = light;

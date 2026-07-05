@@ -23,6 +23,7 @@ namespace Perplex
 	bool Draw(glm::vec3& value, const char* label = "");
 	bool Draw(glm::vec4& value, const char* label = "");
 	bool DrawColor(glm::vec4& value, const char* label = "");
+	bool DrawMultilineText(std::string& value, const char* label, float height);
 
 	bool BeginDropdown(const char* label = "");
 	void EndDropdown();

@@ -33,4 +33,7 @@ namespace Perplex
 
 	struct SpriteAnimatorComponent;
 	void Draw(GuiSelection<SpriteAnimatorComponent> component);
+
+	struct TextComponent;
+	void Draw(GuiSelection<TextComponent>);
 }

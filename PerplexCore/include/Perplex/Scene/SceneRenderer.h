@@ -26,6 +26,7 @@ namespace Perplex
 
 		void RenderSprite(const SpriteRendererComponent& src, const TransformComponent& tc);
 		void RenderPerpixel(Entity entity);
+		void RenderText(Entity entity);
 
 		void Resize(int width, int height);
 

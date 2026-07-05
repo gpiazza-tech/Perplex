@@ -2,13 +2,10 @@
 #include "EditorLayer.h"
 
 #include <Perplex/Scene/SceneManager.h>
-#include <Perplex/Core/Parser.h>
 
 #include <glm/fwd.hpp>
 #include <imgui/imgui.h>
 
-#include <string.h>
-#include <cstdint>
 #include <filesystem>
 #include <string>
 

@@ -1,6 +1,6 @@
 #include <Perplex/pch.h>
 #include <Perplex/Platform/SystemUtils.h>
-#include <Perplex/Core/Parser.h>
+#include <Perplex/Parsing/Parser.h>
 
 #include <filesystem>
 #include <string>

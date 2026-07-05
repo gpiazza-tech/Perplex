@@ -38,6 +38,9 @@ namespace Perplex
 	// Sprite Animator
 	PERPLEX_DEFINE_JSON_STRUCT(SpriteAnimatorComponent, Sprites, Speed, PlayOnStart)
 
+	// Text Renderer
+	PERPLEX_DEFINE_JSON_STRUCT(TextComponent, FontAsset, Text, Color, Emission)
+
 	// Misc
 	PERPLEX_DEFINE_JSON_STRUCT(EntityData, ID, Tag)
 	PERPLEX_DEFINE_JSON_STRUCT(EntityNode, ID, Index, ParentID, ChildIDs)

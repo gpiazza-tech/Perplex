@@ -5,7 +5,7 @@
 #include <Perplex/Core/Core.h>
 #include <Perplex/Core/TypeID.h>
 #include <Perplex/Scene/Scene.h>
-#include <Perplex/Components/ComponentLabelers.h>
+#include <Perplex/Parsing/Parser.h>
 
 #include <entt.hpp>
 #include <cstdint>
@@ -27,7 +27,7 @@ namespace Perplex
 		template<typename T>
 		void RemoveComponent()
 		{
-			HW_CORE_ASSERT(HasComponent<T>(), "Tried to remove non-existent component type '{0}' on entity '{1}'", Label((T&)(T{})).c_str(), GetTag().c_str());
+			HW_CORE_ASSERT(HasComponent<T>(), "Tried to remove non-existent component type '{0}' on entity '{1}'", GetTypeName<T>(), GetTag().c_str());
 
 			// Remove actual component
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
@@ -41,7 +41,7 @@ namespace Perplex
 		template<typename T, typename ...Args>
 		T& AddComponent(Args&& ...args)
 		{
-			HW_CORE_ASSERT(!HasComponent<T>(), "Entity '{0}' already contains component type '{1}'", GetTag().c_str(), Label((T&)(T{})).c_str());
+			HW_CORE_ASSERT(!HasComponent<T>(), "Entity '{0}' already contains component type '{1}'", GetTag().c_str(), GetTypeName<T>());
 
 			// Add actual component
 			T& component = m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
@@ -57,7 +57,7 @@ namespace Perplex
 		template<typename T>
 		T& GetComponent()
 		{
-			HW_CORE_ASSERT(HasComponent<T>(), "Tried to get non-existent component type '{0}' on entity '{1}'", Label((T&)(T{})).c_str(), GetTag().c_str());
+			HW_CORE_ASSERT(HasComponent<T>(), "Tried to get non-existent component type '{0}' on entity '{1}'", GetTypeName<T>(), GetTag().c_str());
 			return m_Scene->m_Registry.get<T>(m_EntityHandle);
 		}
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Perplex/Core/TypeID.h>
-#include <Perplex/Core/Parser.h>
+#include <Perplex/Parsing/Parser.h>
 #include <Perplex/Components/ComponentDrawers.h>
 #include <Perplex/Components/ComponentSerializers.h>
 #include <Perplex/ImGui/GuiSelection.h>

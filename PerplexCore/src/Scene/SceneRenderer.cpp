@@ -9,6 +9,7 @@
 #include <Perplex/Core/Core.h>
 #include <Perplex/Assets/Asset.h>
 #include <Perplex/Perpixel/PerpixelSystem.h>
+#include <Perplex/Text/FontData.h>
 #include <c/perplex_math.h>
 
 #include <glm/glm.hpp>
@@ -71,6 +72,15 @@ namespace Perplex
 				RenderPerpixel(entity);
 		}
 
+		auto texts = scene->View<TextComponent>();
+		for (auto handle : texts)
+		{
+			Entity entity{ handle, scene.get() };
+			auto& text = texts.get<TextComponent>(handle);
+			if (entity.HasComponent<TransformComponent>())
+				RenderText(entity);
+		}
+
 		EndScene();
 	}
 
@@ -123,6 +133,16 @@ namespace Perplex
 				auto& perpixelRenderer = perpixels.get<PerpixelRendererComponent>(handle);
 				if (entity.HasComponent<TransformComponent>())
 					RenderPerpixel(entity);
+			}
+
+			// Render Text
+			auto texts = scene->View<TextComponent>();
+			for (auto handle : texts)
+			{
+				Entity entity{ handle, scene.get() };
+				auto& text = texts.get<TextComponent>(handle);
+				if (entity.HasComponent<TransformComponent>())
+					RenderText(entity);
 			}
 
 			EndScene();
@@ -195,6 +215,34 @@ namespace Perplex
 		for (const auto& pxl : pixels)
 			if (pxl.Lifetime > 0.0f)
 				pxr::Renderer::DrawPixel(transform.Position + vector3(pxl.Position.x, pxl.Position.y, 0.0f), pxl.Color, pxl.Emission);
+	}
+
+	void SceneRenderer::RenderText(Entity entity)
+	{
+		HW_PROFILE_FUNCTION();
+
+		if (!entity.HasComponent<TransformComponent>())
+			return;
+
+		const TextComponent& text = entity.GetComponent<TextComponent>();
+		const TransformComponent& tc = entity.GetComponent<TransformComponent>();
+
+		if (text.FontAsset)
+		{
+			Ref<const FontData> fontData = text.FontAsset.GetData<FontData>();
+
+			glm::vec3 currentPos{ tc.Position };
+
+			for (char c : text.Text)
+			{
+				const FontGlyph& glyph = fontData->Glyphs.at(c);
+				glm::vec3 glyphPos{ currentPos.x + glyph.OffsetX / 16.0f, currentPos.y + glyph.OffsetY / 16.0f, currentPos.y };
+
+				pxr::Renderer::DrawQuad(glyphPos, tc.Scale, glyph.Sprite, glyph.Sprite, text.Color, text.Emission, true);
+
+				currentPos.x += glyph.Stride / 16.0f;
+			}
+		}
 	}
 
 	void SceneRenderer::Resize(int width, int height)

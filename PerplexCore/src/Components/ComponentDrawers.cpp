@@ -241,8 +241,6 @@ namespace Perplex
 				return DrawOptions("Horizontal Alignment", (int&)value, alignmentOptions, 3);
 			});
 
-		/* Vertical Alignment not implemented
-		
 		GuiSelection<VerticalAlignment> verticalAlignment = PERPLEX_SUBSELECTION(component, VerticalAlignment);
 		DrawSelection<VerticalAlignment>(verticalAlignment, [](VerticalAlignment& value)
 			{
@@ -254,7 +252,6 @@ namespace Perplex
 				};
 				return DrawOptions("Vertical Alignment", (int&)value, alignmentOptions, 3);
 			});
-		*/
 
 		DrawSelection<float>(PERPLEX_SUBSELECTION(component, HorizontalSpacing), "Horizontal Spacing");
 		DrawSelection<float>(PERPLEX_SUBSELECTION(component, VerticalSpacing), "Vertical Spacing");

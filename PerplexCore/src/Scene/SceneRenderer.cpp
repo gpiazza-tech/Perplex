@@ -239,13 +239,20 @@ namespace Perplex
 			float newLinePosX{ tc.Position.x };
 			std::vector<std::string_view> lines = ParseLines(text.Text);
 
+			// Vertical Alignment
+			float textHeight = lines.size() / 16.0f * (fontData->LineHeight - 1);
+			if (text.VerticalAlignment == VerticalAlignment::Middle)
+				curser.y += textHeight / 2.0f;
+			else if (text.VerticalAlignment == VerticalAlignment::Bottom)
+				curser.y += textHeight;
+
 			for (const auto& line : lines)
 			{
+				// Horizontal Alignment
 				float lineWidth{};
 				for (size_t i{ 1 }; i < line.length(); ++i)
 					lineWidth += fontData->Glyphs.at(line.at(i)).Stride / 16.0f + text.HorizontalSpacing;
 
-				// Alignment
 				if (text.HorizontalAlignment == HorizontalAlignment::Center)
 					curser.x -= lineWidth / 2.0f;
 				else if (text.HorizontalAlignment == HorizontalAlignment::Right)

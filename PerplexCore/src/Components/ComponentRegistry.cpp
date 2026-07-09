@@ -14,6 +14,7 @@ namespace Perplex
 		{
 			ComponentKind{ IDComponent{} },
 			ComponentKind{ TagComponent{} },
+			ComponentKind{ EnableComponent{} },
 		};
 
 		return components;

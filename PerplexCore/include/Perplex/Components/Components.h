@@ -62,8 +62,16 @@ namespace Perplex
 
 		TagComponent() = default;
 		TagComponent(const TagComponent&) = default;
-		TagComponent(const std::string& tag)
-			: Tag(tag) { }
+		TagComponent(const std::string& tag) : Tag(tag) { }
+	};
+
+	struct EnableComponent
+	{
+		bool Enabled{ true };
+		 
+		EnableComponent() = default;
+		EnableComponent(const EnableComponent&) = default;
+		EnableComponent(bool enabled) : Enabled(enabled) { }
 	};
 
 	struct TransformComponent
@@ -74,8 +82,7 @@ namespace Perplex
 
 		TransformComponent() = default;
 		TransformComponent(const TransformComponent&) = default;
-		TransformComponent(const glm::vec3& translation)
-			: Position(translation) { }
+		TransformComponent(const glm::vec3& translation) : Position(translation) { }
 
 		glm::mat4 GetTransform() const
 		{

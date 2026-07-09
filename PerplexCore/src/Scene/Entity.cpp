@@ -100,4 +100,17 @@ namespace Perplex
 
 		m_Scene->GetEntity(node.ID).GetComponent<TransformComponent>() = newTransform;
 	}
+
+	bool Entity::Active()
+	{
+		EntityNode node = m_Scene->GetHierarchy().GetNode(GetUUID());
+		while (node.ID != 0)
+		{
+			if (!m_Scene->GetEntity(node.ID).GetComponent<EnableComponent>().Enabled)
+				return false;
+			node = m_Scene->GetHierarchy().GetNode(node.ParentID);
+		}
+
+		return GetComponent<EnableComponent>().Enabled;
+	}
 }

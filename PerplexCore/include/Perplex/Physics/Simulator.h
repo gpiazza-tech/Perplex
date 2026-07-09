@@ -37,10 +37,14 @@ namespace Perplex
 		void OnComponentRemoved(Entity entity) override;
 
 		void SetVelocity(UUID entityID, glm::vec2 velocity);
+
+		float GetTimescale() const;
+		void SetTimescale(float timescale);
 	private:
 		void AddCollider(Entity entity);
 	private:
 		int m_World{};
 		ptl::bimap<UUID, uint64_t> m_BodyMap{};
+		float m_Timescale{ 1.0f };
 	};
 }

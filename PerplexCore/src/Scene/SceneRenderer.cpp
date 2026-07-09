@@ -63,7 +63,7 @@ namespace Perplex
 		{
 			Entity entity{ handle, scene.get() };
 			auto& spriteRenderer = sprites.get<SpriteRendererComponent>(handle);
-			if (entity.HasComponent<TransformComponent>())
+			if (entity.HasComponent<TransformComponent>() && entity.Active())
 				RenderSprite(spriteRenderer, entity.GetGlobalTransform());
 		}
 
@@ -72,7 +72,7 @@ namespace Perplex
 		{
 			Entity entity{ handle, scene.get() };
 			auto& perpixelRenderer = perpixels.get<PerpixelRendererComponent>(handle);
-			if (entity.HasComponent<TransformComponent>())
+			if (entity.HasComponent<TransformComponent>() && entity.Active())
 				RenderPerpixel(entity);
 		}
 
@@ -81,7 +81,7 @@ namespace Perplex
 		{
 			Entity entity{ handle, scene.get() };
 			auto& text = texts.get<TextComponent>(handle);
-			if (entity.HasComponent<TransformComponent>())
+			if (entity.HasComponent<TransformComponent>() && entity.Active())
 				RenderText(entity);
 		}
 
@@ -125,7 +125,7 @@ namespace Perplex
 			{
 				Entity entity{ handle, scene.get() };
 				auto& spriteRenderer = view.get<SpriteRendererComponent>(handle);
-				if (entity.HasComponent<TransformComponent>())
+				if (entity.HasComponent<TransformComponent>() && entity.Active())
 					RenderSprite(spriteRenderer, entity.GetGlobalTransform());
 			}
 
@@ -135,7 +135,7 @@ namespace Perplex
 			{
 				Entity entity{ handle, scene.get() };
 				auto& perpixelRenderer = perpixels.get<PerpixelRendererComponent>(handle);
-				if (entity.HasComponent<TransformComponent>())
+				if (entity.HasComponent<TransformComponent>() && entity.Active())
 					RenderPerpixel(entity);
 			}
 
@@ -145,7 +145,7 @@ namespace Perplex
 			{
 				Entity entity{ handle, scene.get() };
 				auto& text = texts.get<TextComponent>(handle);
-				if (entity.HasComponent<TransformComponent>())
+				if (entity.HasComponent<TransformComponent>() && entity.Active())
 					RenderText(entity);
 			}
 

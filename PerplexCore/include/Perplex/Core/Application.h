@@ -34,6 +34,9 @@ namespace Perplex
 		inline Window& GetWindow() { return *m_Window; }
 		inline const Project& GetCurrentProject() { return *m_Project; }
 
+		float GetTimescale() const;
+		void SetTimescale(float timescale);
+
 		void Close();
 
 		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
@@ -49,7 +52,8 @@ namespace Perplex
 		bool m_Minimized = false;
 
 		LayerStack m_LayerStack;
-		float m_LastFrameTime = 0.0f;
+		float m_LastFrameTime{ 0.0f };
+		float m_Timescale{ 1.0f };
 
 		Project* m_Project;
 	private:

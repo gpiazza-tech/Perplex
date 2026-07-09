@@ -10,6 +10,9 @@ namespace Perplex
 	struct TagComponent;
 	void Draw(GuiSelection<TagComponent> component);
 
+	struct EnableComponent;
+	void Draw(GuiSelection<EnableComponent> component);
+
 	struct TransformComponent;
 	void Draw(GuiSelection<TransformComponent> component);
 

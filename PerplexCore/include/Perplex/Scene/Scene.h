@@ -43,6 +43,9 @@ namespace Perplex
 
 		bool IsPlaying() { return m_Playing; }
 
+		float GetTimescale() const;
+		void SetTimescale(float timescale);
+
 		SceneHierarchy& GetHierarchy() { return m_Hierarchy; }
 
 		template<typename T>
@@ -67,6 +70,7 @@ namespace Perplex
 		Entity ConstructEntity(const std::string& name = std::string(), UUID uuid = UUID(), UUID parent = 0);
 	private:
 		bool m_Playing{ false };
+		float m_Timescale{ 1.0f };
 
 		entt::registry m_Registry;
 

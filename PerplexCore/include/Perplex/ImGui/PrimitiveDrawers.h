@@ -28,7 +28,7 @@ namespace Perplex
 	bool BeginDropdown(const char* label = "");
 	void EndDropdown();
 	void SameLine();
-	void DrawSpace(float space);
+	void DrawSpace(float space = 20.0f);
 
 	template<typename T, typename Getter, typename Setter>
 	bool Draw(Getter getter, Setter setter, const char* label = "")

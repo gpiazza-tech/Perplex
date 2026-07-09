@@ -35,6 +35,12 @@ namespace Perplex
 		DrawSelection(tags, "Tag");
 	}
 
+	void Draw(GuiSelection<EnableComponent> component)
+	{
+		GuiSelection<bool> enabled = PERPLEX_SUBSELECTION(component, Enabled);
+		DrawSelection(enabled, "Enabled");
+	}
+
 	void Draw(GuiSelection<TransformComponent> component)
 	{
 		ImVec2 padding = { 1.0f, 1.0f };
@@ -205,7 +211,7 @@ namespace Perplex
 						std::string emissionAssetLabel = std::format("Emission {}", i + 1);
 						changed |= DrawAssetField(emissionAssetLabel.c_str(), sprite.EmissionAsset, AssetType::SpriteAsset);
 
-						DrawSpace(20.0f);
+						DrawSpace();
 					}
 
 					EndDropdown();
@@ -213,7 +219,6 @@ namespace Perplex
 
 				return changed;
 			});
-
 	}
 
 	void Draw(GuiSelection<TextComponent> component)
@@ -223,11 +228,11 @@ namespace Perplex
 		
 		GuiSelection<std::string> text = PERPLEX_SUBSELECTION(component, Text);
 		DrawSelection<std::string>(text, [](std::string& value) { return DrawMultilineText(value, "Text", 50.0f); });
-
+		  
 		DrawSelection<glm::vec4>(PERPLEX_SUBSELECTION(component, Color), [](glm::vec4& val) { return DrawColor(val, "Color"); });
 		DrawSelection<float>(PERPLEX_SUBSELECTION(component, Emission), "Emission");
 
-		DrawSpace(20.0f);
+		DrawSpace();
 
 		GuiSelection<HorizontalAlignment> horizontalAlignment = PERPLEX_SUBSELECTION(component, HorizontalAlignment);
 		DrawSelection<HorizontalAlignment>(horizontalAlignment, [](HorizontalAlignment& value)

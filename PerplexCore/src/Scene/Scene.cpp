@@ -30,8 +30,10 @@ namespace Perplex
 		idc.ID = uuid;
 		m_UUIDMap[uuid] = (entt::entity)entity;
 
-		auto& tag = entity.AddComponent<TagComponent>();
+		TagComponent& tag = entity.AddComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
+
+		EnableComponent& enable = entity.AddComponent<EnableComponent>();
 
 		m_Hierarchy.Add(EntityNode(entity.GetUUID()), parent);
 
@@ -101,6 +103,8 @@ namespace Perplex
 
 	void Scene::Update(Timestep ts)
 	{
+		ts *= m_Timescale;
+
 		for (SceneSystem* system : m_Systems)
 			system->OnSceneUpdate(ts);
 
@@ -132,6 +136,16 @@ namespace Perplex
 				m_Registry.destroy(entityToDestroy);
 			}
 		}
+	}
+
+	float Scene::GetTimescale() const
+	{
+		return m_Timescale;
+	}
+
+	void Scene::SetTimescale(float timescale)
+	{
+		m_Timescale = timescale;
 	}
 
 	void Scene::Stop()

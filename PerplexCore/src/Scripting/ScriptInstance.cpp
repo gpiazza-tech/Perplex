@@ -148,6 +148,7 @@ namespace Perplex
 		m_Unit.AddSymbol("get_mouse_world_pos_x", get_mouse_world_pos_x);
 		m_Unit.AddSymbol("get_mouse_world_pos_y", get_mouse_world_pos_y);
 
+		m_Unit.AddSymbol("_set_enabled", +[](Scene* scene, UUID entity, bool enabled) { scene->GetEntity(entity).GetComponent<EnableComponent>().Enabled = enabled; });
 		m_Unit.AddSymbol("get_sprite_width", get_sprite_width);
 		m_Unit.AddSymbol("get_sprite_height", get_sprite_height);
 		m_Unit.AddSymbol("get_color_ptr", get_color_ptr);
@@ -172,6 +173,7 @@ namespace Perplex
 		m_Unit.AddSymbol("_destroy", _destroy);
 		m_Unit.AddSymbol("_destroy_delay", _destroy_delay);
 		m_Unit.AddSymbol("_set_velocity", _set_velocity);
+		m_Unit.AddSymbol("set_timescale", +[](Scene* scene, float timescale) { scene->SetTimescale(timescale); });
 
 		m_Unit.AddSymbol("_to_perpixel", _to_perpixel);
 

@@ -11,6 +11,9 @@ namespace Perplex
 	// Tag
 	PERPLEX_DEFINE_JSON_STRUCT(TagComponent, Tag)
 
+	// Enable
+	PERPLEX_DEFINE_JSON_STRUCT(EnableComponent, Enabled)
+
 	// Transform
 	PERPLEX_DEFINE_JSON_STRUCT(TransformComponent, Position, Rotation, Scale)
 

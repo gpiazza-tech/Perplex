@@ -97,7 +97,7 @@ namespace Perplex
 	void Application::Update()
 	{
 		float time = (float)glfwGetTime(); // Platform::GetTime
-		Timestep timestep = time - m_LastFrameTime;
+		Timestep timestep = (time - m_LastFrameTime) * m_Timescale;
 		m_LastFrameTime = time;
 
 		if (!m_Minimized)
@@ -136,6 +136,16 @@ namespace Perplex
 	void Application::Close()
 	{
 		m_Running = false;
+	}
+
+	float Application::GetTimescale() const
+	{
+		return m_Timescale;
+	}
+
+	void Application::SetTimescale(float timescale)
+	{
+		m_Timescale = timescale;
 	}
 
 	bool Application::OnWindowClose(WindowCloseEvent& e)

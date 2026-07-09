@@ -104,7 +104,7 @@ namespace Perplex
 		// TODO: this function should be called on a separate thread with
 		//		a consitent framerate!
 
-		float timeStep = ts.GetSeconds();
+		float timeStep = ts.GetSeconds() * m_Timescale;
 
 		// recommended by box2d docs
 		int subStepCount = 4;
@@ -252,5 +252,15 @@ namespace Perplex
 			firstInstance->TryCall("hit_exit", second);
 		if (secondInstance)
 			secondInstance->TryCall("hit_exit", first);
+	}
+
+	float Simulator::GetTimescale() const
+	{
+		return m_Timescale;
+	}
+
+	void Simulator::SetTimescale(float timescale)
+	{
+		m_Timescale = timescale;
 	}
 }

@@ -14,6 +14,9 @@ namespace Perplex
 
 		float GetSeconds() const { return m_Time; }
 		float GetMilliseconds() const { return m_Time * 1000.0f; }
+
+		friend Timestep operator* (Timestep lhs, float rhs) { return Timestep{ lhs.m_Time * rhs }; }
+		friend Timestep operator*= (Timestep& lhs, float rhs) { return lhs.m_Time *= rhs; }
 	private:
 		float m_Time;
 	};

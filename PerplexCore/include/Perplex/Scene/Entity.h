@@ -70,6 +70,8 @@ namespace Perplex
 		TransformComponent GetGlobalTransform();
 		void SetGlobalTransform(const TransformComponent& transform);
 
+		bool Active();
+
 		UUID GetUUID();
 		std::string GetTag();
 		Scene* GetScene() { return m_Scene; };

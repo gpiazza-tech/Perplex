@@ -79,6 +79,7 @@ PX_EXTERN void console_info(char* msg);
 PX_EXTERN void console_warn(char* msg);
 PX_EXTERN void console_error(char* msg);
 
+PX_EXTERN void _set_enabled(Scene _scene, Entity _entity, bool enabled);
 PX_EXTERN struct Vec3* get_position_ptr(Scene s, Entity e);
 PX_EXTERN struct Vec3* get_rotation_ptr(Scene s, Entity e);
 PX_EXTERN struct Vec3* get_scale_ptr(Scene s, Entity e);
@@ -92,6 +93,7 @@ PX_EXTERN Entity _spawn(Scene _scene, PrefabAsset _prefab);
 PX_EXTERN void _destroy(Scene _scene, Entity _entity);
 PX_EXTERN void _destroy_delay(Scene _scene, Entity _entity, float delay);
 PX_EXTERN void _set_velocity(Scene _scene, Entity _entity, struct Vec2 _velocity);
+PX_EXTERN void set_timescale(Scene _scene, float timescale);
 PX_EXTERN void _to_perpixel(Scene _scene, Entity _entity);
 
 typedef void* Sound;
@@ -101,6 +103,7 @@ PX_EXTERN void end_loop(Sound sound);
 
 PX_EXTERN void load_scene(SceneAsset sceneAsset);
 
+#define set_enabled(e, enabled) (_set_enabled(scene, e, enabled)) 
 #define get_position(e) (*get_position_ptr(scene, e))
 #define get_rotation(e) (*get_rotation_ptr(scene, e))
 #define get_scale(e) (*get_scale_ptr(scene, e))

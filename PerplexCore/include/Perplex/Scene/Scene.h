@@ -32,6 +32,7 @@ namespace Perplex
 
 		Entity CreateEntity(const std::string& name = std::string(), UUID uuid = UUID(), UUID parent = 0);
 		Entity CreateAbstractEntity(const std::string& name = std::string(), UUID uuid = UUID(), UUID parent = 0);
+		void DestroyEntityNow(Entity entity);
 		void DestroyEntity(Entity entity, float delay = 0.0f);
 		Entity CopyEntity(Entity entity, UUID parent = 0);
 		Entity GetEntity(UUID uuid);
@@ -41,7 +42,9 @@ namespace Perplex
 		void Update(Timestep ts);
 		void Stop();
 
-		bool IsPlaying() { return m_Playing; }
+		bool IsPlaying() const { return m_Playing; }
+		bool IsPaused() const { return m_Paused; }
+		void SetPaused(bool paused) { m_Paused = paused; }
 
 		float GetTimescale() const;
 		void SetTimescale(float timescale);
@@ -68,8 +71,10 @@ namespace Perplex
 		}
 	private:
 		Entity ConstructEntity(const std::string& name = std::string(), UUID uuid = UUID(), UUID parent = 0);
+		void RemoveEntity(Entity entity);
 	private:
 		bool m_Playing{ false };
+		bool m_Paused{ false };
 		float m_Timescale{ 1.0f };
 
 		entt::registry m_Registry;

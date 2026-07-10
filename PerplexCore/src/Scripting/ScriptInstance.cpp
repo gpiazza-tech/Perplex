@@ -12,7 +12,7 @@
 #include <Perplex/Components/Components.h>
 #include <Perplex/Scripting/Interpreter.h>
 #include <Perplex/Physics/Simulator.h>
-#include <Perplex/Audio/AudioEngine.h>
+#include <Perplex/Audio/AudioSystem.h>
 #include <Perplex/Scene/SceneManager.h>
 
 #include <glm/glm.hpp>
@@ -29,7 +29,6 @@ namespace Perplex
 	static glm::vec3* get_position_ptr(Scene* scene, UUID uuid) { return &scene->GetEntity(uuid).GetComponent<TransformComponent>().Position; }
 	static glm::vec3* get_rotation_ptr(Scene* scene, UUID uuid) { return &scene->GetEntity(uuid).GetComponent<TransformComponent>().Rotation; }
 	static glm::vec3* get_scale_ptr(Scene* scene, UUID uuid) { return &scene->GetEntity(uuid).GetComponent<TransformComponent>().Scale; }
-	static void play_sound(const char* filepath) { AudioEngine::Get().PlaySound(filepath); }
 
 	static float get_sprite_width(Scene* scene, UUID uuid)
 	{
@@ -124,7 +123,7 @@ namespace Perplex
 	{
 		if (m_Unit.IsCompiled())
 			return true;
-		
+
 		m_EntityID = entity.GetUUID();;
 		m_Properties = properties;
 		m_SceneContext = entity.GetScene();
@@ -145,6 +144,10 @@ namespace Perplex
 		m_Unit.AddSymbol("this", &m_EntityID);
 
 		// Bind host functions
+		m_Unit.AddSymbol("_set_paused", +[](Scene* scene, bool paused) { scene->SetPaused(paused); });
+		m_Unit.AddSymbol("_pause", +[](Scene* scene) { scene->SetPaused(true); });
+		m_Unit.AddSymbol("_resume", +[](Scene* scene) { scene->SetPaused(false); });
+
 		m_Unit.AddSymbol("get_mouse_world_pos_x", get_mouse_world_pos_x);
 		m_Unit.AddSymbol("get_mouse_world_pos_y", get_mouse_world_pos_y);
 
@@ -177,9 +180,9 @@ namespace Perplex
 
 		m_Unit.AddSymbol("_to_perpixel", _to_perpixel);
 
-		m_Unit.AddSymbol("play_sound", +[](const char* filepath) { AudioEngine::Get().PlaySound(filepath); });
-		m_Unit.AddSymbol("start_loop", +[](const char* filepath) { return AudioEngine::Get().StartLoop(filepath); });
-		m_Unit.AddSymbol("end_loop", +[](Sound* sound) { return AudioEngine::Get().EndLoop(sound); });
+		m_Unit.AddSymbol("_play_sound", +[](Scene* scene, const char* filepath) { scene->GetSystem<AudioSystem>().PlaySound(filepath); });
+		m_Unit.AddSymbol("_start_loop", +[](Scene* scene, const char* filepath) { return scene->GetSystem<AudioSystem>().StartLoop(filepath); });
+		m_Unit.AddSymbol("_end_loop", +[](Scene* scene, Sound* sound) { scene->GetSystem<AudioSystem>().EndLoop(sound); });
 
 		m_Unit.AddSymbol("load_scene", +[](Asset asset) { SceneManager::Get().LoadScene(asset); });
 

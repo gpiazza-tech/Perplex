@@ -137,7 +137,8 @@ namespace Perplex
 				{
 					// WINDOWS ONLY
 
-					std::string command = "start " + path.string();
+					fs::path startCommandPath = NativePath(path);
+					std::string command = "start " + startCommandPath.string() + "";
 					std::system(command.c_str());
 				}
 			}

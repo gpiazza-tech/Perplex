@@ -15,8 +15,6 @@ namespace fs = std::filesystem;
 
 namespace Perplex
 {
-	AudioEngine* AudioEngine::s_Instance = nullptr;
-
 	AudioEngine::AudioEngine()
 	{
 		m_Engine = new ma_engine();
@@ -26,8 +24,6 @@ namespace Perplex
 		{
 			HW_CORE_ASSERT(false, "Failed to initialize audio engine!");
 		}
-
-		s_Instance = this;
 	}
 
 	AudioEngine::~AudioEngine()
@@ -89,5 +85,15 @@ namespace Perplex
 	{
 		ma_sound_uninit(sound);
 		delete sound;
+	}
+
+	void AudioEngine::Stop()
+	{
+		ma_engine_stop(m_Engine);
+	}
+
+	void AudioEngine::Start()
+	{
+		ma_engine_start(m_Engine);
 	}
 }

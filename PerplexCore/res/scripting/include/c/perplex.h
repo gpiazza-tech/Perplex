@@ -70,6 +70,10 @@ typedef void* Scene;
 PX_EXTERN Scene scene;
 PX_EXTERN Entity this;
 
+PX_EXTERN void _set_paused(Scene _scene, bool paused);
+PX_EXTERN void _pause(Scene _scene);
+PX_EXTERN void _resume(Scene _scene);
+
 PX_EXTERN float get_sprite_width(Scene _scene, Entity e);
 PX_EXTERN float get_sprite_height(Scene _scene, Entity e);
 PX_EXTERN struct Vec4* get_color_ptr(Scene s, Entity e);
@@ -97,9 +101,13 @@ PX_EXTERN void set_timescale(Scene _scene, float timescale);
 PX_EXTERN void _to_perpixel(Scene _scene, Entity _entity);
 
 typedef void* Sound;
-PX_EXTERN void play_sound(const char* filepath);
-PX_EXTERN Sound start_loop(const char* filepath);
-PX_EXTERN void end_loop(Sound sound);
+PX_EXTERN void _play_sound(Scene _scene, const char* filepath);
+PX_EXTERN Sound _start_loop(Scene _scene, const char* filepath);
+PX_EXTERN void _end_loop(Scene _scene, Sound sound);
+
+#define play_sound(filepath) (_play_sound(scene, filepath))
+#define start_loop(filepath) (_start_loop(scene, filepath))
+#define end_loop(sound) (_end_loop(scene, sound))
 
 PX_EXTERN void load_scene(SceneAsset sceneAsset);
 

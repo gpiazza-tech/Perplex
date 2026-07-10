@@ -55,6 +55,19 @@ namespace Perplex
 		return entity;
 	}
 
+	void Scene::DestroyEntityNow(Entity entity)
+	{
+		if (m_Playing)
+		{
+			HW_CORE_WARN("Calling DestroyEntityNow during scene play is not allowed, calling DestroyEntity instead.");
+			DestroyEntity(entity);
+		}
+		else
+		{
+			RemoveEntity(entity);
+		}
+	}
+
 	void Scene::DestroyEntity(Entity entity, float delay)
 	{
 		m_DyingEntities.emplace_back(entity.GetUUID(), delay);
@@ -108,6 +121,9 @@ namespace Perplex
 		for (SceneSystem* system : m_Systems)
 			system->OnSceneUpdate(ts);
 
+		if (m_Paused)
+			return;
+
 		for (size_t i{}; i < m_DyingEntities.size(); ++i)
 		{
 			m_DyingEntities[i].Time -= ts;
@@ -130,10 +146,7 @@ namespace Perplex
 							system->OnComponentRemoved(entityToDestroy);
 
 				// Actually destroy entity
-				m_Hierarchy.Remove(entityToDestroy.GetUUID());
-
-				m_UUIDMap.erase(entityToDestroy.GetUUID());
-				m_Registry.destroy(entityToDestroy);
+				RemoveEntity(entityToDestroy);
 			}
 		}
 	}
@@ -154,5 +167,17 @@ namespace Perplex
 
 		for (SceneSystem* system : m_Systems)
 			system->OnSceneStop();
+	}
+
+	void Scene::RemoveEntity(Entity entity)
+	{
+		EntityNode entityNode = m_Hierarchy.GetNode(entity.GetUUID());
+
+		for (auto& childNodes : entityNode.ChildIDs)
+			RemoveEntity(GetEntity(childNodes));
+
+		m_Hierarchy.Remove(entity.GetUUID());
+		m_UUIDMap.erase(entity.GetUUID());
+		m_Registry.destroy(entity);
 	}
 }

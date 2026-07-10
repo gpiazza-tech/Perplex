@@ -129,6 +129,7 @@ namespace Perplex
 	{
 		Asset ScriptAsset;
 		std::vector<ScriptProperty> Properties;
+		bool AlwaysReceiveUpdates{ false };
 
 		ScriptComponent()
 			: ScriptAsset(Asset()), Properties(std::vector<ScriptProperty>())
@@ -190,5 +191,14 @@ namespace Perplex
 
 		TextComponent() = default;
 		TextComponent(const TextComponent&) = default;
+	};
+
+	// TODO: needs to be implemented!
+	struct AudioComponent
+	{
+		Asset AudioAsset{};
+
+		AudioComponent() = default;
+		AudioComponent(const AudioComponent&) = default;
 	};
 }

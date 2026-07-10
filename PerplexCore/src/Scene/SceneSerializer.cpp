@@ -11,6 +11,7 @@
 #include <Perplex/Scripting/Interpreter.h>
 #include <Perplex/Perpixel/PerpixelSystem.h>
 #include <Perplex/Animation/AnimationSystem.h>
+#include <Perplex/Audio/AudioSystem.h>
 #include <Perplex/Components/ComponentRegistry.h>
 #include <Perplex/Components/ComponentKind.h>
 
@@ -47,10 +48,12 @@ namespace Perplex
 		scene->AddSystem<Interpreter>();
 		scene->AddSystem<PerpixelSystem>();
 		scene->AddSystem<AnimationSystem>();
+		scene->AddSystem<AudioSystem>();
 
 		for (auto& entityJson : sceneJson["Entities"])
 		{
 			Entity entity = scene->CreateAbstractEntity(entityJson["Tag"].get<std::string>(), entityJson["ID"].get<UUID>());
+			entity.GetComponent<EnableComponent>().Enabled = entityJson["Enabled"];
 			DeserializeEntity(entityJson, entity);
 		}
 
@@ -63,6 +66,7 @@ namespace Perplex
 	{
 		json["ID"] = entity.GetComponent<IDComponent>().ID;
 		json["Tag"] = entity.GetComponent<TagComponent>().Tag;
+		json["Enabled"] = entity.GetComponent<EnableComponent>().Enabled;
 
 		for (auto& componentKind : ComponentRegistry::GetAdditiveKinds())
 			if (componentKind.Has(entity))

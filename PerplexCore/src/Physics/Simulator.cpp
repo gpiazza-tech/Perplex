@@ -104,6 +104,9 @@ namespace Perplex
 		// TODO: this function should be called on a separate thread with
 		//		a consitent framerate!
 
+		if (m_Scene->IsPaused())
+			return;
+
 		float timeStep = ts.GetSeconds() * m_Timescale;
 
 		// recommended by box2d docs

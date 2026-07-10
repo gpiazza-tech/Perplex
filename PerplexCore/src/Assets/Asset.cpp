@@ -33,5 +33,9 @@ namespace Perplex
 	}
 
 	void to_json(nlohmann::json& json, const Asset& asset) { json = (uint64_t)asset.m_Handler; }
-	void from_json(const nlohmann::json& json, Asset& asset) { asset.m_Handler = json.get<uint64_t>(); }
+	void from_json(const nlohmann::json& json, Asset& asset)
+	{
+		asset.m_Handler = json.get<uint64_t>();
+		AssetManager::LoadData(asset);
+	}
 }

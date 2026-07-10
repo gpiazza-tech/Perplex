@@ -60,6 +60,9 @@ namespace Perplex
 
 	void PerpixelSystem::OnSceneUpdate(Timestep ts)
 	{
+		if (m_Scene->IsPaused())
+			return;
+
 		auto view = m_Scene->View<PerpixelRendererComponent>();
 		for (auto e : view)
 		{

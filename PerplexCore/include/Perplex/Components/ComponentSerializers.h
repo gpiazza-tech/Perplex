@@ -25,7 +25,7 @@ namespace Perplex
 	PERPLEX_DEFINE_JSON_STRUCT(CameraComponent, Primary, Zoom, Background, PixelsPerUnit, PixelPerfect, ScalingMode)
 
 	// Script
-	PERPLEX_DEFINE_JSON_STRUCT(ScriptComponent, ScriptAsset, Properties)
+	PERPLEX_DEFINE_JSON_STRUCT(ScriptComponent, ScriptAsset, Properties, AlwaysReceiveUpdates)
 
 	// Box Collider
 	PERPLEX_DEFINE_JSON_STRUCT(BoxColliderComponent, Scale)

@@ -127,6 +127,8 @@ namespace Perplex
 			}
 		}
 
+		DrawSelection(PERPLEX_SUBSELECTION(component, AlwaysReceiveUpdates), "Always Receive Updates");
+
 		ImGui::PopID();
 	}
 

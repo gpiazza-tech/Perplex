@@ -52,31 +52,29 @@ namespace Perplex
 	void Interpreter::OnSceneStart()
 	{
 		// Compile Scripts
+		auto view = m_Scene->View<ScriptComponent>();
+		for (auto e : view)
 		{
-			auto view = m_Scene->View<ScriptComponent>();
-			for (auto e : view)
-			{
-				Entity entity{ e, m_Scene.get() };
+			Entity entity{ e, m_Scene.get() };
 
-				auto& sc = view.get<ScriptComponent>(e);
-				TagComponent& tag = entity.GetComponent<TagComponent>();
+			auto& sc = view.get<ScriptComponent>(e);
+			TagComponent& tag = entity.GetComponent<TagComponent>();
 
-				InitScriptInstance(entity);
-			}
+			InitScriptInstance(entity);
 		}
 	}
 
 	void Interpreter::OnSceneUpdate(Timestep ts)
 	{
 		// Call Update
+		auto view = m_Scene->View<ScriptComponent>();
+		for (auto e : view)
 		{
-			auto view = m_Scene->View<ScriptComponent>();
-			for (auto e : view)
-			{
-				Entity entity{ e, m_Scene.get() };
+			Entity entity{ e, m_Scene.get() };
+			auto& sc = view.get<ScriptComponent>(e);
 
-				auto& sc = view.get<ScriptComponent>(e);
-				TagComponent& tag = entity.GetComponent<TagComponent>();
+			if (sc.AlwaysReceiveUpdates || !m_Scene->IsPaused())
+			{
 				UUID entityID = entity.GetUUID();
 
 				std::unique_ptr<ScriptInstance>& instance = m_ScriptInstanceMap.at(entityID);
@@ -94,20 +92,17 @@ namespace Perplex
 	void Interpreter::OnSceneStop()
 	{
 		// Call Stop
+		auto view = m_Scene->View<ScriptComponent>();
+		for (auto e : view)
 		{
-			auto view = m_Scene->View<ScriptComponent>();
-			for (auto e : view)
-			{
-				Entity entity{ e, m_Scene.get() };
+			Entity entity{ e, m_Scene.get() };
 
-				auto& sc = view.get<ScriptComponent>(e);
-				TagComponent& tag = entity.GetComponent<TagComponent>();
-				UUID entityID = entity.GetUUID();
+			auto& sc = view.get<ScriptComponent>(e);
+			UUID entityID = entity.GetUUID();
 
-				std::unique_ptr<ScriptInstance>& instance = m_ScriptInstanceMap[entityID];
-				instance->TryCall("stop");
-				m_ScriptInstanceMap.erase(entityID);
-			}
+			std::unique_ptr<ScriptInstance>& instance = m_ScriptInstanceMap[entityID];
+			instance->TryCall("stop");
+			m_ScriptInstanceMap.erase(entityID);
 		}
 	}
 

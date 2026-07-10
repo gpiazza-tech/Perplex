@@ -140,7 +140,7 @@ namespace Perplex
 			else
 				SetSelectedEntity(node.ID);
 		}
-
+		 
 		if (ImGui::BeginDragDropSource())
 		{
 			ImGui::SetDragDropPayload("SCENE_HIERARCHY_ITEM", (const void*)&entity, sizeof(Entity), ImGuiCond_Once);
@@ -182,7 +182,8 @@ namespace Perplex
 
 		if (deleteEntity)
 		{
-			scene->DestroyEntity(entity);
+			for (auto& node : m_SelectedNodes)
+				scene->DestroyEntityNow(scene->GetEntity(node));
 			m_SelectedNodes.clear();
 		}
 	}

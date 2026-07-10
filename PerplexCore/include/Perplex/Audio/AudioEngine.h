@@ -14,14 +14,13 @@ namespace Perplex
 		AudioEngine();
 		~AudioEngine();
 
-		static inline AudioEngine& Get() { return *s_Instance; };
-		
 		void PlaySound(const std::filesystem::path& audioFile);
 		Sound* StartLoop(const std::filesystem::path& audioFile);
 		void EndLoop(Sound* sound);
-	private:
-		static AudioEngine* s_Instance;
 
+		void Stop();
+		void Start();
+	private:
 		ma_engine* m_Engine{};
 	};
 }

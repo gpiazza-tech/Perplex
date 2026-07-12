@@ -36,7 +36,7 @@ namespace Perplex
 
 		// Set Current Project
 		m_Project = new Project("C:/dev/PerplexProjects/Game");
-		pxr::SetResourceFolder(m_Project->GetProjectPath() / "renderer");
+		pxr::SetResourceFolder(m_Project->GetProjectPath() / "engine/res");
 
 		// Create window
 		m_Window = std::unique_ptr<Window>(Window::Create(WindowProps(name)));

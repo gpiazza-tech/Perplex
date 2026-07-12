@@ -36,8 +36,8 @@ namespace Perplex
 		m_Framebuffer.Bind();
 		m_Camera = editorCamera;
 
-		pxr::Renderer::BeginFrame({ 0.0f, 0.02f, 0.1f, 1.0f });
-		pxr::Renderer::BeginBatch(editorCamera.GetViewProjection());
+		pxr::Renderer::BeginFrame(editorCamera.GetViewProjection(), editorCamera.GetPixelResolution(), { 0.0f, 0.02f, 0.1f, 1.0f });
+		pxr::Renderer::BeginBatch();
 	}
 
 	void SceneRenderer::BeginScene(const pxr::Camera& camera, const TransformComponent& cameraTransform, const glm::vec4& background)
@@ -50,8 +50,8 @@ namespace Perplex
 		glm::vec3 pixelPerfectPosition = pxr::MakePixelPerfect(cameraTransform.Position, camera.GetPixelsPerUnit());
 		glm::mat4 pixelPerfectTransform = glm::translate(glm::mat4(1.0f), pixelPerfectPosition);
 
-		pxr::Renderer::BeginFrame(background);
-		pxr::Renderer::BeginBatch(camera.GetProjection() * glm::inverse(pixelPerfectTransform));
+		pxr::Renderer::BeginFrame(camera.GetProjection() * glm::inverse(pixelPerfectTransform), camera.GetPixelResolution(), background);
+		pxr::Renderer::BeginBatch();
 	}
 
 	void SceneRenderer::RenderEditor(Ref<Scene> scene, const EditorCamera& camera)
@@ -84,6 +84,9 @@ namespace Perplex
 			if (entity.HasComponent<TransformComponent>() && entity.Active())
 				RenderText(entity);
 		}
+
+		glm::vec2 mouseWorldPos{ Input::GetMouseWorldPosition().first, Input::GetMouseWorldPosition().second };
+		pxr::Renderer::DrawLine({ 0.0f, 0.0f }, mouseWorldPos, {1.0f, 1.0f, 1.0f, 1.0f});
 
 		EndScene();
 	}
@@ -197,13 +200,13 @@ namespace Perplex
 			Ref<const pxr::Sprite> emissionSprite = src.EmissionSpriteAsset.GetData<pxr::Sprite>();
 
 			if (src.EmissionSpriteAsset)
-				pxr::Renderer::DrawRotatedQuad(tc.Position, tc.Rotation, tc.Scale, *sprite.get(), *emissionSprite.get(), src.Color, src.Emission, true);
+				pxr::Renderer::DrawSprite(tc.Position, tc.Rotation, tc.Scale, *sprite, *emissionSprite, src.Color, src.Emission, true);
 			else
-				pxr::Renderer::DrawRotatedQuad(tc.Position, tc.Rotation, tc.Scale, *sprite.get(), *sprite.get(), src.Color, src.Emission, true);
+				pxr::Renderer::DrawSprite(tc.Position, tc.Rotation, tc.Scale, *sprite, *sprite, src.Color, src.Emission, true);
 		}
 		else
 		{
-			pxr::Renderer::DrawQuad(tc.Position, tc.Scale, src.Color, src.Emission);
+			pxr::Renderer::DrawSprite(tc.Position, tc.Rotation, tc.Scale, src.Color, src.Emission, true);
 		}
 	}
 
@@ -262,8 +265,8 @@ namespace Perplex
 				for (char c : line)
 				{
 					const FontGlyph& glyphToRender = fontData->Glyphs.at(c);
-					glm::vec3 glyphPos{ curser.x + glyphToRender.OffsetX / 16.0f, curser.y + glyphToRender.OffsetY / 16.0f, curser.y };
-					pxr::Renderer::DrawQuad(glyphPos, tc.Scale, glyphToRender.Sprite, glyphToRender.Sprite, text.Color, text.Emission, true);
+					glm::vec3 glyphPos{ curser.x + glyphToRender.OffsetX / 16.0f, curser.y + glyphToRender.OffsetY / 16.0f, tc.Position.z };
+					pxr::Renderer::DrawSprite(glyphPos, tc.Rotation, tc.Scale, glyphToRender.Sprite, glyphToRender.Sprite, text.Color, text.Emission, true);
 					curser.x += glyphToRender.Stride / 16.0f + text.HorizontalSpacing;
 				}
 

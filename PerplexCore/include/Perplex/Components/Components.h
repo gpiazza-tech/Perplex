@@ -98,16 +98,43 @@ namespace Perplex
 
 	struct SpriteRendererComponent
 	{
-		Asset SpriteAsset = Asset();
-		glm::vec4 Color = glm::vec4(1.0f);
+		Asset SpriteAsset{};
+		glm::vec4 Color{ 1.0f };
 
-		Asset EmissionSpriteAsset = Asset();
-		float Emission = 0.0f;
+		Asset EmissionSpriteAsset{};
+		float Emission{ 0.0f };
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
-		SpriteRendererComponent(const glm::vec4& color)
-			: Color(color) {}
+		SpriteRendererComponent(const glm::vec4& color) : Color{ color } {}
+	};
+
+	struct CircleRendererComponent
+	{
+		float Radius{ 1.0f };
+		float Thickness{ 1.0f };
+
+		glm::vec4 Color{ 1.0f };
+		float Emission{ 0.0 };
+
+		bool PixelPerfect{ true };
+
+		CircleRendererComponent() = default;
+		CircleRendererComponent(const CircleRendererComponent&) = default;
+	};
+
+	struct LineRendererComponent
+	{
+		glm::vec2 Start{ 0.0f, 0.0f };
+		glm::vec2 End{ 1.0f, 1.0f };
+
+		glm::vec4 Color{ 1.0f };
+		float Emission{ 0.0 };
+
+		bool PixelPerfect{ true };
+
+		LineRendererComponent() = default;
+		LineRendererComponent(const LineRendererComponent&) = default;
 	};
 
 	struct CameraComponent

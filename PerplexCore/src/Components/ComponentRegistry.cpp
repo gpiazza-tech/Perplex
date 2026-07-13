@@ -26,6 +26,8 @@ namespace Perplex
 		{
 			ComponentKind{ TransformComponent{} },
 			ComponentKind{ SpriteRendererComponent{} },
+			ComponentKind{ CircleRendererComponent{} },
+			ComponentKind{ LineRendererComponent{} },
 			ComponentKind{ CameraComponent{} },
 			ComponentKind{ ScriptComponent{} },
 			ComponentKind{ PerpixelRendererComponent{} },

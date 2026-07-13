@@ -5,6 +5,7 @@ layout (location = 0) out vec4 o_Color;
 uniform float u_PixelsPerUnit;
 
 in float v_Slope;
+in float v_YIntercept;
 in vec4 v_Color;
 in float v_Emission;
 
@@ -26,7 +27,7 @@ void main()
 
 	if (absSlope <= 1.0f)
 	{
-		float lineY = float(int(pixelCoord.x * v_Slope * u_PixelsPerUnit)) / u_PixelsPerUnit;
+		float lineY = float(int((pixelCoord.x * v_Slope + v_YIntercept) * u_PixelsPerUnit)) / u_PixelsPerUnit;
 		float yDist = abs(lineY - pixelCoord.y);
 
 		if (yDist > 0.0f)
@@ -35,7 +36,7 @@ void main()
 
 	if (absSlope > 1.0f)
 	{
-		float lineX = float(int(pixelCoord.y / v_Slope * u_PixelsPerUnit)) / u_PixelsPerUnit;
+		float lineX = float(int(((pixelCoord.y - v_YIntercept) / v_Slope) * u_PixelsPerUnit)) / u_PixelsPerUnit;
 		float xDist = abs(lineX - pixelCoord.x);
 
 		if (xDist > 0.0f)

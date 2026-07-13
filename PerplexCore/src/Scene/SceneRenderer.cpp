@@ -67,6 +67,24 @@ namespace Perplex
 				RenderSprite(spriteRenderer, entity.GetGlobalTransform());
 		}
 
+		auto circles = scene->View<CircleRendererComponent>();
+		for (auto handle : circles)
+		{
+			Entity entity{ handle, scene.get() };
+			auto& circleRenderer = circles.get<CircleRendererComponent>(handle);
+			if (entity.HasComponent<TransformComponent>() && entity.Active())
+				RenderCircle(circleRenderer, entity.GetGlobalTransform());
+		}
+
+		auto lines = scene->View<LineRendererComponent>();
+		for (auto handle : lines)
+		{
+			Entity entity{ handle, scene.get() };
+			auto& lineRenderer = lines.get<LineRendererComponent>(handle);
+			if (entity.HasComponent<TransformComponent>() && entity.Active())
+				RenderLine(lineRenderer, entity.GetGlobalTransform());
+		}
+
 		auto perpixels = scene->View<PerpixelRendererComponent>();
 		for (auto handle : perpixels)
 		{
@@ -84,9 +102,6 @@ namespace Perplex
 			if (entity.HasComponent<TransformComponent>() && entity.Active())
 				RenderText(entity);
 		}
-
-		glm::vec2 mouseWorldPos{ Input::GetMouseWorldPosition().first, Input::GetMouseWorldPosition().second };
-		pxr::Renderer::DrawLine({ 0.0f, 0.0f }, mouseWorldPos, {1.0f, 1.0f, 1.0f, 1.0f});
 
 		EndScene();
 	}
@@ -130,6 +145,24 @@ namespace Perplex
 				auto& spriteRenderer = view.get<SpriteRendererComponent>(handle);
 				if (entity.HasComponent<TransformComponent>() && entity.Active())
 					RenderSprite(spriteRenderer, entity.GetGlobalTransform());
+			}
+
+			auto circles = scene->View<CircleRendererComponent>();
+			for (auto handle : circles)
+			{
+				Entity entity{ handle, scene.get() };
+				auto& circleRenderer = circles.get<CircleRendererComponent>(handle);
+				if (entity.HasComponent<TransformComponent>() && entity.Active())
+					RenderCircle(circleRenderer, entity.GetGlobalTransform());
+			}
+
+			auto lines = scene->View<LineRendererComponent>();
+			for (auto handle : lines)
+			{
+				Entity entity{ handle, scene.get() };
+				auto& lineRenderer = lines.get<LineRendererComponent>(handle);
+				if (entity.HasComponent<TransformComponent>() && entity.Active())
+					RenderLine(lineRenderer, entity.GetGlobalTransform());
 			}
 
 			// Perpixel Renderers
@@ -208,6 +241,21 @@ namespace Perplex
 		{
 			pxr::Renderer::DrawSprite(tc.Position, tc.Rotation, tc.Scale, src.Color, src.Emission, true);
 		}
+	}
+
+	void SceneRenderer::RenderCircle(const CircleRendererComponent& src, const TransformComponent& tc)
+	{
+		HW_PROFILE_FUNCTION();
+
+		pxr::Renderer::DrawCircle(tc.Position, src.Radius, src.Thickness, src.Color, src.Emission, src.PixelPerfect);
+	}
+
+	void SceneRenderer::RenderLine(const LineRendererComponent& src, const TransformComponent& tc)
+	{
+		HW_PROFILE_FUNCTION();
+
+		glm::vec2 position{ tc.Position.x, tc.Position.y };
+		pxr::Renderer::DrawLine(position + src.Start, position + src.End, src.Color, src.Emission, src.PixelPerfect);
 	}
 
 	void SceneRenderer::RenderPerpixel(Entity entity)

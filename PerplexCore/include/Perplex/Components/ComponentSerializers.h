@@ -21,6 +21,9 @@ namespace Perplex
 	PERPLEX_DEFINE_JSON_STRUCT(Sprite, ColorAsset, EmissionAsset)
 	PERPLEX_DEFINE_JSON_STRUCT(SpriteRendererComponent, SpriteAsset, Color, EmissionSpriteAsset, Emission)
 
+	// Box Renderer
+	PERPLEX_DEFINE_JSON_STRUCT(BoxRendererComponent, Bounds, Color, Emission, PixelPerfect)
+
 	// Circle Renderer
 	PERPLEX_DEFINE_JSON_STRUCT(CircleRendererComponent, Radius, Thickness, Color, Emission, PixelPerfect)
 

@@ -73,10 +73,23 @@ namespace Perplex
 		DrawSelection<float>(PERPLEX_SUBSELECTION(component, Emission), "Emission");
 	}
 
+	void Draw(GuiSelection<BoxRendererComponent> component)
+	{
+		DrawSelection(PERPLEX_SUBSELECTION(component, Bounds), "Bounds");
+
+		DrawSpace();
+
+		DrawSelection<glm::vec4>(PERPLEX_SUBSELECTION(component, Color), [](glm::vec4& val) { return DrawColor(val, "Color"); });
+		DrawSelection(PERPLEX_SUBSELECTION(component, Emission), "Emission");
+		DrawSelection(PERPLEX_SUBSELECTION(component, PixelPerfect), "Pixel Perfect");
+	}
+
 	void Draw(GuiSelection<CircleRendererComponent> component)
 	{
 		DrawSelection(PERPLEX_SUBSELECTION(component, Radius), "Radius");
 		DrawSelection(PERPLEX_SUBSELECTION(component, Thickness), "Thickness");
+
+		DrawSpace();
 
 		DrawSelection<glm::vec4>(PERPLEX_SUBSELECTION(component, Color), [](glm::vec4& val) { return DrawColor(val, "Color"); });
 		DrawSelection(PERPLEX_SUBSELECTION(component, Emission), "Emission");
@@ -87,6 +100,8 @@ namespace Perplex
 	{
 		DrawSelection(PERPLEX_SUBSELECTION(component, Start), "Start");
 		DrawSelection(PERPLEX_SUBSELECTION(component, End), "End");
+
+		DrawSpace();
 
 		DrawSelection<glm::vec4>(PERPLEX_SUBSELECTION(component, Color), [](glm::vec4& val) { return DrawColor(val, "Color"); });
 		DrawSelection(PERPLEX_SUBSELECTION(component, Emission), "Emission");

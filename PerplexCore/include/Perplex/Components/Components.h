@@ -109,6 +109,19 @@ namespace Perplex
 		SpriteRendererComponent(const glm::vec4& color) : Color{ color } {}
 	};
 
+	struct BoxRendererComponent
+	{
+		glm::vec2 Bounds{ 1.0f, 1.0f };
+
+		glm::vec4 Color{ 1.0f };
+		float Emission{ 0.0 };
+
+		bool PixelPerfect{ true };
+
+		BoxRendererComponent() = default;
+		BoxRendererComponent(const BoxRendererComponent&) = default;
+	};
+
 	struct CircleRendererComponent
 	{
 		float Radius{ 1.0f };

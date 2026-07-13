@@ -25,6 +25,7 @@ namespace Perplex
 		void DrawToScreen();
 
 		void RenderSprite(const SpriteRendererComponent& src, const TransformComponent& tc);
+		void RenderBox(const BoxRendererComponent& src, const TransformComponent& tc);
 		void RenderCircle(const CircleRendererComponent& src, const TransformComponent& tc);
 		void RenderLine(const LineRendererComponent& src, const TransformComponent& tc);
 		void RenderPerpixel(Entity entity);

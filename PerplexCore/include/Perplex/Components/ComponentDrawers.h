@@ -19,6 +19,9 @@ namespace Perplex
 	struct SpriteRendererComponent;
 	void Draw(GuiSelection<SpriteRendererComponent> component);
 
+	struct BoxRendererComponent;
+	void Draw(GuiSelection<BoxRendererComponent> component);
+
 	struct CircleRendererComponent;
 	void Draw(GuiSelection<CircleRendererComponent> component);
 

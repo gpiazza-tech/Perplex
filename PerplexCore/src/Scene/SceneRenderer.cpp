@@ -67,6 +67,15 @@ namespace Perplex
 				RenderSprite(spriteRenderer, entity.GetGlobalTransform());
 		}
 
+		auto boxes = scene->View<BoxRendererComponent>();
+		for (auto handle : boxes)
+		{
+			Entity entity{ handle, scene.get() };
+			auto& boxRenderer = boxes.get<BoxRendererComponent>(handle);
+			if (entity.HasComponent<TransformComponent>() && entity.Active())
+				RenderBox(boxRenderer, entity.GetGlobalTransform());
+		}
+
 		auto circles = scene->View<CircleRendererComponent>();
 		for (auto handle : circles)
 		{
@@ -145,6 +154,15 @@ namespace Perplex
 				auto& spriteRenderer = view.get<SpriteRendererComponent>(handle);
 				if (entity.HasComponent<TransformComponent>() && entity.Active())
 					RenderSprite(spriteRenderer, entity.GetGlobalTransform());
+			}
+
+			auto boxes = scene->View<BoxRendererComponent>();
+			for (auto handle : boxes)
+			{
+				Entity entity{ handle, scene.get() };
+				auto& boxRenderer = boxes.get<BoxRendererComponent>(handle);
+				if (entity.HasComponent<TransformComponent>() && entity.Active())
+					RenderBox(boxRenderer, entity.GetGlobalTransform());
 			}
 
 			auto circles = scene->View<CircleRendererComponent>();
@@ -241,6 +259,13 @@ namespace Perplex
 		{
 			pxr::Renderer::DrawSprite(tc.Position, tc.Rotation, tc.Scale, src.Color, src.Emission, true);
 		}
+	}
+
+	void SceneRenderer::RenderBox(const BoxRendererComponent& src, const TransformComponent& tc)
+	{
+		HW_PROFILE_FUNCTION();
+
+		pxr::Renderer::DrawBox(tc.Position, src.Bounds, src.Color, src.Emission, src.PixelPerfect);
 	}
 
 	void SceneRenderer::RenderCircle(const CircleRendererComponent& src, const TransformComponent& tc)

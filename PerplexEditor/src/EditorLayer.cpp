@@ -85,10 +85,10 @@ namespace Perplex
         switch (m_SceneState)
         {
         case SceneState::Edit:
-            m_SceneRenderer.RenderEditor(activeScene, m_EditorCamera);
+            m_SceneRenderer.RenderEditor(activeScene, m_EditorCamera, m_RenderSettings);
             break;
         case SceneState::Play:
-            m_SceneRenderer.Render(activeScene);
+            m_SceneRenderer.Render(activeScene, m_RenderSettings);
             break;
         default:
             break;
@@ -106,6 +106,7 @@ namespace Perplex
 
         UI_Stats();
         UI_Toolbar();
+        UI_RenderSettings();
 
         m_Dockspace.End();
     }
@@ -211,6 +212,26 @@ namespace Perplex
 
         ImGui::PopStyleVar(2);
         ImGui::PopStyleColor(3);
+    }
+
+    void EditorLayer::UI_RenderSettings()
+    {
+        ImGui::Begin("Render Settings");
+
+        ImGui::Checkbox("Postprocessing", &m_RenderSettings.Postprocessing);
+
+        ImGui::Dummy({ 0.0f, 20.0f });
+
+        ImGui::Checkbox("Bloom", &m_RenderSettings.Bloom);
+        ImGui::DragFloat("Blooom Threshold", &m_RenderSettings.BloomThreshold, 0.1f);
+        ImGui::DragFloat("Blooom Filter Radius", &m_RenderSettings.BloomFilterRadius, 0.001f);
+
+        ImGui::Dummy({ 0.0f, 20.0f });
+
+        ImGui::Checkbox("Tonemapping", &m_RenderSettings.Tonemapping);
+        ImGui::Checkbox("Pixelate", &m_RenderSettings.Pixelate);
+
+        ImGui::End();
     }
 
     void EditorLayer::OnScenePlay()

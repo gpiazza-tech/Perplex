@@ -54,10 +54,8 @@ namespace Perplex
 		pxr::Renderer::BeginBatch();
 	}
 
-	void SceneRenderer::RenderEditor(Ref<Scene> scene, const EditorCamera& camera)
+	void SceneRenderer::RenderEntities(Ref<Scene> scene, const RenderSettings& renderSettings)
 	{
-		BeginScene(camera);
-
 		auto sprites = scene->View<SpriteRendererComponent>();
 		for (auto handle : sprites)
 		{
@@ -111,103 +109,106 @@ namespace Perplex
 			if (entity.HasComponent<TransformComponent>() && entity.Active())
 				RenderText(entity);
 		}
-
-		EndScene();
 	}
 
-	void SceneRenderer::Render(Ref<Scene> scene)
+	void SceneRenderer::RenderEditorWidgets(Ref<Scene> scene, const RenderSettings& renderSettings)
 	{
-		// Find Camera
-		CameraComponent* mainCamera = nullptr;
-		TransformComponent* cameraTransform = nullptr;
+		std::optional<Entity> mainCamera = FindMainCamera(scene);
+
+		if (mainCamera)
 		{
-			HW_PROFILE_SCOPE("Find Camera");
+			const CameraComponent& mainCameraComponent = mainCamera.value().GetComponent<CameraComponent>();
+			const TransformComponent& mainCameraTransform = mainCamera.value().GetComponent<TransformComponent>();
 
-			auto view = scene->View<CameraComponent>();
-			for (auto handle : view)
+			pxr::Camera camera({ m_Width, m_Height }, mainCameraComponent.PixelsPerUnit, mainCameraComponent.Zoom, mainCameraComponent.ScalingMode);
+
+			pxr::Renderer::DrawBox(mainCameraTransform.Position,
+				{ camera.GetPixelResolution().x / camera.GetPixelsPerUnit() / 2.0f, 
+				camera.GetPixelResolution().y / camera.GetPixelsPerUnit() / 2.0f });
+		}
+
+		// Script Widgets
+		auto scripts = scene->View<ScriptComponent>();
+		for (auto handle : scripts)
+		{
+			Entity entity{ handle, scene.get() };
+			if (!entity.Active())
+				continue;
+
+			glm::vec2 widgetOffset{};
+			if (entity.HasComponent<TransformComponent>())
 			{
-				Entity entity{ handle, scene.get() };
+				glm::vec2 vec3Pos{ entity.GetGlobalTransform().Position };
+				widgetOffset = { vec3Pos.x, vec3Pos.y };
+			}
 
-				auto& camera = view.get<CameraComponent>(handle);
-
-				if (entity.HasComponent<TransformComponent>() && camera.Primary)
+			auto& script = scripts.get<ScriptComponent>(handle);
+			for (const auto& property : script.Properties)
+			{
+				if (property.GetType() == PerplexTypes::Bounds)
 				{
-					mainCamera = &camera;
-					cameraTransform = &entity.GetComponent<TransformComponent>();
-					break;
+					Bounds bounds{ property.GetValue<Bounds>() };
+					pxr::Renderer::DrawBox(glm::vec2{ bounds.CenterX, bounds.CenterY } + widgetOffset, { bounds.BoundsX, bounds.BoundsY });
+				}
+
+				else if (property.GetType() == PerplexTypes::Radius)
+				{
+					Radius radius{ property.GetValue<Radius>() };
+					pxr::Renderer::DrawCircle(glm::vec2{ radius.CenterX, radius.CenterY } + widgetOffset, radius.Radius, radius.Radius);
 				}
 			}
 		}
+	}
 
-		// Render sprites
+	void SceneRenderer::RenderEditor(Ref<Scene> scene, const EditorCamera& camera, const RenderSettings& renderSettings)
+	{
+		BeginScene(camera);
+		RenderEntities(scene, renderSettings);
+		RenderEditorWidgets(scene, renderSettings);
+		EndScene(renderSettings);
+	}
+
+	void SceneRenderer::Render(Ref<Scene> scene, const RenderSettings& renderSettings)
+	{
+		std::optional<Entity> mainCamera = FindMainCamera(scene);
+
+		// Render Entities
 		if (mainCamera)
 		{
 			HW_PROFILE_SCOPE("Render Sprites");
 
-			pxr::Camera camera({ m_Width, m_Height }, mainCamera->PixelsPerUnit, mainCamera->Zoom, mainCamera->ScalingMode);
-			BeginScene(camera, *cameraTransform, mainCamera->Background);
+			const CameraComponent& mainCameraComponent = mainCamera.value().GetComponent<CameraComponent>();
+			const TransformComponent& mainCameraTransform = mainCamera.value().GetComponent<TransformComponent>();
 
-			auto view = scene->View<SpriteRendererComponent>();
-			for (auto handle : view)
-			{
-				Entity entity{ handle, scene.get() };
-				auto& spriteRenderer = view.get<SpriteRendererComponent>(handle);
-				if (entity.HasComponent<TransformComponent>() && entity.Active())
-					RenderSprite(spriteRenderer, entity.GetGlobalTransform());
-			}
+			pxr::Camera camera({ m_Width, m_Height }, mainCameraComponent.PixelsPerUnit, mainCameraComponent.Zoom, mainCameraComponent.ScalingMode);
 
-			auto boxes = scene->View<BoxRendererComponent>();
-			for (auto handle : boxes)
-			{
-				Entity entity{ handle, scene.get() };
-				auto& boxRenderer = boxes.get<BoxRendererComponent>(handle);
-				if (entity.HasComponent<TransformComponent>() && entity.Active())
-					RenderBox(boxRenderer, entity.GetGlobalTransform());
-			}
-
-			auto circles = scene->View<CircleRendererComponent>();
-			for (auto handle : circles)
-			{
-				Entity entity{ handle, scene.get() };
-				auto& circleRenderer = circles.get<CircleRendererComponent>(handle);
-				if (entity.HasComponent<TransformComponent>() && entity.Active())
-					RenderCircle(circleRenderer, entity.GetGlobalTransform());
-			}
-
-			auto lines = scene->View<LineRendererComponent>();
-			for (auto handle : lines)
-			{
-				Entity entity{ handle, scene.get() };
-				auto& lineRenderer = lines.get<LineRendererComponent>(handle);
-				if (entity.HasComponent<TransformComponent>() && entity.Active())
-					RenderLine(lineRenderer, entity.GetGlobalTransform());
-			}
-
-			// Perpixel Renderers
-			auto perpixels = scene->View<PerpixelRendererComponent>();
-			for (auto handle : perpixels)
-			{
-				Entity entity{ handle, scene.get() };
-				auto& perpixelRenderer = perpixels.get<PerpixelRendererComponent>(handle);
-				if (entity.HasComponent<TransformComponent>() && entity.Active())
-					RenderPerpixel(entity);
-			}
-
-			// Render Text
-			auto texts = scene->View<TextComponent>();
-			for (auto handle : texts)
-			{
-				Entity entity{ handle, scene.get() };
-				auto& text = texts.get<TextComponent>(handle);
-				if (entity.HasComponent<TransformComponent>() && entity.Active())
-					RenderText(entity);
-			}
-
-			EndScene();
+			BeginScene(camera, mainCameraTransform, mainCameraComponent.Background);
+			RenderEntities(scene, renderSettings);
+			EndScene(renderSettings);
 		}
 	}
 
-	void SceneRenderer::EndScene()
+	std::optional<Entity> SceneRenderer::FindMainCamera(Ref<Scene> scene)
+	{
+		HW_PROFILE_FUNCTION();
+
+		auto view = scene->View<CameraComponent>();
+		for (auto handle : view)
+		{
+			Entity entity{ handle, scene.get() };
+
+			auto& camera = view.get<CameraComponent>(handle);
+
+			if (entity.HasComponent<TransformComponent>() && camera.Primary)
+			{
+				return entity;
+			}
+		}
+
+		return std::nullopt;
+	}
+
+	void SceneRenderer::EndScene(const RenderSettings& renderSettings)
 	{
 		HW_PROFILE_FUNCTION();
 
@@ -215,29 +216,27 @@ namespace Perplex
 		pxr::Renderer::EndBatch();
 		pxr::Renderer::Flush();
 
-		// Renderer Post Processing
-		static bool bloom = true;
-		static float threshold = 1.0f;
-		static float filterRadius = 0.003f;
-		if (bloom)
+		if (renderSettings.Postprocessing)
 		{
-			m_BloomRenderer.RenderBloomTexture(m_Framebuffer.GetTextureID(), threshold, filterRadius);
-			m_Framebuffer.DrawTexture(m_BloomRenderer.BloomTexture());
+			if (renderSettings.Bloom)
+			{
+				m_BloomRenderer.RenderBloomTexture(m_Framebuffer.GetTextureID(), renderSettings.BloomThreshold, renderSettings.BloomFilterRadius);
+				m_Framebuffer.DrawTexture(m_BloomRenderer.BloomTexture());
+			}
+
+			if (renderSettings.Tonemapping)
+			{
+				m_Tonemapper.RenderTonemap(m_Framebuffer.GetTextureID());
+				m_Framebuffer.DrawTexture(m_Tonemapper.TonemappedTexture());
+			}
+
+			if (renderSettings.Pixelate)
+			{
+				m_Pixelator.RenderPixelator(m_Framebuffer.GetTextureID(), m_Camera.GetPixelResolution());
+				m_Framebuffer.DrawTexture(m_Pixelator.PixelatedTexture());
+			}
 		}
 
-		static bool tonemap = true;
-		if (tonemap)
-		{
-			m_Tonemapper.RenderTonemap(m_Framebuffer.GetTextureID());
-			m_Framebuffer.DrawTexture(m_Tonemapper.TonemappedTexture());
-		}
-
-		static bool pixelate = true;
-		if (pixelate)
-		{
-			m_Pixelator.RenderPixelator(m_Framebuffer.GetTextureID(), m_Camera.GetPixelResolution());
-			m_Framebuffer.DrawTexture(m_Pixelator.PixelatedTexture());
-		}
 		m_Framebuffer.DrawToScreen();
 	}
 

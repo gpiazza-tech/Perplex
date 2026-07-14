@@ -8,6 +8,7 @@
 #include "Panels/PerpixelPanel.h"
 #include "Panels/ViewportPanel.h"
 #include <Perplex/ImGui/StringPopup.h>
+#include <Perplex/Core/RenderSettings.h>
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
@@ -39,6 +40,7 @@ namespace Perplex
 
 		void UI_Stats();
 		void UI_Toolbar();
+		void UI_RenderSettings();
 
 		void OnAssetImported(Asset asset);
 	private:
@@ -54,6 +56,8 @@ namespace Perplex
 		AudioEngine m_AudioEngine{};
 
 		EditorCamera m_EditorCamera{};
+
+		RenderSettings m_RenderSettings{};
 		
 		// Panels
 		Dockspace m_Dockspace{};

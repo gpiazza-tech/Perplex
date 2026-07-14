@@ -3,6 +3,8 @@
 #include <Perplex/ImGui/PrimitiveDrawers.h>
 #include <Perplex/Core/PerplexTypes.h>
 
+#include <c/perplex_math.h>
+
 #include <cstdint>
 
 namespace Perplex
@@ -18,6 +20,21 @@ namespace Perplex
 	bool DrawOptions(const char* label, int& current, Option options[], size_t optionCount);
 	bool DrawAssetField(const char* label, Asset& asset, AssetType type);
 	bool DrawEntityField(const char* label, EntityData& entity);
+
+	inline void Draw(Bounds& bounds, const char* label)
+	{
+		Draw(bounds.CenterX, "Center X");
+		Draw(bounds.CenterY, "Center Y");
+		Draw(bounds.BoundsX, "Bounds X");
+		Draw(bounds.BoundsY, "Bounds Y");
+	}
+
+	inline void Draw(Radius& radius, const char* label)
+	{
+		Draw(radius.CenterX, "Center X");
+		Draw(radius.CenterY, "Center Y");
+		Draw(radius.Radius, "Radius");
+	}
 
 	template<typename T>
 	void DrawAny(std::any& value, const char* label = "")

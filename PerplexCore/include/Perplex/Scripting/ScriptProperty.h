@@ -30,7 +30,7 @@ namespace Perplex
 		const PerplexTypes GetType() const { return m_Type; }
 
 		template<typename T>
-		const T& GetValue() const { return std::any_cast<T>(m_Value); }
+		T GetValue() const { return std::any_cast<T>(m_Value); }
 		void* GetPtr() { return &m_Value; }
 
 		void TrySync(const ScriptProperty& property);

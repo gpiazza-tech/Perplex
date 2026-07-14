@@ -4,11 +4,11 @@
 #include <Perplex/Core/PerplexTypes.h>
 #include <Perplex/Assets/Asset.h>
 #include <Perplex/Components/Components.h>
-#include <Perplex/ImGui/ImGuiUtilities.h>
 #include <Perplex/ImGui/PerplexDrawers.h>
-#include <Perplex/Serialization/JsonHelper.h>
 #include <Perplex/Components/ComponentSerializers.h>
+#include <Perplex/Serialization/JsonHelper.h>
 #include <Perplex/Assets/AssetType.h>
+#include <c/perplex_math.h>
 
 #include <nlohmann/json_fwd.hpp>
 #include <nlohmann/json.hpp>
@@ -66,6 +66,12 @@ namespace Perplex
 			case PerplexTypes::Asset:
 				m_Value = Asset();
 				break;
+			case PerplexTypes::Bounds:
+				m_Value = Bounds{};
+				break;
+			case PerplexTypes::Radius:
+				m_Value = Radius{};
+				break;
 			}
 		}
 	}
@@ -106,6 +112,12 @@ namespace Perplex
 		case PerplexTypes::Asset:
 			DrawAssetField(m_Name.c_str(), std::any_cast<Asset&>(m_Value), StringToAssetType(m_TypeStr));
 			break;
+		case PerplexTypes::Bounds:
+			DrawAny<Bounds>(m_Value, m_Name.c_str());
+			break;
+		case PerplexTypes::Radius:
+			DrawAny<Radius>(m_Value, m_Name.c_str());
+			break;
 		default:
 			break;
 		}
@@ -143,6 +155,12 @@ namespace Perplex
 		case PerplexTypes::Asset:
 			j["value"] = std::any_cast<Asset>(property.m_Value);
 			break;
+		case PerplexTypes::Bounds:
+			j["value"] = std::any_cast<Bounds>(property.m_Value);
+			break;
+		case PerplexTypes::Radius:
+			j["value"] = std::any_cast<Radius>(property.m_Value);
+			break;
 		default:
 			break;
 		}
@@ -179,6 +197,12 @@ namespace Perplex
 			break;
 		case PerplexTypes::Asset:
 			property.m_Value = j["value"].get<Asset>();
+			break;
+		case PerplexTypes::Bounds:
+			property.m_Value = j["value"].get<Bounds>();
+			break;
+		case PerplexTypes::Radius:
+			property.m_Value = j["value"].get<Radius>();
 			break;
 		default:
 			break;

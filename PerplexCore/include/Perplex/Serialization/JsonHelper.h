@@ -1,7 +1,6 @@
 #pragma once
 
-#include <Perplex/Components/Components.h>
-#include <Perplex/Scene/EntityNode.h>
+#include <c/perplex_math.h>
 
 #include <glm/fwd.hpp>
 #include <nlohmann/json.hpp>
@@ -24,6 +23,9 @@ namespace Perplex
 		static nlohmann::json LoadFromFile(const std::filesystem::path& path);
 	};
 }
+
+PERPLEX_DEFINE_JSON_STRUCT(Bounds, CenterX, CenterY, BoundsX, BoundsY)
+PERPLEX_DEFINE_JSON_STRUCT(Radius, CenterX, CenterY, Radius)
 
 namespace glm
 {

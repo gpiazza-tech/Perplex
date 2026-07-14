@@ -16,7 +16,9 @@ namespace Perplex
 		Vec3 = 6,
 		Entity = 7,
 		Asset = 8,
-		PerplexObject = 9
+		PerplexObject = 9,
+		Bounds = 10,
+		Radius = 11
 	};
 
 	class PerplexTypesConversions
@@ -42,6 +44,10 @@ namespace Perplex
 				return PerplexTypes::Asset;
 			else if (cType == "SceneAsset")
 				return PerplexTypes::Asset;
+			else if (cType == "Bounds")
+				return PerplexTypes::Bounds;
+			else if (cType == "Radius")
+				return PerplexTypes::Radius;
 			else 
 				return PerplexTypes::None;
 		}

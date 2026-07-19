@@ -34,6 +34,16 @@ namespace Perplex
 	{
 	}
 
+	b2BodyId Simulator::GetBody(Entity entity)
+	{
+		return std::bit_cast<b2BodyId>(m_BodyMap.at(entity.GetUUID()));
+	}
+
+	b2ShapeId Simulator::GetShape(Entity entity)
+	{
+		return std::bit_cast<b2ShapeId>(m_ShapeMap.at(entity.GetUUID()));
+	}
+
 	void Simulator::AddCollider(Entity entity)
 	{
 		const TransformComponent& globalTransform = entity.GetGlobalTransform();
@@ -79,9 +89,10 @@ namespace Perplex
 		}
 
 		b2BodyId bodyId = b2CreateBody(WORLD, &bodyDef);
-		b2CreatePolygonShape(bodyId, &shapeDef, &dynamicBox);
+		b2ShapeId shapeId = b2CreatePolygonShape(bodyId, &shapeDef, &dynamicBox);
 
 		m_BodyMap.set_pair(entity.GetUUID(), std::bit_cast<uint64_t>(bodyId));
+		m_ShapeMap.set_pair(entity.GetUUID(), std::bit_cast<uint64_t>(shapeId));
 	}
 
 	void Simulator::OnSceneStart()
@@ -119,6 +130,7 @@ namespace Perplex
 		for (auto e : view)
 		{
 			Entity entity{ e, m_Scene.get() };
+			SyncPhysicsProperties(entity);
 
 			TransformComponent& transform = entity.GetComponent<TransformComponent>();
 			TransformComponent globalTransform = entity.GetGlobalTransform();
@@ -194,7 +206,7 @@ namespace Perplex
 		{
 			Entity entity{ e, m_Scene.get() };
 
-			b2BodyId bodyId = std::bit_cast<b2BodyId>(m_BodyMap.at(entity.GetUUID()));
+			b2BodyId bodyId = GetBody(entity);
 			Box2DUserData* userData = (Box2DUserData*)b2Body_GetUserData(bodyId);
 
 			delete userData;
@@ -233,6 +245,38 @@ namespace Perplex
 		b2Body_SetLinearVelocity(bodyId, { velocity.x, velocity.y });
 	}
 
+	void Simulator::SyncPhysicsProperties(Entity entity)
+	{
+		b2BodyId bodyId = GetBody(entity);
+		b2ShapeId shapeId = GetShape(entity);
+
+		// Entity should always have a BoxColliderComponent
+		const BoxColliderComponent& collider = entity.GetComponent<BoxColliderComponent>();
+
+		if (entity.HasComponent<PhysicsBodyComponent>())
+		{
+			const PhysicsBodyComponent& bodyComp = entity.GetComponent<PhysicsBodyComponent>();
+
+			if (b2Body_GetType(bodyId) != b2_dynamicBody)
+				b2Body_SetType(bodyId, b2_dynamicBody);
+
+			if (b2Body_GetGravityScale(bodyId) != bodyComp.GravityScale)
+				b2Body_SetGravityScale(bodyId, bodyComp.GravityScale);
+
+			if (b2Shape_GetDensity(shapeId) != bodyComp.Density)
+				b2Shape_SetDensity(shapeId, bodyComp.Density, true);
+
+			if (b2Shape_GetFriction(shapeId) != bodyComp.Friction)
+				b2Shape_SetFriction(shapeId, bodyComp.Friction);
+		}
+
+		else
+		{
+			if (b2Body_GetType(bodyId) != b2_kinematicBody)
+				b2Body_SetType(bodyId, b2_kinematicBody);
+		}
+	}
+
 	void HitEnter(Ref<Scene> scene, UUID first, UUID second)
 	{
 		Interpreter& interpreter = scene->GetSystem<Interpreter>();
@@ -245,6 +289,16 @@ namespace Perplex
 			secondInstance->TryCall("hit_enter", first);
 	}
 
+	float Simulator::GetTimescale() const
+	{
+		return m_Timescale;
+	}
+
+	void Simulator::SetTimescale(float timescale)
+	{
+		m_Timescale = timescale;
+	}
+
 	void HitExit(Ref<Scene> scene, UUID first, UUID second)
 	{
 		Interpreter& interpreter = scene->GetSystem<Interpreter>();
@@ -255,15 +309,5 @@ namespace Perplex
 			firstInstance->TryCall("hit_exit", second);
 		if (secondInstance)
 			secondInstance->TryCall("hit_exit", first);
-	}
-
-	float Simulator::GetTimescale() const
-	{
-		return m_Timescale;
-	}
-
-	void Simulator::SetTimescale(float timescale)
-	{
-		m_Timescale = timescale;
 	}
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdlib.h>
+
 #ifdef __cplusplus
 #include <glm/fwd.hpp>
 #include <glm/glm.hpp>
@@ -79,10 +81,34 @@ typedef struct
 	float Radius;
 } Radius;
 
+// Returns a random value from 0.0f inclusively to 1.0f exclusively
+static inline float RandomFloat()
+{
+	return (float)rand() / (float)RAND_MAX;
+}
+
+// Returns a random value from min inclusively to max exclusively
+static inline float RandomFloatRange(float min, float max)
+{
+	return RandomFloat() * (max - min) + min;
+}
+
+// Returns a random integer
+static inline int RandomInt()
+{
+	return rand();
+}
+
+// Returns a random value from min inclusively to max exclusively
+static inline int RandomIntRange(float min, float max)
+{
+	return (int)(RandomFloat() * (max - min) + min);
+}
+
 static inline Vec2 RandomPointInBounds(Bounds* bounds)
 {
 	Vec2 point;
-	point.x = (float)(rand() / INT_MAX) * bounds->BoundsX * 2.0f + bounds->CenterX - bounds->BoundsX / 2.0f;
-	point.y = (float)(rand() / INT_MAX) * bounds->BoundsY * 2.0f + bounds->CenterY - bounds->BoundsY / 2.0f;
+	point.x = RandomFloatRange(bounds->CenterX - bounds->BoundsX, bounds->CenterX + bounds->BoundsX);
+	point.y = RandomFloatRange(bounds->CenterY - bounds->BoundsY, bounds->CenterY + bounds->BoundsY);
 	return point;
 }

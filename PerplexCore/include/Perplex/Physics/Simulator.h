@@ -12,6 +12,9 @@
 
 #include <cstdint>
 
+struct b2BodyId;
+struct b2ShapeId;
+
 namespace Perplex
 {
 	class Scene;
@@ -40,10 +43,15 @@ namespace Perplex
 		float GetTimescale() const;
 		void SetTimescale(float timescale);
 	private:
+		b2BodyId GetBody(Entity entity);
+		b2ShapeId GetShape(Entity entity);
+
 		void AddCollider(Entity entity);
+		void SyncPhysicsProperties(Entity entity);
 	private:
 		int m_World{};
 		ptl::bimap<UUID, uint64_t> m_BodyMap{};
+		ptl::bimap<UUID, uint64_t> m_ShapeMap{};
 		float m_Timescale{ 1.0f };
 	};
 }

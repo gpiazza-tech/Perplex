@@ -19,6 +19,7 @@
 #include <glm/fwd.hpp>
 
 #include <string>
+#include <string.h>
 
 #define COMPONENT_REMOVER_SYMBOL(x) m_Unit.AddSymbol("Remove"#x, +[](Scene* scene, UUID uuid) { scene->GetEntity(uuid).RemoveComponent<x>(); })
 
@@ -137,13 +138,24 @@ namespace Perplex
 		for (auto& property : m_Properties)
 		{
 			m_Unit.AddSymbol(property.GetName().c_str(), property.GetPtr());
-		}
+		} 
 
 		// Bind transform
 		m_Unit.AddSymbol("scene", &m_SceneContext);
 		m_Unit.AddSymbol("this", &m_EntityID);
 
 		// Bind host functions
+		m_Unit.AddSymbol("_has_tag", +[](Scene* scene, UUID entity, char* tag)
+			{ 
+				Entity entityObj = scene->GetEntity(entity);
+				if (!entityObj)
+				{
+					HW_CORE_WARN("Entity with UUID {0} does not exist!", (uint64_t)entity);
+					return false;
+				}
+				return entityObj.GetTag() == tag;
+			});
+
 		m_Unit.AddSymbol("_set_paused", +[](Scene* scene, bool paused) { scene->SetPaused(paused); });
 		m_Unit.AddSymbol("_pause", +[](Scene* scene) { scene->SetPaused(true); });
 		m_Unit.AddSymbol("_resume", +[](Scene* scene) { scene->SetPaused(false); });

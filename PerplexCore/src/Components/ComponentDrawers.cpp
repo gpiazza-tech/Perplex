@@ -217,6 +217,10 @@ namespace Perplex
 		DrawSelection(PERPLEX_SUBSELECTION(component, GravityScale), "Gravity Scale");
 		DrawSelection(PERPLEX_SUBSELECTION(component, Density), "Density");
 		DrawSelection(PERPLEX_SUBSELECTION(component, Friction), "Friction");
+
+		DrawSpace();
+
+		DrawSelection(PERPLEX_SUBSELECTION(component, LockRotation), "Lock Rotation");
 	}
 
 	void Draw(GuiSelection<SpriteAnimatorComponent> component)

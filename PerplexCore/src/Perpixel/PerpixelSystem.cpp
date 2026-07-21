@@ -42,6 +42,16 @@ namespace Perplex
 		}
 	}
 
+	void TryCallPerpixelEnd(Entity entity, PerpixelInstance& instance)
+	{
+		Interpreter& interpreter = entity.GetScene()->GetSystem<Interpreter>();
+		ScriptInstance* scriptInstance = interpreter.GetInstance(entity.GetUUID());
+		if (scriptInstance)
+		{
+			scriptInstance->TryCall("perpixel_end");
+		}
+	}
+
 	void PerpixelSystem::OnSceneStart()
 	{
 		auto view = m_Scene->View<PerpixelRendererComponent>();
@@ -77,7 +87,10 @@ namespace Perplex
 			const PerpixelRendererComponent& perpixelComponent = view.get<PerpixelRendererComponent>(e);
 			PerpixelInstance& perpixelInstance = m_PerpixelInstanceMap.at(entityID);
 
-			TryCallPerpixelUpdate(ts, entity, perpixelInstance);
+			if (perpixelInstance.GetAlivePixelCount() > 0)
+				TryCallPerpixelUpdate(ts, entity, perpixelInstance);
+			else
+				TryCallPerpixelEnd(entity, perpixelInstance);
 		}
 	}
 

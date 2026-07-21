@@ -21,6 +21,7 @@ namespace Perplex
 
 	void TryCallPerpixelStart(Entity entity, PerpixelInstance& instance);
 	void TryCallPerpixelUpdate(Timestep ts, Entity entity, PerpixelInstance& instance);
+	void TryCallPerpixelEnd(Entity entity, PerpixelInstance& instance);
 
 	class PerpixelSystem : SceneSystem
 	{

@@ -203,6 +203,8 @@ namespace Perplex
 		float Density{ 1.0f };
 		float Friction{ 0.3f };
 
+		bool LockRotation{ false };
+
 		PhysicsBodyComponent() = default;
 		PhysicsBodyComponent(const PhysicsBodyComponent&) = default;
 	};

@@ -59,4 +59,17 @@ namespace Perplex
 
         m_SpawnShape = shape;
 	}
+
+    const size_t PerpixelInstance::GetAlivePixelCount()
+    {
+        size_t alivePixels{};
+
+        for (const auto& pixel : m_Pixels)
+        {
+            if (pixel.Lifetime >= 0.0f)
+                ++alivePixels;
+        }
+
+        return alivePixels;
+    }
 }

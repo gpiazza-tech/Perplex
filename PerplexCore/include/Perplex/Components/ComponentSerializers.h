@@ -42,7 +42,7 @@ namespace Perplex
 	PERPLEX_DEFINE_JSON_STRUCT(BoxColliderComponent, Scale)
 
 	// Physics Body
-	PERPLEX_DEFINE_JSON_STRUCT(PhysicsBodyComponent, GravityScale, Density, Friction)
+	PERPLEX_DEFINE_JSON_STRUCT(PhysicsBodyComponent, GravityScale, Density, Friction, LockRotation)
 
 	// Perpixel Renderer
 	PERPLEX_DEFINE_JSON_STRUCT(PerpixelShapeInfo, CircleRadius, RectSize, ColorAsset, EmissionAsset, Color, Emission)

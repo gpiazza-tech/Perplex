@@ -80,6 +80,7 @@ namespace Perplex
 			bodyDef.gravityScale = physicsBody.GravityScale;
 			shapeDef.density = physicsBody.Density;
 			shapeDef.material.friction = physicsBody.Friction;
+			bodyDef.motionLocks.angularZ = physicsBody.LockRotation;
 			bodyDef.enableSleep = false;
 		}
 
@@ -268,6 +269,9 @@ namespace Perplex
 
 			if (b2Shape_GetFriction(shapeId) != bodyComp.Friction)
 				b2Shape_SetFriction(shapeId, bodyComp.Friction);
+
+			if (b2Body_GetMotionLocks(bodyId).angularZ != bodyComp.LockRotation)
+				b2Body_SetMotionLocks(bodyId, b2MotionLocks{ false, false, bodyComp.LockRotation });
 		}
 
 		else

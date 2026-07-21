@@ -93,7 +93,7 @@ namespace Perplex
 
 	Entity Scene::GetEntity(UUID uuid)
 	{
-		return Entity(m_UUIDMap[uuid], this);
+		return m_UUIDMap.contains(uuid) ? Entity{ m_UUIDMap.at(uuid), this } : Entity{};
 	}
 
 	std::vector<Entity> Scene::GetParentEntities()
@@ -126,13 +126,18 @@ namespace Perplex
 
 		for (size_t i{}; i < m_DyingEntities.size(); ++i)
 		{
-			m_DyingEntities[i].Time -= ts;
+			m_DyingEntities.at(i).Time -= ts;
 
-			if (m_DyingEntities[i].Time <= 0.0f)
+			if (m_DyingEntities.at(i).Time <= 0.0f)
 			{
-				Entity entityToDestroy = GetEntity(m_DyingEntities[i].EntityID);
+				Entity entityToDestroy = GetEntity(m_DyingEntities.at(i).EntityID);
 				m_DyingEntities.erase(m_DyingEntities.begin() + i);
 				--i;
+
+				// Check if entity exists. This can be false if destroy was called twice on an entity
+				// and the entity has already been destroyed.
+				if (!entityToDestroy)
+					continue;
 
 				// Check if entity has ID. This can be false if the entity is
 				// being destroyed on the same frame that it was created

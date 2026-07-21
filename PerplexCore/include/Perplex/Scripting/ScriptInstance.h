@@ -29,7 +29,7 @@ namespace Perplex
 		bool Compile(const std::string& src, Entity entity, const std::vector<ScriptProperty>& properties);
 
 		template<typename ReturnType, typename... Args>
-		std::optional<ReturnType> TryCall(const char* funcName, Args&&... funcArgs)
+		std::optional<ReturnType> TryCall(const char* funcName, Args... funcArgs)
 		{
 			if (!m_Unit.IsCompiled())
 				return std::nullopt;
@@ -38,13 +38,13 @@ namespace Perplex
 
 			FuncPtrType funcPtr = reinterpret_cast<FuncPtrType>(m_Unit.GetSymbol(funcName));
 			if (funcPtr != nullptr)
-				return std::optional<ReturnType>{ funcPtr(std::forward<Args>(funcArgs)...) };
+				return std::optional<ReturnType>{ funcPtr(funcArgs...) };
 
 			return std::nullopt;
 		}
 
 		template<typename... Args>
-		void TryCall(const char* funcName, Args&&... funcArgs)
+		void TryCall(const char* funcName, Args... funcArgs)
 		{
 			if (!m_Unit.IsCompiled())
 				return;
@@ -53,7 +53,7 @@ namespace Perplex
 
 			FuncPtrType funcPtr = reinterpret_cast<FuncPtrType>(m_Unit.GetSymbol(funcName));
 			if (funcPtr != nullptr)
-				funcPtr(std::forward<Args>(funcArgs)...);
+				funcPtr(funcArgs...);
 			return;
 		}
 

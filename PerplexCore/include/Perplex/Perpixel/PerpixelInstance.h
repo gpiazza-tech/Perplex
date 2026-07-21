@@ -16,6 +16,8 @@ namespace Perplex
 
 		std::vector<pixel>& GetPixels() { return m_Pixels; }
 		const std::vector<pixel>& GetPixels() const { return m_Pixels; }
+
+		const size_t GetAlivePixelCount();
 	private:
 		PerpixelShape m_SpawnShape{};
 

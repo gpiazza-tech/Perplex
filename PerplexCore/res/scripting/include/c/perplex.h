@@ -70,6 +70,8 @@ typedef void* Scene;
 PX_EXTERN Scene scene;
 PX_EXTERN Entity this;
 
+PX_EXTERN bool _has_tag(Scene _scene, Entity e, char* tag);
+
 PX_EXTERN void _set_paused(Scene _scene, bool paused);
 PX_EXTERN void _pause(Scene _scene);
 PX_EXTERN void _resume(Scene _scene);
@@ -104,6 +106,8 @@ typedef void* Sound;
 PX_EXTERN void _play_sound(Scene _scene, const char* filepath);
 PX_EXTERN Sound _start_loop(Scene _scene, const char* filepath);
 PX_EXTERN void _end_loop(Scene _scene, Sound sound);
+
+bool has_tag(Entity e, char* tag) { return _has_tag(scene, e, tag); }
 
 #define play_sound(filepath) (_play_sound(scene, filepath))
 #define start_loop(filepath) (_start_loop(scene, filepath))

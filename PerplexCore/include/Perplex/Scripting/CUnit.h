@@ -13,6 +13,8 @@ namespace Perplex
 		CUnit(const CUnit&);
 		~CUnit();
 
+		void SetErrorFunction(void* userData, void(errorFunction)(void* userData, const char* message));
+
 		bool AddLibraryPath(const char* path);
 		bool AddLibrary(const char* library);
 		bool AddIncludePath(const char* path);

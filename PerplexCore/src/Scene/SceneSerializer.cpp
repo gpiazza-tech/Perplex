@@ -44,11 +44,6 @@ namespace Perplex
 		nlohmann::json sceneJson = JsonHelper::LoadFromFile(path);
 
 		Ref<Scene> scene = CreateRef<Scene>();
-		scene->AddSystem<Simulator>();
-		scene->AddSystem<Interpreter>();
-		scene->AddSystem<PerpixelSystem>();
-		scene->AddSystem<AnimationSystem>();
-		scene->AddSystem<AudioSystem>();
 
 		for (auto& entityJson : sceneJson["Entities"])
 		{

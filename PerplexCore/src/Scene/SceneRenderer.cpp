@@ -290,11 +290,11 @@ namespace Perplex
 		PerpixelSystem& system = entity.GetScene()->GetSystem<PerpixelSystem>();
 		TransformComponent transform = entity.GetGlobalTransform();
 
-		const std::vector<pixel>& pixels = system.GetPixels(entity.GetUUID());
+		const std::vector<Pixel>& pixels = system.GetPixels(entity.GetUUID());
 
 		for (const auto& pxl : pixels)
 			if (pxl.Lifetime > 0.0f)
-				pxr::Renderer::DrawPixel(transform.Position + vector3(pxl.Position.x, pxl.Position.y, 0.0f), pxl.Color, pxl.Emission);
+				pxr::Renderer::DrawPixel(transform.Position + glm::vec3{ pxl.Position.x, pxl.Position.y, 0.0f }, glm::vec4{ pxl.Color.r, pxl.Color.g, pxl.Color.b, pxl.Color.a }, pxl.Emission);
 	}
 
 	void SceneRenderer::RenderText(Entity entity)

@@ -23,6 +23,7 @@ namespace Perplex
 	void SceneManager::LoadScene(Ref<Scene> scene)
 	{ 
 		m_NextScene = scene;
+		m_SavedScene = CreateRef<Scene>();
 	};
 
 	void SceneManager::SaveScene(const std::filesystem::path& path)
@@ -40,14 +41,27 @@ namespace Perplex
 			bool playing = m_ActiveScene != nullptr && m_ActiveScene->IsPlaying();
 
 			if (playing)
-				m_ActiveScene->Stop();
+				Stop();
 
 			m_ActiveScene = m_NextScene;
 
 			if (playing)
-				m_ActiveScene->Start();
+				Play();
 
 			m_JustLoaded = true;
 		}
+	}
+
+	void SceneManager::Play()
+	{
+		m_SavedScene = CreateRef<Scene>(*m_ActiveScene.get());
+		m_ActiveScene->Start();
+	}
+
+	void SceneManager::Stop()
+	{
+		m_ActiveScene->Stop();
+		m_ActiveScene = CreateRef<Scene>(*m_SavedScene.get());
+		m_NextScene = m_ActiveScene;
 	}
 }

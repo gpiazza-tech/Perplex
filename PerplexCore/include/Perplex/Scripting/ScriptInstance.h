@@ -26,7 +26,7 @@ namespace Perplex
 	{
 	public:
 		bool IsCompiled() { return m_Unit.IsCompiled(); }
-		bool Compile(const std::string& src, Entity entity, const std::vector<ScriptProperty>& properties);
+		bool Compile(const std::string& srcName, const std::string& src, Entity entity, const std::vector<ScriptProperty>& properties);
 
 		template<typename ReturnType, typename... Args>
 		std::optional<ReturnType> TryCall(const char* funcName, Args... funcArgs)

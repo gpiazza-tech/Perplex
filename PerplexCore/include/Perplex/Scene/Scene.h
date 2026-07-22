@@ -25,10 +25,23 @@ namespace Perplex
 		float Time{};
 	};
 
+	void InitSceneSystems(Scene& scene);
+
 	class Scene
 	{
 	public:
 		Scene();
+		Scene(const Scene& other);
+		Scene(Scene&& other) = default;
+		Scene& operator=(Scene other)
+		{
+			std::swap(m_Registry, other.m_Registry);
+			std::swap(m_Hierarchy, other.m_Hierarchy);
+			std::swap(m_UUIDMap, other.m_UUIDMap);
+			std::swap(m_Systems, other.m_Systems);
+			return *this;
+		}
+		Scene& operator=(Scene&& other) = default;
 
 		Entity CreateEntity(const std::string& name = std::string(), UUID uuid = UUID(), UUID parent = 0);
 		Entity CreateAbstractEntity(const std::string& name = std::string(), UUID uuid = UUID(), UUID parent = 0);
@@ -77,12 +90,12 @@ namespace Perplex
 		bool m_Paused{ false };
 		float m_Timescale{ 1.0f };
 
-		entt::registry m_Registry;
+		entt::registry m_Registry{};
 
-		std::unordered_map<UUID, entt::entity> m_UUIDMap;
-		std::vector<DyingEntity> m_DyingEntities;
+		std::unordered_map<UUID, entt::entity> m_UUIDMap{};
+		std::vector<DyingEntity> m_DyingEntities{};
 
-		SceneHierarchy m_Hierarchy;
+		SceneHierarchy m_Hierarchy{};
 
 		entt::entity m_SystemsContainer{};
 		std::vector<SceneSystem*> m_Systems{};

@@ -11,6 +11,8 @@ namespace Perplex
 
 	struct ScriptData
 	{
+		std::string SourceName;
+
 		std::string Source;
 		std::vector<ScriptProperty> Properties;
 	};

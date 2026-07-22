@@ -2,6 +2,7 @@
 
 #include "perplex_bool.h"
 #include "perplex_math.h"
+#include "perplex_pixel.h"
 
 #include <stdint.h>
 
@@ -16,55 +17,6 @@
 typedef unsigned long long Entity;
 typedef unsigned long long PrefabAsset;
 typedef unsigned long long SceneAsset;
-
-struct Vec4
-{
-	union { float x, r; };
-	union { float y, g; };
-	union { float z, b; };
-	union { float w, a; };
-};
-
-struct Vec4 vec4_create(float x, float y, float z, float w)
-{
-	struct Vec4 vec4;
-	vec4.x = x;
-	vec4.y = y;
-	vec4.z = z;
-	vec4.w = w;
-	return vec4;
-}
-
-struct Vec3
-{
-	float x;
-	float y;
-	float z;
-};
-
-struct Vec3 vec3_create(float x, float y, float z)
-{
-	struct Vec3 vec3;
-	vec3.x = x;
-	vec3.y = y;
-	vec3.z = z;
-	return vec3;
-}
-
-struct Vec2
-{
-	float x;
-	float y;
-};
-
-struct Vec2 vec2_create(float x, float y)
-{
-	struct Vec2 vec2;
-	vec2.x = x;
-	vec2.y = y;
-	return vec2;
-}
-
 typedef void* Scene;
 
 PX_EXTERN Scene scene;
@@ -100,7 +52,9 @@ PX_EXTERN void _destroy(Scene _scene, Entity _entity);
 PX_EXTERN void _destroy_delay(Scene _scene, Entity _entity, float delay);
 PX_EXTERN void _set_velocity(Scene _scene, Entity _entity, struct Vec2 _velocity);
 PX_EXTERN void set_timescale(Scene _scene, float timescale);
+
 PX_EXTERN void _to_perpixel(Scene _scene, Entity _entity);
+PX_EXTERN void _perpixel_spawn_pixel(Scene _scene, Entity _entity, Pixel pixel);
 
 typedef void* Sound;
 PX_EXTERN void _play_sound(Scene _scene, const char* filepath);
@@ -135,6 +89,7 @@ PX_EXTERN void load_scene(SceneAsset sceneAsset);
 #define destroy_delay(entity, delay) (_destroy_delay(scene, entity, delay))
 
 #define to_perpixel() _to_perpixel(scene, this)
+#define perpixel_spawn_pixel(pxl) _perpixel_spawn_pixel(scene, this, pxl)
 
 // __declspec(dllimport) void _set_velocity(Scene s, Entity e, struct Vec2 velocity);
 // void set_velocity(struct Vec2 velocity) { _set_velocity(scene, entity, velocity); }

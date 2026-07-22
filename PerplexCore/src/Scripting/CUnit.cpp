@@ -14,8 +14,6 @@ namespace Perplex
 	CUnit::CUnit()
 		: m_State(tcc_new()), m_IsCompiled(false)
 	{
-		tcc_set_error_func(m_State, nullptr, [](void* opaque, const char* msg) { HW_CORE_ERROR("C Script Error: {0}", msg); });
-
 		const Project& project = Application::Get().GetCurrentProject();
 		tcc_set_lib_path(m_State, project.EngineRes("scripting/tcc/lib").string().c_str());
 		tcc_add_library_path(m_State, project.EngineRes("scripting/tcc/win32/lib").string().c_str());
@@ -28,8 +26,6 @@ namespace Perplex
 	CUnit::CUnit(const CUnit& other)
 		: m_State(tcc_new()), m_IsCompiled(false)
 	{
-		tcc_set_error_func(m_State, nullptr, [](void* opaque, const char* msg) { HW_CORE_ERROR("C Script Error: {0}", msg); });
-
 		const Project& project = Application::Get().GetCurrentProject();
 		tcc_set_lib_path(m_State, project.EngineRes("scripting/tcc/lib").string().c_str());
 		tcc_add_library_path(m_State, project.EngineRes("scripting/tcc/win32/lib").string().c_str());
@@ -42,6 +38,11 @@ namespace Perplex
 	CUnit::~CUnit()
 	{
 		tcc_delete(m_State);
+	}
+
+	void CUnit::SetErrorFunction(void* userData, void(errorFunction)(void* userData, const char* message))
+	{
+		tcc_set_error_func(m_State, userData, errorFunction);
 	}
 
 	bool CUnit::AddLibraryPath(const char* path)

@@ -22,10 +22,14 @@ namespace Perplex
 		void SaveScene(const std::filesystem::path& path);
 		Ref<Scene> ActiveScene() { return m_ActiveScene; }
 
+		void Play();
+		void Stop();
+
 		void OnUpdateEnd();
 		bool JustLoaded() const { return m_JustLoaded; }
 	private:
 		Ref<Scene> m_ActiveScene{};
+		Ref<Scene> m_SavedScene{};
 		Ref<Scene> m_NextScene{};
 
 		bool m_JustLoaded{ false };

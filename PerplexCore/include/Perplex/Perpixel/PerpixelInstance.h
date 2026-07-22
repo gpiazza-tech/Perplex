@@ -14,14 +14,16 @@ namespace Perplex
 		void SetSpawnShape(const PerpixelShape& shape);
 		const PerpixelShape& GetSpawnShape() const { return m_SpawnShape; }
 
-		std::vector<pixel>& GetPixels() { return m_Pixels; }
-		const std::vector<pixel>& GetPixels() const { return m_Pixels; }
+		std::vector<Pixel>& GetPixels() { return m_Pixels; }
+		const std::vector<Pixel>& GetPixels() const { return m_Pixels; }
 
-		const size_t GetAlivePixelCount();
+		void SpawnPixel(const Pixel& pxl) { m_Pixels.emplace_back(pxl); };
+
+		const size_t GetAlivePixelCount() const;
 	private:
 		PerpixelShape m_SpawnShape{};
 
-		std::vector<pixel> m_SpawnPixels{};
-		std::vector<pixel> m_Pixels{};
+		std::vector<Pixel> m_SpawnPixels{};
+		std::vector<Pixel> m_Pixels{};
 	};
 }

@@ -239,7 +239,7 @@ namespace Perplex
         ImGuiUtilities::SetRuntimeStyles();
 
         m_SceneState = SceneState::Play;
-        SceneManager::Get().ActiveScene()->Start();
+        SceneManager::Get().Play();
     }
 
     void EditorLayer::OnSceneStop()
@@ -247,7 +247,7 @@ namespace Perplex
         ImGuiUtilities::SetEditorStyles();
 
         m_SceneState = SceneState::Edit;
-        SceneManager::Get().ActiveScene()->Stop();
+        SceneManager::Get().Stop();
     }
 
     void EditorLayer::OnResize()

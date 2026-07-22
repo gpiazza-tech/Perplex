@@ -10,6 +10,14 @@
 #include <Perplex/Components/ComponentRegistry.h>
 #include <Perplex/Components/ComponentKind.h>
 
+// SYSTEMS
+#include <Perplex/Physics/Simulator.h>
+#include <Perplex/Scripting/Interpreter.h>
+#include <Perplex/Perpixel/PerpixelSystem.h>
+#include <Perplex/Animation/AnimationSystem.h>
+#include <Perplex/Audio/AudioSystem.h>
+
+
 #include <entt.hpp>
 
 #include <string>
@@ -17,9 +25,39 @@
 
 namespace Perplex
 {
-	Scene::Scene()
+	void InitSceneSystems(Scene& scene)
 	{
-		m_SystemsContainer = m_Registry.create();
+		scene.AddSystem<Simulator>();
+		scene.AddSystem<Interpreter>();
+		scene.AddSystem<PerpixelSystem>();
+		scene.AddSystem<AnimationSystem>();
+		scene.AddSystem<AudioSystem>();
+	}
+
+	Scene::Scene() : m_SystemsContainer{ m_Registry.create() }
+	{
+		InitSceneSystems(*this);
+	}
+
+	Scene::Scene(const Scene& other) : m_SystemsContainer{ m_Registry.create() }, m_Hierarchy{ other.m_Hierarchy }
+	{
+		InitSceneSystems(*this);
+		
+		for (auto entityHandle : other.m_Registry.view<entt::entity>())
+		{
+			if (entityHandle == m_SystemsContainer)
+				continue;
+
+			Entity ogEntity = Entity{ entityHandle, (Scene*)(&other)};
+			Entity newEntity = ConstructEntity(ogEntity.GetTag(), ogEntity.GetUUID(), UUID{ 0 });
+			newEntity.GetComponent<EnableComponent>() = ogEntity.GetComponent<EnableComponent>();
+
+			for (const auto& component : ComponentRegistry::GetAdditiveKinds())
+				if (component.Has(ogEntity))
+					component.Copy(ogEntity, newEntity);
+		}
+
+		m_Hierarchy = other.m_Hierarchy;
 	}
 
 	Entity Scene::ConstructEntity(const std::string& name, UUID uuid, UUID parent)

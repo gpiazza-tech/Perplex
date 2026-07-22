@@ -46,7 +46,7 @@ namespace Perplex
             float aEmit = emissionPixels[i].a / 255.0f * shape.Info.Emission;
 
             // Particle
-            pixel pxl{};
+            Pixel pxl{};
             pxl.Color = { rColor, gColor, bColor, aColor };
             pxl.Position = { (i % colorSprite->PixelWidth / pixelsPerUnit) - center.x, (i / colorSprite->PixelWidth / pixelsPerUnit) - center.y };
             pxl.Emission = rEmit; // only red channel contributes to emission
@@ -60,7 +60,7 @@ namespace Perplex
         m_SpawnShape = shape;
 	}
 
-    const size_t PerpixelInstance::GetAlivePixelCount()
+    const size_t PerpixelInstance::GetAlivePixelCount() const
     {
         size_t alivePixels{};
 

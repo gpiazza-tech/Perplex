@@ -45,7 +45,7 @@ namespace Perplex
 			UUID entityID = entity.GetUUID();
 
 			std::unique_ptr<ScriptInstance>& instance = m_ScriptInstanceMap[entity.GetUUID()];
-			instance->Compile(scriptData->Source, entity, sc.Properties);
+			instance->Compile(scriptData->SourceName, scriptData->Source, entity, sc.Properties);
 		}
 	}
 

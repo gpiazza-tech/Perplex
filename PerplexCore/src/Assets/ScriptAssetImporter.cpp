@@ -28,6 +28,9 @@ namespace Perplex
 		std::ostringstream oss;
 		oss << ifs.rdbuf();
 
+		fs::path filename = path.filename();
+
+		data["sourceName"] = filename.string();
 		data["source"] = TrimProperties(oss.str());
 		data["properties"] = FindProperties(oss.str());
 
@@ -39,6 +42,7 @@ namespace Perplex
 		nlohmann::json data = JsonHelper::LoadFromFile(path.string().append(".meta"))["data"];
 
 		ScriptData scriptData = ScriptData();
+		scriptData.SourceName = data["sourceName"].get<std::string>();
 		scriptData.Source = data["source"].get<std::string>();
 		scriptData.Properties = data["properties"].get<std::vector<ScriptProperty>>();
 

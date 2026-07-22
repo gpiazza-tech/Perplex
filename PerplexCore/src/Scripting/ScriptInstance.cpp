@@ -14,6 +14,9 @@
 #include <Perplex/Physics/Simulator.h>
 #include <Perplex/Audio/AudioSystem.h>
 #include <Perplex/Scene/SceneManager.h>
+#include <Perplex/Perpixel/PerpixelInstance.h>
+#include <Perplex/Perpixel/PerpixelSystem.h>
+#include <c/perplex_pixel.h>
 
 #include <glm/glm.hpp>
 #include <glm/fwd.hpp>
@@ -120,10 +123,23 @@ namespace Perplex
 			entity.RemoveComponent<PhysicsBodyComponent>();
 	}
 
-	bool ScriptInstance::Compile(const std::string& src, Entity entity, const std::vector<ScriptProperty>& properties)
+	static void _perpixel_spawn_pixel(Scene* scene, UUID entityID, Pixel pixel)
+	{
+		PerpixelInstance* perpixelInstance = scene->GetSystem<PerpixelSystem>().GetInstance(entityID);
+		if (!perpixelInstance)
+		{
+			HW_CORE_WARN("Entity {0} does not have associated perpixel instance!", (uint64_t)entityID);
+			return;
+		}
+		perpixelInstance->SpawnPixel(pixel);
+	}
+
+	bool ScriptInstance::Compile(const std::string& srcName, const std::string& src, Entity entity, const std::vector<ScriptProperty>& properties)
 	{
 		if (m_Unit.IsCompiled())
 			return true;
+
+		m_Unit.SetErrorFunction((void*)srcName.c_str(), [](void* userData, const char* message) { HW_CORE_ERROR("C Error in {0}: {1}", (const char*)userData, message); });
 
 		m_EntityID = entity.GetUUID();;
 		m_Properties = properties;
@@ -191,6 +207,7 @@ namespace Perplex
 		m_Unit.AddSymbol("set_timescale", +[](Scene* scene, float timescale) { scene->SetTimescale(timescale); });
 
 		m_Unit.AddSymbol("_to_perpixel", _to_perpixel);
+		m_Unit.AddSymbol("_perpixel_spawn_pixel", _perpixel_spawn_pixel);
 
 		m_Unit.AddSymbol("_play_sound", +[](Scene* scene, const char* filepath) { scene->GetSystem<AudioSystem>().PlaySound(filepath); });
 		m_Unit.AddSymbol("_start_loop", +[](Scene* scene, const char* filepath) { return scene->GetSystem<AudioSystem>().StartLoop(filepath); });

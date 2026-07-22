@@ -2,20 +2,13 @@
 
 #include "perplex_math.h"
 
-#ifdef __cplusplus
-struct pixel
+typedef struct Pixel
 {
-	vector2 Position;
-	vector4 Color;
+	Vec2 Position;
+	Color Color;
 	float Emission;
+
+	Vec2 Velocity;
+
 	float Lifetime;
-};
-#else
-struct pixel
-{
-	struct vector2 Position;
-	struct vector4 Color;
-	float Emission;
-	float Lifetime;
-};
-#endif
+} Pixel;

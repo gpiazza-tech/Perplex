@@ -2,42 +2,7 @@
 
 #include <stdlib.h>
 
-#ifdef __cplusplus
-#include <glm/fwd.hpp>
-#include <glm/glm.hpp>
-using vector2 = glm::vec2;
-using vector3 = glm::vec3;
-using vector4 = glm::vec4;
-#else
-struct vector2
-{
-	union
-	{
-		struct { float x, y; };
-		struct { float r, g; };
-	};
-};
-
-struct vector3
-{
-	union
-	{
-		struct { float x, y, z; };
-		struct { float r, g, b; };
-	};
-};
-
-struct vector4
-{
-	union
-	{
-		struct { float x, y, z, w; };
-		struct { float r, g, b, a; };
-	};
-};
-#endif
-
-typedef struct
+typedef struct Vec2
 {
 	union
 	{
@@ -46,7 +11,7 @@ typedef struct
 	};
 } Vec2;
 
-typedef struct
+typedef struct Vec3
 {
 	union
 	{
@@ -55,7 +20,7 @@ typedef struct
 	};
 } Vec3;
 
-typedef struct
+typedef struct Vec4
 {
 	union
 	{
@@ -66,7 +31,34 @@ typedef struct
 
 typedef Vec4 Color;
 
-typedef struct 
+static inline Vec4 Vec4_Create(float x, float y, float z, float w)
+{
+	Vec4 vec4;
+	vec4.x = x;
+	vec4.y = y;
+	vec4.z = z;
+	vec4.w = w;
+	return vec4;
+}
+
+static inline Vec3 Vec3_Create(float x, float y, float z)
+{
+	Vec3 vec3;
+	vec3.x = x;
+	vec3.y = y;
+	vec3.z = z;
+	return vec3;
+}
+
+static inline Vec2 Vec2_Create(float x, float y)
+{
+	Vec2 vec2;
+	vec2.x = x;
+	vec2.y = y;
+	return vec2;
+}
+
+typedef struct Bounds
 {
 	float CenterX;
 	float CenterY;
@@ -74,7 +66,7 @@ typedef struct
 	float BoundsY;
 } Bounds;
 
-typedef struct
+typedef struct Radius
 {
 	float CenterX;
 	float CenterY;
@@ -105,10 +97,15 @@ static inline int RandomIntRange(float min, float max)
 	return (int)(RandomFloat() * (max - min) + min);
 }
 
-static inline Vec2 RandomPointInBounds(Bounds* bounds)
+static inline Vec2 RandomPointInBounds(const Bounds* bounds)
 {
 	Vec2 point;
 	point.x = RandomFloatRange(bounds->CenterX - bounds->BoundsX, bounds->CenterX + bounds->BoundsX);
 	point.y = RandomFloatRange(bounds->CenterY - bounds->BoundsY, bounds->CenterY + bounds->BoundsY);
 	return point;
+}
+
+static inline float Lerp(float a, float b, float t)
+{
+	return a + t * (b - a);
 }

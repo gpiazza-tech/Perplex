@@ -37,8 +37,8 @@ namespace Perplex
 		void OnComponentAdded(Entity entity) override;
 		void OnComponentRemoved(Entity entity) override;
 
-		std::vector<pixel>& GetPixels(UUID perpixelEntityID);
-		const std::vector<pixel>& GetPixels(UUID perpixelEntityID) const;
+		std::vector<Pixel>& GetPixels(UUID perpixelEntityID);
+		const std::vector<Pixel>& GetPixels(UUID perpixelEntityID) const;
 
 		PerpixelInstance* GetInstance(UUID perpixelEntityID);
 	private:

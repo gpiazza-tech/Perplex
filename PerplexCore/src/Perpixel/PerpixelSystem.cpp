@@ -26,7 +26,7 @@ namespace Perplex
 		ScriptInstance* scriptInstance = interpreter.GetInstance(entity.GetUUID());
 		if (scriptInstance)
 		{
-			std::vector<pixel>& pixels = instance.GetPixels();
+			std::vector<Pixel>& pixels = instance.GetPixels();
 			scriptInstance->TryCall("perpixel_start", pixels.data(), pixels.size());
 		}
 	}
@@ -37,7 +37,7 @@ namespace Perplex
 		ScriptInstance* scriptInstance = interpreter.GetInstance(entity.GetUUID());
 		if (scriptInstance)
 		{
-			std::vector<pixel>& pixels = instance.GetPixels();
+			std::vector<Pixel>& pixels = instance.GetPixels();
 			scriptInstance->TryCall("perpixel_update", ts.GetSeconds(), pixels.data(), pixels.size());
 		}
 	}
@@ -121,9 +121,9 @@ namespace Perplex
 		m_PerpixelInstanceMap.erase(entityID);
 	}
 
-	std::vector<pixel>& PerpixelSystem::GetPixels(UUID perpixelEntityID)
+	std::vector<Pixel>& PerpixelSystem::GetPixels(UUID perpixelEntityID)
 	{
-		static std::vector<pixel> nullPxls{};
+		static std::vector<Pixel> nullPxls{};
 
 		if (!m_PerpixelInstanceMap.contains(perpixelEntityID))
 			return nullPxls;
@@ -131,9 +131,9 @@ namespace Perplex
 		return m_PerpixelInstanceMap.at(perpixelEntityID).GetPixels();
 	}
 
-	const std::vector<pixel>& PerpixelSystem::GetPixels(UUID perpixelEntityID) const
+	const std::vector<Pixel>& PerpixelSystem::GetPixels(UUID perpixelEntityID) const
 	{
-		static std::vector<pixel> nullPxls{};
+		static std::vector<Pixel> nullPxls{};
 
 		if (!m_PerpixelInstanceMap.contains(perpixelEntityID))
 			return nullPxls;

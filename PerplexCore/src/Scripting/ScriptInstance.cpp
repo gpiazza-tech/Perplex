@@ -169,6 +169,12 @@ namespace Perplex
 
 		m_Unit.AddSymbol("get_mouse_world_pos_x", get_mouse_world_pos_x);
 		m_Unit.AddSymbol("get_mouse_world_pos_y", get_mouse_world_pos_y);
+
+		// RENDERER
+
+		m_Unit.AddSymbol("Renderer_DrawCircle", +[](glm::vec2 center, float radius, float thickness, glm::vec4 color, float emission, bool pixelPerfect) { pxr::Renderer::DrawCircle(center, radius, thickness, color, emission, pixelPerfect); });
+		m_Unit.AddSymbol("Renderer_DrawLine", +[](glm::vec2 start, glm::vec2 end, glm::vec4 color, float emission, bool pixelPerfect) { pxr::Renderer::DrawLine(start, end, color, emission, pixelPerfect); });
+		m_Unit.AddSymbol("Renderer_DrawBox", +[](glm::vec2 center, glm::vec2 bounds, glm::vec4 color, float emission, bool pixelPerfect) { pxr::Renderer::DrawBox(center, bounds, color, emission, pixelPerfect); });
 		
 		// MISC
 

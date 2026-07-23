@@ -1,18 +1,12 @@
 #pragma once
 
+#include "perplex_defs.h"
 #include "perplex_bool.h"
 #include "perplex_math.h"
 #include "perplex_pixel.h"
+#include "perplex_renderer.h"
 
 #include <stdint.h>
-
-#ifndef PROPERTY
-#define PROPERTY
-#endif
-
-#ifndef PX_EXTERN
-#define PX_EXTERN __declspec(dllimport)
-#endif
 
 typedef unsigned long long UUID;
 typedef unsigned long long PrefabAsset;

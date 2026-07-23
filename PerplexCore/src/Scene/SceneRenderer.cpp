@@ -12,6 +12,8 @@
 #include <Perplex/Text/FontData.h>
 #include <Perplex/Text/Alignment.h>
 #include <Perplex/Parsing/Parser.h>
+#include <Perplex/Scripting/Interpreter.h>
+#include <Perplex/Scripting/ScriptInstance.h>
 #include <c/perplex_math.h>
 
 #include <glm/glm.hpp>
@@ -57,6 +59,17 @@ namespace Perplex
 
 	void SceneRenderer::RenderEntities(Ref<Scene> scene, const RenderSettings& renderSettings)
 	{
+		auto scripts = scene->View<ScriptComponent>();
+		for (auto handle : scripts)
+		{
+			Entity entity{ handle, scene.get() };
+			auto& scriptComponent = scripts.get<ScriptComponent>(handle);
+
+			ScriptInstance* instance = scene->GetSystem<Interpreter>().GetInstance(entity.GetUUID());
+			if (instance && instance->IsCompiled())
+				instance->TryCall("render");
+		}
+
 		auto sprites = scene->View<SpriteRendererComponent>();
 		for (auto handle : sprites)
 		{

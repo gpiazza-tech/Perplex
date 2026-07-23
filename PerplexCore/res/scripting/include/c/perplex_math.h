@@ -109,3 +109,18 @@ static inline float Lerp(float a, float b, float t)
 {
 	return a + t * (b - a);
 }
+
+static inline Vec2 LerpVec2(Vec2 a, Vec2 b, float t)
+{
+	return Vec2_Create(Lerp(a.x, b.x, t), Lerp(a.y, b.y, t));
+}
+
+static inline Vec3 LerpVec3(Vec3 a, Vec3 b, float t)
+{
+	return Vec3_Create(Lerp(a.x, b.x, t), Lerp(a.y, b.y, t), Lerp(a.z, b.z, t));
+}
+
+static inline Vec4 LerpVec4(Vec4 a, Vec4 b, float t)
+{
+	return Vec4_Create(Lerp(a.x, b.x, t), Lerp(a.y, b.y, t), Lerp(a.z, b.z, t), Lerp(a.w, b.w, t));
+}

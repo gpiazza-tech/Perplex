@@ -14,82 +14,99 @@
 #define PX_EXTERN __declspec(dllimport)
 #endif
 
-typedef unsigned long long Entity;
+typedef unsigned long long UUID;
 typedef unsigned long long PrefabAsset;
 typedef unsigned long long SceneAsset;
-typedef void* Scene;
 
-PX_EXTERN Scene scene;
-PX_EXTERN Entity this;
+typedef struct Scene
+{
 
-PX_EXTERN bool _has_tag(Scene _scene, Entity e, char* tag);
+} Scene;
 
-PX_EXTERN void _set_paused(Scene _scene, bool paused);
-PX_EXTERN void _pause(Scene _scene);
-PX_EXTERN void _resume(Scene _scene);
+typedef struct Entity
+{
+	int EntityHandler;
+	Scene* ScenePtr;
+} Entity;
 
-PX_EXTERN float get_sprite_width(Scene _scene, Entity e);
-PX_EXTERN float get_sprite_height(Scene _scene, Entity e);
-PX_EXTERN struct Vec4* get_color_ptr(Scene s, Entity e);
+PX_EXTERN Scene* scene;
+PX_EXTERN Entity self;
 
-PX_EXTERN void console_trace(char* msg);
-PX_EXTERN void console_info(char* msg);
-PX_EXTERN void console_warn(char* msg);
-PX_EXTERN void console_error(char* msg);
+// ENTITY
 
-PX_EXTERN void _set_enabled(Scene _scene, Entity _entity, bool enabled);
-PX_EXTERN struct Vec3* get_position_ptr(Scene s, Entity e);
-PX_EXTERN struct Vec3* get_rotation_ptr(Scene s, Entity e);
-PX_EXTERN struct Vec3* get_scale_ptr(Scene s, Entity e);
+PX_EXTERN bool Entity_HasTag(Entity entity, const char* tag);
+PX_EXTERN void Entity_SetEnabled(Entity entity, bool enabled);
 
-PX_EXTERN float degrees(float rad);
-PX_EXTERN float radians(float deg);
+PX_EXTERN Vec3* Entity_GetPositionPtr(Entity entity);
+#define position_of(entity) (*Entity_GetPositionPtr(entity))
+#define position (*Entity_GetPositionPtr(self))
 
-PX_EXTERN void try_call(Scene s, Entity e, char* funcName);
+PX_EXTERN Vec3* Entity_GetRotationPtr(Entity entity);
+#define rotation_of(entity) (*Entity_GetRotationPtr(entity))
+#define rotation (*Entity_GetRotationPtr(self))
 
-PX_EXTERN Entity _spawn(Scene _scene, PrefabAsset _prefab);
-PX_EXTERN void _destroy(Scene _scene, Entity _entity);
-PX_EXTERN void _destroy_delay(Scene _scene, Entity _entity, float delay);
-PX_EXTERN void _set_velocity(Scene _scene, Entity _entity, struct Vec2 _velocity);
-PX_EXTERN void set_timescale(Scene _scene, float timescale);
+PX_EXTERN Vec3* Entity_GetScalePtr(Entity entity);
+#define scale_of(entity) (*Entity_GetScalePtr(entity))
+#define scale (*Entity_GetScalePtr(self))
 
-PX_EXTERN void _to_perpixel(Scene _scene, Entity _entity);
-PX_EXTERN void _perpixel_spawn_pixel(Scene _scene, Entity _entity, Pixel pixel);
+PX_EXTERN void Entity_ToPerpixel(Entity entity);
+
+PX_EXTERN void Entity_Destroy(Entity entity);
+PX_EXTERN void Entity_DestroyDelay(Entity entity, float delay);
+
+// SCENE
+
+PX_EXTERN void Scene_SetPaused(Scene* scene, bool paused);
+#define set_paused(paused) (Scene_SetPaused(scene, paused))
+
+PX_EXTERN void Scene_Pause(Scene* scene);
+#define pause() (Scene_Pause(scene))
+
+PX_EXTERN void Scene_Resume(Scene* scene);
+#define resume() (Scene_Resume(scene))
+
+PX_EXTERN Entity Scene_Spawn(Scene* scene, PrefabAsset prefab);
+#define spawn(prefab) (Scene_Spawn(scene, prefab))
+
+// DEBUG
+
+PX_EXTERN void Trace(char* msg);
+PX_EXTERN void Info(char* msg);
+PX_EXTERN void Warn(char* msg);
+PX_EXTERN void Error(char* msg);
+
+// MATH
+
+PX_EXTERN float Degrees(float rad);
+PX_EXTERN float Radians(float deg);
+
+// COMPONENTS
+
+PX_EXTERN Vec2* Sprite_GetSizePtr(Entity entity);
+#define spriteSize (*Sprite_GetSizePtr(self))
+
+PX_EXTERN Color* Sprite_GetColorPtr(Entity entity);
+#define spriteColor (*Sprite_GetColorPtr(self));
+
+PX_EXTERN void Script_TryCall(Entity entity, char* funcName);
+PX_EXTERN void Perpixel_SpawnPixel(Entity entity, Pixel pixel);
+
+PX_EXTERN void PhysicsBody_SetVelocity(Entity entity, Vec2 velocity);
+
+// TODO: PX_EXTERN void Entity_PerpixelSpawnPixel(Entity entity);
 
 typedef void* Sound;
-PX_EXTERN void _play_sound(Scene _scene, const char* filepath);
-PX_EXTERN Sound _start_loop(Scene _scene, const char* filepath);
-PX_EXTERN void _end_loop(Scene _scene, Sound sound);
+PX_EXTERN void Scene_PlaySound(Scene* scene, const char* filepath);
+#define play_sound(filepath) (Scene_PlaySound(scene, filepath))
 
-bool has_tag(Entity e, char* tag) { return _has_tag(scene, e, tag); }
+PX_EXTERN Sound Scene_StartLoop(Scene* scene, const char* filepath);
+#define start_loop(filepath) (Scene_StartLoop(scene, filepath))
 
-#define play_sound(filepath) (_play_sound(scene, filepath))
-#define start_loop(filepath) (_start_loop(scene, filepath))
-#define end_loop(sound) (_end_loop(scene, sound))
+PX_EXTERN void Scene_EndLoop(Scene* scene, Sound sound);
+#define end_loop(sound) (Scene_EndLoop(scene, sound))
 
-PX_EXTERN void load_scene(SceneAsset sceneAsset);
-
-#define set_enabled(e, enabled) (_set_enabled(scene, e, enabled)) 
-#define get_position(e) (*get_position_ptr(scene, e))
-#define get_rotation(e) (*get_rotation_ptr(scene, e))
-#define get_scale(e) (*get_scale_ptr(scene, e))
-
-#define get_color(e) (*get_color_ptr(scene, e))
-
-#define position (*get_position_ptr(scene, this))
-#define rotation (*get_rotation_ptr(scene, this))
-#define scale (*get_scale_ptr(scene, this))
-
-#define color (*get_color_ptr(scene, this))
-
-#define call(entity, funcName) (try_call(scene, entity, funcName))
-
-#define spawn(prefab) (_spawn(scene, prefab))
-#define destroy(entity) (_destroy(scene, entity))
-#define destroy_delay(entity, delay) (_destroy_delay(scene, entity, delay))
-
-#define to_perpixel() _to_perpixel(scene, this)
-#define perpixel_spawn_pixel(pxl) _perpixel_spawn_pixel(scene, this, pxl)
+PX_EXTERN void SceneAsset_Load(SceneAsset sceneAsset);
+PX_EXTERN void Scene_SetTimescale(Scene* scene, float timescale);
 
 // __declspec(dllimport) void _set_velocity(Scene s, Entity e, struct Vec2 velocity);
 // void set_velocity(struct Vec2 velocity) { _set_velocity(scene, entity, velocity); }

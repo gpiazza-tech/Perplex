@@ -284,13 +284,17 @@ namespace Perplex
 	void HitEnter(Ref<Scene> scene, UUID first, UUID second)
 	{
 		Interpreter& interpreter = scene->GetSystem<Interpreter>();
+
 		ScriptInstance* firstInstance = interpreter.GetInstance(first);
+		Entity firstEntity = scene->GetEntity(first);
+
 		ScriptInstance* secondInstance = interpreter.GetInstance(second);
+		Entity secondEntity = scene->GetEntity(first);
 
 		if (firstInstance)
-			firstInstance->TryCall("hit_enter", second);
+			firstInstance->TryCall("hit_enter", secondEntity);
 		if (secondInstance)
-			secondInstance->TryCall("hit_enter", first);
+			secondInstance->TryCall("hit_enter", firstEntity);
 	}
 
 	float Simulator::GetTimescale() const
@@ -306,12 +310,16 @@ namespace Perplex
 	void HitExit(Ref<Scene> scene, UUID first, UUID second)
 	{
 		Interpreter& interpreter = scene->GetSystem<Interpreter>();
+
 		ScriptInstance* firstInstance = interpreter.GetInstance(first);
+		Entity firstEntity = scene->GetEntity(first);
+
 		ScriptInstance* secondInstance = interpreter.GetInstance(second);
+		Entity secondEntity = scene->GetEntity(first);
 
 		if (firstInstance)
-			firstInstance->TryCall("hit_exit", second);
+			firstInstance->TryCall("hit_exit", secondEntity);
 		if (secondInstance)
-			secondInstance->TryCall("hit_exit", first);
+			secondInstance->TryCall("hit_exit", firstEntity);
 	}
 }

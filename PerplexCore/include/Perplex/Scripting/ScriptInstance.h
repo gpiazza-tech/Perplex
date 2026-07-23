@@ -3,6 +3,7 @@
 #include "CUnit.h"
 #include <Perplex/Core/UUID.h>
 #include <Perplex/Core/Core.h>
+#include <Perplex/Scene/Entity.h>
 
 #include <string>
 #include <utility>
@@ -11,7 +12,6 @@
 
 namespace Perplex
 {
-	class Entity;
 	class Scene;
 	class ScriptProperty;
 	class Simulator;
@@ -63,8 +63,8 @@ namespace Perplex
 		void SetStarted(bool val) { m_Started = val; }
 	private:
 		CUnit m_Unit{};
-		UUID m_EntityID{ 0 };
-		Scene* m_SceneContext{ nullptr };
+		Entity m_Entity{};
+		Scene* m_ScenePtr{};
 		bool m_Started{ false };
 
 		std::vector<ExternalFunction> m_ExternalFunctions = std::vector<ExternalFunction>();

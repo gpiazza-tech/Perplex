@@ -16,6 +16,7 @@
 #include <Perplex/Scene/SceneManager.h>
 #include <Perplex/Perpixel/PerpixelInstance.h>
 #include <Perplex/Perpixel/PerpixelSystem.h>
+#include <Perplex/Assets/Asset.h>
 #include <c/perplex_pixel.h>
 
 #include <glm/glm.hpp>
@@ -30,78 +31,26 @@ namespace Perplex
 {
 	static float get_mouse_world_pos_x() { return Input::GetMouseWorldPosition().first; }
 	static float get_mouse_world_pos_y() { return Input::GetMouseWorldPosition().second; }
-	static glm::vec3* get_position_ptr(Scene* scene, UUID uuid) { return &scene->GetEntity(uuid).GetComponent<TransformComponent>().Position; }
-	static glm::vec3* get_rotation_ptr(Scene* scene, UUID uuid) { return &scene->GetEntity(uuid).GetComponent<TransformComponent>().Rotation; }
-	static glm::vec3* get_scale_ptr(Scene* scene, UUID uuid) { return &scene->GetEntity(uuid).GetComponent<TransformComponent>().Scale; }
 
-	static float get_sprite_width(Scene* scene, UUID uuid)
+	static Entity Scene_Spawn(Scene* scene, uint64_t prefabAssetID)
 	{
-		Entity entity = scene->GetEntity(uuid);
-		if (!entity || !entity.HasComponent<SpriteRendererComponent>() || !entity.HasComponent<TransformComponent>())
-		{
-			HW_CORE_ERROR("{0} does not have a SpriteComponent or TransformComponent!", entity.GetTag());
-			return 0.0f;
-		}
-
-		Ref<pxr::Sprite> colorSprite = entity.GetComponent<SpriteRendererComponent>().SpriteAsset.GetData<pxr::Sprite>();
-		return (colorSprite ? colorSprite->ScaleFactorX : 1.0f / 16.0f) * entity.GetComponent<TransformComponent>().Scale.x;
-	}
-
-	static float get_sprite_height(Scene* scene, UUID uuid)
-	{
-		Entity entity = scene->GetEntity(uuid);
-		if (!entity || !entity.HasComponent<SpriteRendererComponent>() || !entity.HasComponent<TransformComponent>())
-		{
-			HW_CORE_ERROR("{0} does not have a SpriteComponent or TransformComponent!", entity.GetTag());
-			return 0.0f;
-		}
-
-		Ref<pxr::Sprite> colorSprite = entity.GetComponent<SpriteRendererComponent>().SpriteAsset.GetData<pxr::Sprite>();
-		return (colorSprite ? colorSprite->ScaleFactorY : 1.0f / 16.0f) * entity.GetComponent<TransformComponent>().Scale.y;
-	}
-
-	static glm::vec4* get_color_ptr(Scene* scene, UUID uuid) { return &scene->GetEntity(uuid).GetComponent<SpriteRendererComponent>().Color; }
-
-	static void try_call(Scene* scene, UUID uuid, const char* funcName)
-	{
-		ScriptInstance* instance = scene->GetSystem<Interpreter>().GetInstance(uuid);
-
-		if (instance != nullptr)
-		{
-			instance->TryCall(funcName);
-		}
-		else
-		{
-			HW_CORE_WARN("Tried to call function on entity with no ScriptComponent!");
-		}
-	}
-
-	static long long _spawn(Scene* scene, uint64_t prefabAssetID)
-	{
-		Asset prefabAsset{ UUID{ prefabAssetID} };
+		Asset prefabAsset{ UUID{ prefabAssetID } };
 		if (!prefabAsset)
 		{
 			HW_ERROR("Trying to spawn empty prefab!");
-			return static_cast<long long>(UUID{});
+			return Entity{};
 		}
 
 		Ref<Scene> prefabScene = prefabAsset.GetData<Scene>();
  		Entity newEntity = scene->CopyEntity(prefabScene->GetParentEntities().at(0));
-		UUID newEntityID = newEntity.GetUUID();
-		return static_cast<long long>(newEntityID);
+		return newEntity;
 	}
 
-	static void _destroy(Scene* scene, UUID entity) { scene->DestroyEntity(scene->GetEntity(entity)); }
-	static void _destroy_delay(Scene* scene, UUID entity, float delay) { scene->DestroyEntity(scene->GetEntity(entity), delay); }
-	static void _set_velocity(Scene* scene, UUID entity, glm::vec2 velocity) { scene->GetSystem<Simulator>().SetVelocity(entity, velocity); }
-
-	static void _to_perpixel(Scene* scene, UUID entityID)
+	static void _to_perpixel(Entity entity)
 	{
-		Entity entity = scene->GetEntity(entityID);
-		
 		if (!entity.HasComponent<SpriteRendererComponent>())
 		{
-			HW_CORE_WARN("Entity {0} does not have sprite renderer to convert to perpixel!", (uint64_t)entityID);
+			HW_CORE_WARN("Entity {0} does not have sprite renderer to convert to perpixel!", (uint64_t)entity.GetUUID());
 			return;
 		}
 
@@ -123,12 +72,12 @@ namespace Perplex
 			entity.RemoveComponent<PhysicsBodyComponent>();
 	}
 
-	static void _perpixel_spawn_pixel(Scene* scene, UUID entityID, Pixel pixel)
+	static void _perpixel_spawn_pixel(Entity entity, Pixel pixel)
 	{
-		PerpixelInstance* perpixelInstance = scene->GetSystem<PerpixelSystem>().GetInstance(entityID);
+		PerpixelInstance* perpixelInstance = entity.GetScene()->GetSystem<PerpixelSystem>().GetInstance(entity.GetUUID());
 		if (!perpixelInstance)
 		{
-			HW_CORE_WARN("Entity {0} does not have associated perpixel instance!", (uint64_t)entityID);
+			HW_CORE_WARN("Entity {0} does not have associated perpixel instance!", (uint64_t)entity.GetUUID());
 			return;
 		}
 		perpixelInstance->SpawnPixel(pixel);
@@ -141,9 +90,9 @@ namespace Perplex
 
 		m_Unit.SetErrorFunction((void*)srcName.c_str(), [](void* userData, const char* message) { HW_CORE_ERROR("C Error in {0}: {1}", (const char*)userData, message); });
 
-		m_EntityID = entity.GetUUID();;
+		m_Entity = entity;
+		m_ScenePtr = entity.GetScene();
 		m_Properties = properties;
-		m_SceneContext = entity.GetScene();
 
 		const Project& project = Application::Get().GetCurrentProject();
 		m_Unit.AddIncludePath(project.EngineRes("scripting/include/c").string().c_str());
@@ -154,66 +103,76 @@ namespace Perplex
 		for (auto& property : m_Properties)
 		{
 			m_Unit.AddSymbol(property.GetName().c_str(), property.GetPtr());
-		} 
+		}
 
 		// Bind transform
-		m_Unit.AddSymbol("scene", &m_SceneContext);
-		m_Unit.AddSymbol("this", &m_EntityID);
+		m_Unit.AddSymbol("scene", &m_ScenePtr);
+		m_Unit.AddSymbol("self", &m_Entity);
 
 		// Bind host functions
-		m_Unit.AddSymbol("_has_tag", +[](Scene* scene, UUID entity, char* tag)
+
+		// ENTITY
+		m_Unit.AddSymbol("Entity_HasTag", +[](Entity entity, const char* tag)
 			{ 
-				Entity entityObj = scene->GetEntity(entity);
-				if (!entityObj)
+				if (!entity)
 				{
-					HW_CORE_WARN("Entity with UUID {0} does not exist!", (uint64_t)entity);
+					HW_CORE_WARN("Entity does not exist!");
 					return false;
 				}
-				return entityObj.GetTag() == tag;
+				return entity.GetTag() == tag;
 			});
+		m_Unit.AddSymbol("Entity_SetEnabled", +[](Entity entity, bool enabled) { entity.GetComponent<EnableComponent>().Enabled = enabled; });
 
-		m_Unit.AddSymbol("_set_paused", +[](Scene* scene, bool paused) { scene->SetPaused(paused); });
-		m_Unit.AddSymbol("_pause", +[](Scene* scene) { scene->SetPaused(true); });
-		m_Unit.AddSymbol("_resume", +[](Scene* scene) { scene->SetPaused(false); });
+		m_Unit.AddSymbol("Entity_GetPositionPtr", +[](Entity entity) { return &entity.GetComponent<TransformComponent>().Position; });
+		m_Unit.AddSymbol("Entity_GetRotationPtr", +[](Entity entity) { return &entity.GetComponent<TransformComponent>().Rotation; });
+		m_Unit.AddSymbol("Entity_GetScalePtr", +[](Entity entity) { return &entity.GetComponent<TransformComponent>().Scale; });
 
-		m_Unit.AddSymbol("get_mouse_world_pos_x", get_mouse_world_pos_x);
-		m_Unit.AddSymbol("get_mouse_world_pos_y", get_mouse_world_pos_y);
+		m_Unit.AddSymbol("Entity_ToPerpixel", _to_perpixel);
+		m_Unit.AddSymbol("Perpixel_SpawnPixel", _perpixel_spawn_pixel);
 
-		m_Unit.AddSymbol("_set_enabled", +[](Scene* scene, UUID entity, bool enabled) { scene->GetEntity(entity).GetComponent<EnableComponent>().Enabled = enabled; });
-		m_Unit.AddSymbol("get_sprite_width", get_sprite_width);
-		m_Unit.AddSymbol("get_sprite_height", get_sprite_height);
-		m_Unit.AddSymbol("get_color_ptr", get_color_ptr);
+		m_Unit.AddSymbol("Entity_Destroy", +[](Entity entity) { entity.GetScene()->DestroyEntity(entity); });
+		m_Unit.AddSymbol("Entity_DestroyDelay", +[](Entity entity, float delay) { entity.GetScene()->DestroyEntity(entity, delay); });
 
-		m_Unit.AddSymbol("get_position_ptr", get_position_ptr);
-		m_Unit.AddSymbol("get_rotation_ptr", get_rotation_ptr);
-		m_Unit.AddSymbol("get_scale_ptr", get_scale_ptr);
+		// SCENE
 
-		m_Unit.AddSymbol("console_trace", +[](const char* msg) { HW_TRACE(msg); });
-		m_Unit.AddSymbol("console_info", +[](const char* msg) { HW_INFO(msg); });
-		m_Unit.AddSymbol("console_warn", +[](const char* msg) { HW_WARN(msg); });
-		m_Unit.AddSymbol("console_error", +[](const char* msg) { HW_ERROR(msg); });
+		m_Unit.AddSymbol("Scene_SetPaused", +[](Scene* scene, bool paused) { scene->SetPaused(paused); });
+		m_Unit.AddSymbol("Scene_Pause", +[](Scene* scene) { scene->SetPaused(true); });
+		m_Unit.AddSymbol("Scene_Resume", +[](Scene* scene) { scene->SetPaused(false); });
+
+		m_Unit.AddSymbol("Scene_Spawn", Scene_Spawn);
+
+		m_Unit.AddSymbol("Scene_SetTimescale", +[](Scene* scene, float timescale) { scene->SetTimescale(timescale); });
+
+		m_Unit.AddSymbol("Scene_PlaySound", +[](Scene* scene, const char* filepath) { scene->GetSystem<AudioSystem>().PlaySound(filepath); });
+		m_Unit.AddSymbol("Scene_StartLoop", +[](Scene* scene, const char* filepath) { return scene->GetSystem<AudioSystem>().StartLoop(filepath); });
+		m_Unit.AddSymbol("Scene_EndLoop", +[](Scene* scene, Sound* sound) { scene->GetSystem<AudioSystem>().EndLoop(sound); });
+
+		// COMPONENTS
+
+		m_Unit.AddSymbol("Sprite_GetColorPtr", +[](Entity entity) { return &entity.GetComponent<SpriteRendererComponent>().Color; });
+		m_Unit.AddSymbol("PhysicsBody_SetVelocity", +[](Entity entity, glm::vec2 velocity) { entity.GetScene()->GetSystem<Simulator>().SetVelocity(entity.GetUUID(), velocity); });
+
+		m_Unit.AddSymbol("Script_TryCall", +[](Entity entity) { entity.GetScene()->GetSystem<Interpreter>().GetInstance(entity.GetUUID()); });
+		// DEBUG
+
+		m_Unit.AddSymbol("Trace", +[](const char* msg) { HW_TRACE(msg); });
+		m_Unit.AddSymbol("Info", +[](const char* msg) { HW_INFO(msg); });
+		m_Unit.AddSymbol("Warn", +[](const char* msg) { HW_WARN(msg); });
+		m_Unit.AddSymbol("Error", +[](const char* msg) { HW_ERROR(msg); });
+
+		// MATH
 
 		m_Unit.AddSymbol("key_pressed", Input::IsKeyPressed);
 		m_Unit.AddSymbol("mouse_button_pressed", Input::IsMouseButtonPressed);
 		m_Unit.AddSymbol("degrees", +[](float rad) { return glm::degrees(rad); });
 		m_Unit.AddSymbol("radians", +[](float deg) { return glm::radians(deg); });
 
-		m_Unit.AddSymbol("try_call", try_call);
+		m_Unit.AddSymbol("get_mouse_world_pos_x", get_mouse_world_pos_x);
+		m_Unit.AddSymbol("get_mouse_world_pos_y", get_mouse_world_pos_y);
+		
+		// MISC
 
-		m_Unit.AddSymbol("_spawn", _spawn);
-		m_Unit.AddSymbol("_destroy", _destroy);
-		m_Unit.AddSymbol("_destroy_delay", _destroy_delay);
-		m_Unit.AddSymbol("_set_velocity", _set_velocity);
-		m_Unit.AddSymbol("set_timescale", +[](Scene* scene, float timescale) { scene->SetTimescale(timescale); });
-
-		m_Unit.AddSymbol("_to_perpixel", _to_perpixel);
-		m_Unit.AddSymbol("_perpixel_spawn_pixel", _perpixel_spawn_pixel);
-
-		m_Unit.AddSymbol("_play_sound", +[](Scene* scene, const char* filepath) { scene->GetSystem<AudioSystem>().PlaySound(filepath); });
-		m_Unit.AddSymbol("_start_loop", +[](Scene* scene, const char* filepath) { return scene->GetSystem<AudioSystem>().StartLoop(filepath); });
-		m_Unit.AddSymbol("_end_loop", +[](Scene* scene, Sound* sound) { scene->GetSystem<AudioSystem>().EndLoop(sound); });
-
-		m_Unit.AddSymbol("load_scene", +[](Asset asset) { SceneManager::Get().LoadScene(asset); });
+		m_Unit.AddSymbol("SceneAsset_Load", +[](Asset asset) { SceneManager::Get().LoadScene(asset); });
 
 		COMPONENT_REMOVER_SYMBOL(TransformComponent);
 

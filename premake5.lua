@@ -25,6 +25,7 @@ IncludeDir["glm"] = "PerplexCore/vendor/glm"
 IncludeDir["entt"] = "PerplexCore/vendor/entt/include"
 IncludeDir["nlohmann_json"] = "PerplexCore/vendor/nlohmann_json/include"
 IncludeDir["box2d"] = "PerplexCore/vendor/box2d/include"
+IncludeDir["angelscript"] = "PerplexCore/vendor/angelscript/include"
 
 group "Dependencies"
     include "PerplexRenderer/vendor/glew"
@@ -33,6 +34,7 @@ group "Dependencies"
     include "PerplexCore/vendor/efsw"
     include "PerplexCore/vendor/tcc"
     include "PerplexCore/vendor/box2d"
+    include "PerplexCore/vendor/angelscript"
 group ""
 
 project "PerplexRenderer"
@@ -135,6 +137,7 @@ project "PerplexCore"
         "%{IncludeDir.entt}",
         "%{IncludeDir.nlohmann_json}",
         "%{IncludeDir.box2d}",
+        "%{IncludeDir.angelscript}",
     }
 
     links
@@ -144,7 +147,8 @@ project "PerplexCore"
         "ImGui",
         "efsw",
         "tcc",
-        "box2d"
+        "box2d",
+        "angelscript"
     }
 
     buildoptions

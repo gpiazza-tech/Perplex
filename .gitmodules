@@ -36,3 +36,9 @@
 [submodule "PerplexCore/vendor/efsw"]
 	path = PerplexCore/vendor/efsw
 	url = https://github.com/gpiazza-tech/efsw
+[submodule "angelscript"]
+	path = angelscript
+	url = https://github.com/gpiazza-tech/angelscript
+[submodule "PerplexCore/vendor/angelscript"]
+	path = PerplexCore/vendor/angelscript
+	url = https://github.com/gpiazza-tech/angelscript

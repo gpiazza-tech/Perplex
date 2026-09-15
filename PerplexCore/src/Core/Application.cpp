@@ -15,6 +15,7 @@
 #include <Perplex/Serialization/JsonHelper.h>
 #include <Perplex/Platform/SystemUtils.h>
 #include <Perplex/Core/Game.h>
+#include <Perplex/Angel/AngelEngine.h>
 #include <pxr/pxr.h>
 
 #include <filesystem>
@@ -66,6 +67,9 @@ namespace Perplex
 		// Create asset manager
 		m_AssetManager = std::make_unique<AssetManager>(m_Game.AssetsDirectory);
 		m_AssetManager->SetEventCallback(BIND_EVENT_FN(OnEvent));
+
+		// Create angel engine
+		m_AngelEngine = std::make_unique<AngelEngine>();
 
 		// Initialize Renderer and Resources
 		TryCopyResFolder(m_Game.RootDirectory / "engine/res");

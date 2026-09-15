@@ -65,9 +65,9 @@ namespace Perplex
 			Entity entity{ handle, scene.get() };
 			auto& scriptComponent = scripts.get<ScriptComponent>(handle);
 
-			ScriptInstance* instance = scene->GetSystem<Interpreter>().GetInstance(entity.GetUUID());
-			if (instance && instance->IsCompiled())
-				instance->TryCall("render");
+			std::optional<AngelObject> instance = scene->GetSystem<Interpreter>().GetInstance(entity.GetUUID());
+			if (instance)
+				instance->Call<void>("Render");
 		}
 
 		auto sprites = scene->View<SpriteRendererComponent>();

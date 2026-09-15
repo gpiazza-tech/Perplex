@@ -16,6 +16,8 @@
 
 #include <memory>
 #include <vector>
+#include <Perplex/Angel/AngelModule.h>
+#include <optional>
 
 namespace Perplex
 {
@@ -35,22 +37,9 @@ namespace Perplex
 		}
 	}
 
-	void Interpreter::InitScriptInstance(Entity entity)
-	{
-		ScriptComponent& sc = entity.GetComponent<ScriptComponent>();
-		Ref<ScriptData> scriptData = sc.ScriptAsset.GetData<ScriptData>();
-		if (scriptData)
-		{
-			m_ScriptInstanceMap[entity.GetUUID()] = std::make_unique<ScriptInstance>();
-			UUID entityID = entity.GetUUID();
-
-			std::unique_ptr<ScriptInstance>& instance = m_ScriptInstanceMap[entity.GetUUID()];
-			instance->Compile(scriptData->SourceName, scriptData->Source, entity, sc.Properties);
-		}
-	}
-
 	void Interpreter::OnSceneStart()
 	{
+		/*
 		// Compile Scripts
 		auto view = m_Scene->View<ScriptComponent>();
 		for (auto e : view)
@@ -62,6 +51,7 @@ namespace Perplex
 
 			InitScriptInstance(entity);
 		}
+		*/
 	}
 
 	void Interpreter::OnSceneUpdate(Timestep ts)
@@ -77,14 +67,14 @@ namespace Perplex
 			{
 				UUID entityID = entity.GetUUID();
 
-				std::unique_ptr<ScriptInstance>& instance = m_ScriptInstanceMap.at(entityID);
-
-				if (!instance->Started())
+				if (!m_ScriptInstanceMap.contains(entityID))
 				{
-					instance->SetStarted(true);
-					instance->TryCall("start");
+					Ref<AngelModule> angelModule = sc.ScriptAsset.GetData<AngelModule>();
+					if (angelModule)
+						m_ScriptInstanceMap.emplace(entityID, angelModule->CreateObject(entity));
+					m_ScriptInstanceMap.at(entityID).Call<void>("Start");
 				}
-				instance->TryCall("update", ts.GetSeconds());
+				m_ScriptInstanceMap.at(entityID).Call<void>("Update", ts.GetSeconds());
 			}
 		}
 	}
@@ -100,16 +90,13 @@ namespace Perplex
 			auto& sc = view.get<ScriptComponent>(e);
 			UUID entityID = entity.GetUUID();
 
-			std::unique_ptr<ScriptInstance>& instance = m_ScriptInstanceMap[entityID];
-			instance->TryCall("stop");
+			m_ScriptInstanceMap.at(entityID).Call<void>("Stop");
 			m_ScriptInstanceMap.erase(entityID);
 		}
 	}
 
 	void Interpreter::OnComponentAdded(Entity entity)
 	{
-		if (m_Scene->IsPlaying() && entity.HasComponent<ScriptComponent>())
-			InitScriptInstance(entity);
 	}
 
 	void Interpreter::OnComponentRemoved(Entity entity)
@@ -134,18 +121,16 @@ namespace Perplex
 		}
 	}
 
-	ScriptInstance* Interpreter::GetInstance(UUID entityID)
+	std::optional<AngelObject> Interpreter::GetInstance(UUID entityID)
 	{
-		// TODO: returning unique_ptr::get, a safer alternative should be implemented
-
 		if (m_ScriptInstanceMap.contains(entityID))
-			return m_ScriptInstanceMap[entityID].get();
-		return nullptr;
+			return m_ScriptInstanceMap.at(entityID);
+		return std::nullopt;
 	}
 
 	void Interpreter::InvokeEvent(const char* eventName, void* data)
 	{
 		for (auto& scriptInstance : m_ScriptInstanceMap)
-			scriptInstance.second->TryCall(eventName, data);
+			scriptInstance.second.Call<void>(eventName, data);
 	}
 }

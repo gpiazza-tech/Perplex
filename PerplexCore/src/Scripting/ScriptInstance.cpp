@@ -32,8 +32,8 @@
 
 namespace Perplex
 {
-	static float get_mouse_world_pos_x() { return Input::GetMouseWorldPosition().first; }
-	static float get_mouse_world_pos_y() { return Input::GetMouseWorldPosition().second; }
+	static float get_mouse_world_pos_x() { return Input::GetMouseWorldPosition().x; }
+	static float get_mouse_world_pos_y() { return Input::GetMouseWorldPosition().y; }
 
 	static Entity Scene_Spawn(Scene* scene, uint64_t prefabAssetID)
 	{

@@ -2,6 +2,9 @@
 
 #include <Perplex/Core/Timestep.h>
 
+#include <glm/fwd.hpp>
+#include <glm/glm.hpp>
+
 #include <utility>
 
 namespace Perplex
@@ -12,33 +15,21 @@ namespace Perplex
 		static bool IsKeyPressed(int keycode);
 
 		static bool IsMouseButtonPressed(int button);
-		static std::pair<int, int> GetMousePixelPosition();
-		static std::pair<float, float> GetMousePosition();
-		static std::pair<float, float> GetMouseDelta();
+		static glm::ivec2 GetMousePixelPosition();
+		static glm::vec2 GetMousePosition();
+		static glm::vec2 GetMouseDelta();
 		static float GetMouseX();
 		static float GetMouseY();
 
-		static void SetMouseWorldPosition(std::pair<float, float> mouseWorldPosition)
-		{
-			s_MouseWorldPosX = mouseWorldPosition.first;
-			s_MouseWorldPosY = mouseWorldPosition.second;
-		}
-
-		static std::pair<float, float> GetMouseWorldPosition()
-		{
-			return { s_MouseWorldPosX, s_MouseWorldPosY };
-		}
+		static void SetMouseWorldPosition(glm::vec2 mouseWorldPos) { s_MouseWorldPos = mouseWorldPos; }
+		static glm::vec2 GetMouseWorldPosition() { return s_MouseWorldPos; }
 	private:
 		static void OnUpdate(Timestep ts); // Called from Application::Run()
 	private:
-		static float s_MousePosX;
-		static float s_MousePosY;
+		static glm::vec2 s_MousePos;
+		static glm::vec2 s_OldMousePos;
 
-		static float s_OldMousePosX;
-		static float s_OldMousePosY;
-
-		static float s_MouseWorldPosX;
-		static float s_MouseWorldPosY;
+		static glm::vec2 s_MouseWorldPos;
 
 		friend class Application;
 	};

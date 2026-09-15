@@ -7,8 +7,10 @@
 #include <Perplex/Core/Core.h>
 #include <Perplex/Core/Timestep.h>
 #include <Perplex/Assets/Asset.h>
+#include <Perplex/Angel/AngelObject.h>
 
 #include <unordered_map>
+#include <optional>
 
 namespace Perplex
 {
@@ -34,11 +36,9 @@ namespace Perplex
 
 		void OnScriptAssetReimported(Asset asset);
 
-		ScriptInstance* GetInstance(UUID entityID);
+		std::optional<AngelObject> GetInstance(UUID entityID);
 		void InvokeEvent(const char* eventName, void* data);
 	private:
-		void InitScriptInstance(Entity entity);
-	private:
-		std::unordered_map<UUID, std::unique_ptr<ScriptInstance>> m_ScriptInstanceMap;
+		std::unordered_map<UUID, AngelObject> m_ScriptInstanceMap;
 	};
 }

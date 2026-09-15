@@ -25,7 +25,7 @@ namespace Perplex
 	{
 		if (Input::IsMouseButtonPressed(0))
 		{
-			m_Position -= glm::vec3(Input::GetMouseDelta().first, -Input::GetMouseDelta().second, 0.0f) * ts.GetSeconds() * 7.0f;
+			m_Position -= glm::vec3(Input::GetMouseDelta().x, -Input::GetMouseDelta().y, 0.0f) * ts.GetSeconds() * 7.0f;
 			CalculateView();
 		}
 	}

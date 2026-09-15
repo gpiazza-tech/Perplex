@@ -5,6 +5,8 @@
 #include <Perplex/Core/Application.h>
 #include <Perplex/Core/Project.h>
 
+#include <Perplex/Angel/AngelEngine.h>
+
 #include "../../../vendor/tcc/libtcc.h"
 
 namespace Perplex

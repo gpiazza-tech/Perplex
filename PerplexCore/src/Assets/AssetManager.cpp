@@ -11,6 +11,7 @@
 #include <Perplex/Assets/SceneAssetImporter.h>
 #include <Perplex/Assets/PrefabAssetImporter.h>
 #include <Perplex/Assets/FontAssetImporter.h>
+#include <Perplex/Assets/AngelScriptAssetImporter.h>
 #include <Perplex/Events/AssetEvent.h>
 
 #include <Perplex/Core/UUID.h>
@@ -34,6 +35,7 @@ namespace Perplex
 		m_Importers.push_back(std::make_unique<SceneAssetImporter>());
 		m_Importers.push_back(std::make_unique<PrefabAssetImporter>());
 		m_Importers.push_back(std::make_unique<FontAssetImporter>());
+		m_Importers.push_back(std::make_unique<AngelScriptAssetImporter>());
 
 		// Loop over all asset files in project
 		for (const auto& entry : fs::recursive_directory_iterator(m_AssetsPath))

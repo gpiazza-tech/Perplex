@@ -78,9 +78,9 @@ namespace Perplex
 	{
 		unit.AddSymbol("ScriptComponent_TryCall", +[](Entity entity, const char* name) 
 			{
-				ScriptInstance* instance = entity.GetScene()->GetSystem<Interpreter>().GetInstance(entity.GetUUID());
+				std::optional<AngelObject> instance = entity.GetScene()->GetSystem<Interpreter>().GetInstance(entity.GetUUID());
 				if (instance)
-					instance->TryCall(name);
+					instance->Call<void>(name);
 			});
 	}
 

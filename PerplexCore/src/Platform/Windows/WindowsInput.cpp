@@ -9,14 +9,10 @@
 
 namespace Perplex
 {
-	float Input::s_MousePosX = 0;
-	float Input::s_MousePosY = 0;
-		  
-	float Input::s_OldMousePosX = 0;
-	float Input::s_OldMousePosY = 0;
+	glm::vec2 Input::s_MousePos{};
+	glm::vec2 Input::s_OldMousePos{};
 
-	float Input::s_MouseWorldPosX = 0;
-	float Input::s_MouseWorldPosY = 0;
+	glm::vec2 Input::s_MouseWorldPos{};
 
 	bool Input::IsKeyPressed(int keycode)
 	{
@@ -31,7 +27,7 @@ namespace Perplex
 		return state == GLFW_PRESS;
 	}
 
-	std::pair<int, int> Input::GetMousePixelPosition()
+	glm::ivec2 Input::GetMousePixelPosition()
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 		double xpos, ypos;
@@ -39,10 +35,10 @@ namespace Perplex
 		int width, height;
 		glfwGetWindowSize(window, &width, &height);
 
-		return { static_cast<int>(xpos), height - static_cast<int>(ypos) };
+		return glm::ivec2{ static_cast<int>(xpos), height - static_cast<int>(ypos) };
 	}
 
-	std::pair<float, float> Input::GetMousePosition()
+	glm::vec2 Input::GetMousePosition()
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 		double xpos, ypos;
@@ -54,34 +50,29 @@ namespace Perplex
 		xpos = xpos / width * 2.0 - 1.0;
 		ypos = ypos / height * 2.0 - 1.0;
 
-		return { static_cast<float>(xpos), static_cast<float>(ypos) };
+		return glm::vec2{ static_cast<float>(xpos), static_cast<float>(ypos) };
 	}
 
-	std::pair<float, float> Input::GetMouseDelta()
+	glm::vec2 Input::GetMouseDelta()
 	{
-		float mouseDeltaX = s_MousePosX - s_OldMousePosX;
-		float mouseDeltaY = s_MousePosY - s_OldMousePosY;
-		return { mouseDeltaX, mouseDeltaY };
+		return s_MousePos - s_OldMousePos;
 	}
 
 	float Input::GetMouseX()
 	{
-		return s_MousePosX;
+		return s_MousePos.x;
 	}
 
 	float Input::GetMouseY()
 	{
-		return s_MousePosY;
+		return s_MousePos.y;
 	}
 
 	void Input::OnUpdate(Timestep ts)
 	{
-		auto [x, y] = GetMousePosition();
+		glm::vec2 pos = GetMousePosition();
 
-		s_OldMousePosX = s_MousePosX;
-		s_OldMousePosY = s_MousePosY;
-
-		s_MousePosX = x;
-		s_MousePosY = y;
+		s_OldMousePos = s_MousePos;
+		s_MousePos = pos;
 	}
 }

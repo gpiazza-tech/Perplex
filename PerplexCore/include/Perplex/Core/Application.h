@@ -11,6 +11,7 @@ namespace Perplex
 {
 	class Window;
 	class AssetManager;
+	class AngelEngine;
 	class Event;
 	class WindowCloseEvent;
 	class WindowResizeEvent;
@@ -37,7 +38,8 @@ namespace Perplex
 
 		static inline Application& Get() { return *s_Instance; }
 		inline Window& GetWindow() { return *m_Window; }
-		inline AssetManager& GetAssetManager() { return *m_AssetManager; };
+		inline AssetManager& GetAssetManager() { return *m_AssetManager; }
+		inline AngelEngine& GetAngelEngine() { return *m_AngelEngine; }
 		std::filesystem::path EngineRes(const std::filesystem::path& relative) const;
 
 		float GetTimescale() const;
@@ -53,6 +55,7 @@ namespace Perplex
 	private:
 		std::unique_ptr<Window> m_Window;
 		std::unique_ptr<AssetManager> m_AssetManager;
+		std::unique_ptr<AngelEngine> m_AngelEngine;
 		ImGuiLayer* m_ImGuiLayer = nullptr;
 
 		bool m_Running = true;

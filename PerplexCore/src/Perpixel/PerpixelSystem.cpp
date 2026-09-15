@@ -23,32 +23,32 @@ namespace Perplex
 	void TryCallPerpixelStart(Entity entity, PerpixelInstance& instance)
 	{
 		Interpreter& interpreter = entity.GetScene()->GetSystem<Interpreter>();
-		ScriptInstance* scriptInstance = interpreter.GetInstance(entity.GetUUID());
+		std::optional<AngelObject> scriptInstance = interpreter.GetInstance(entity.GetUUID());
 		if (scriptInstance)
 		{
 			std::vector<Pixel>& pixels = instance.GetPixels();
-			scriptInstance->TryCall("perpixel_start", pixels.data(), pixels.size());
+			scriptInstance->Call<void>("PerpixelStart", pixels.data(), pixels.size());
 		}
 	}
 
 	void TryCallPerpixelUpdate(Timestep ts, Entity entity, PerpixelInstance& instance)
 	{
 		Interpreter& interpreter = entity.GetScene()->GetSystem<Interpreter>();
-		ScriptInstance* scriptInstance = interpreter.GetInstance(entity.GetUUID());
+		std::optional<AngelObject> scriptInstance = interpreter.GetInstance(entity.GetUUID());
 		if (scriptInstance)
 		{
 			std::vector<Pixel>& pixels = instance.GetPixels();
-			scriptInstance->TryCall("perpixel_update", ts.GetSeconds(), pixels.data(), pixels.size());
+			scriptInstance->Call<void>("PerpixelUpdate", ts.GetSeconds(), pixels.data(), pixels.size());
 		}
 	}
 
 	void TryCallPerpixelEnd(Entity entity, PerpixelInstance& instance)
 	{
 		Interpreter& interpreter = entity.GetScene()->GetSystem<Interpreter>();
-		ScriptInstance* scriptInstance = interpreter.GetInstance(entity.GetUUID());
+		std::optional<AngelObject> scriptInstance = interpreter.GetInstance(entity.GetUUID());
 		if (scriptInstance)
 		{
-			scriptInstance->TryCall("perpixel_end");
+			scriptInstance->Call<void>("PerpixelEnd");
 		}
 	}
 

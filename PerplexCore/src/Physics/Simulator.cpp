@@ -285,16 +285,16 @@ namespace Perplex
 	{
 		Interpreter& interpreter = scene->GetSystem<Interpreter>();
 
-		ScriptInstance* firstInstance = interpreter.GetInstance(first);
+		std::optional<AngelObject> firstInstance = interpreter.GetInstance(first);
 		Entity firstEntity = scene->GetEntity(first);
 
-		ScriptInstance* secondInstance = interpreter.GetInstance(second);
+		std::optional<AngelObject> secondInstance = interpreter.GetInstance(second);
 		Entity secondEntity = scene->GetEntity(first);
 
 		if (firstInstance)
-			firstInstance->TryCall("hit_enter", secondEntity);
+			firstInstance->Call<void>("HitEnter", secondEntity);
 		if (secondInstance)
-			secondInstance->TryCall("hit_enter", firstEntity);
+			secondInstance->Call<void>("HitEnter", firstEntity);
 	}
 
 	float Simulator::GetTimescale() const
@@ -311,15 +311,15 @@ namespace Perplex
 	{
 		Interpreter& interpreter = scene->GetSystem<Interpreter>();
 
-		ScriptInstance* firstInstance = interpreter.GetInstance(first);
+		std::optional<AngelObject> firstInstance = interpreter.GetInstance(first);
 		Entity firstEntity = scene->GetEntity(first);
 
-		ScriptInstance* secondInstance = interpreter.GetInstance(second);
+		std::optional<AngelObject> secondInstance = interpreter.GetInstance(second);
 		Entity secondEntity = scene->GetEntity(first);
 
 		if (firstInstance)
-			firstInstance->TryCall("hit_exit", secondEntity);
+			firstInstance->Call<void>("HitExit", secondEntity);
 		if (secondInstance)
-			secondInstance->TryCall("hit_exit", firstEntity);
+			secondInstance->Call<void>("HitExit", firstEntity);
 	}
 }

@@ -16,6 +16,7 @@
 
 #include <string>
 #include <format>
+#include <Perplex/Angel/AngelModule.h>
 
 namespace Perplex
 {
@@ -147,14 +148,14 @@ namespace Perplex
 		ImGui::PushID(&component);
 
 		GuiSelection<Asset> scriptAsset = PERPLEX_SUBSELECTION(component, ScriptAsset);
-		bool scriptAssetChanged = DrawSelection<Asset>(scriptAsset, [](Asset& value) { return DrawAssetField("Source", value, AssetType::ScriptAsset); });
+		bool scriptAssetChanged = DrawSelection<Asset>(scriptAsset, [](Asset& value) { return DrawAssetField("Source", value, AssetType::AngelScriptAsset); });
 
 		if (scriptAssetChanged)
 		{
 			for (auto& componentRef : component)
 			{
 				if (componentRef.get().ScriptAsset)
-					componentRef.get().Properties = componentRef.get().ScriptAsset.GetData<ScriptData>()->Properties;
+					componentRef.get().Properties = componentRef.get().ScriptAsset.GetData<AngelModule>()->Properties();
 				else
 					componentRef.get().Properties.clear();
 			}

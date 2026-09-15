@@ -14,6 +14,7 @@ namespace Perplex
 		PrefabAsset,
 		FontAsset,
 		AudioAsset,
+		AngelScriptAsset,
 	};
 
 	inline AssetType StringToAssetType(const std::string& str)
@@ -32,6 +33,8 @@ namespace Perplex
 			return AssetType::FontAsset;
 		else if (str == "AudioAsset")
 			return AssetType::AudioAsset;
+		else if (str == "AngelScriptAsset")
+			return AssetType::AngelScriptAsset;
 
 		HW_CORE_ERROR("{0} is not a valid AssetType!", str);
 

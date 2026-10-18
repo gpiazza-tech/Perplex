@@ -142,6 +142,7 @@ namespace Perplex
 		}
 
 		// Script Widgets
+		
 		auto scripts = scene->View<ScriptComponent>();
 		for (auto handle : scripts)
 		{
@@ -159,19 +160,20 @@ namespace Perplex
 			auto& script = scripts.get<ScriptComponent>(handle);
 			for (const auto& property : script.Properties)
 			{
-				if (property.GetType() == PerplexTypes::Bounds)
+				if (property.Type == "Bounds")
 				{
-					Bounds bounds{ property.GetValue<Bounds>() };
-					pxr::Renderer::DrawBox(glm::vec2{ bounds.CenterX, bounds.CenterY } + widgetOffset, { bounds.BoundsX, bounds.BoundsY });
+					Bounds bounds = *(Bounds*)property.Data.data();
+					pxr::Renderer::DrawBox(bounds.Center + widgetOffset, bounds.Extents);
 				}
 
-				else if (property.GetType() == PerplexTypes::Radius)
+				else if (property.Type == "Radius")
 				{
-					Radius radius{ property.GetValue<Radius>() };
+					Radius radius = *(Radius*)property.Data.data();
 					pxr::Renderer::DrawCircle(glm::vec2{ radius.CenterX, radius.CenterY } + widgetOffset, radius.Radius, radius.Radius);
 				}
 			}
 		}
+		
 	}
 
 	void SceneRenderer::RenderEditor(Ref<Scene> scene, const EditorCamera& camera)

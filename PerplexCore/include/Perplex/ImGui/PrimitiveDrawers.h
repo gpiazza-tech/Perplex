@@ -1,23 +1,25 @@
 #pragma once
 
 #include "GuiSelection.h"
-#include <Perplex/Assets/Asset.h>
-#include <Perplex/Assets/AssetType.h>
 
 #include <glm/fwd.hpp>
 
 #include <string>
-#include <memory>
 #include <vector>
-#include <type_traits>
-#include <format>
 
 namespace Perplex
 {
-	bool Draw(int& value, const char* label = "", int min = 0, int max = 0);
+	bool Draw(bool& value, const char* label = "");
+	bool Draw(int8_t& value, const char* label = "", int min = 0, int max = 0);
+	bool Draw(int16_t& value, const char* label = "", int min = 0, int max = 0);
+	bool Draw(int32_t& value, const char* label = "", int min = 0, int max = 0);
+	bool Draw(int64_t& value, const char* label = "", int min = 0, int max = 0);
+	bool Draw(uint8_t& value, const char* label = "", int min = 0, int max = 0);
+	bool Draw(uint16_t& value, const char* label = "", int min = 0, int max = 0);
+	bool Draw(uint32_t& value, const char* label = "", int min = 0, int max = 0);
+	bool Draw(uint64_t& value, const char* label = "", int min = 0, int max = 0);
 	bool Draw(float& value, const char* label = "");
 	bool Draw(double& value, const char* label = "");
-	bool Draw(bool& value, const char* label = "");
 	bool Draw(std::string& value, const char* label = "", bool editable = true);
 	bool Draw(glm::vec2& value, const char* label = "");
 	bool Draw(glm::vec3& value, const char* label = "");

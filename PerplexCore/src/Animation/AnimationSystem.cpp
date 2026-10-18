@@ -20,6 +20,8 @@ namespace Perplex
 
 	void AnimationSystem::OnSceneUpdate(Timestep ts)
 	{
+		HW_PROFILE_FUNCTION();
+
 		for (auto& [uuid, instance] : m_AnimatorMap)
 		{
 			Entity entity = m_Scene->GetEntity(uuid);

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Perplex/Angel/AngelEngine.h>
-#include <Perplex/Scripting/ScriptProperty.h>
+#include <Perplex/Angel/AngelProperty.h>
 
 #include <string>
 #include <type_traits>
@@ -14,6 +14,7 @@ class asIScriptFunction;
 namespace Perplex
 {
 	class AngelObject;
+	struct AngelProperty;
 	class Entity;
 
 	class AngelModule
@@ -53,9 +54,7 @@ namespace Perplex
 			m_Engine->SetObject(obj);
 
 			[&] <std::size_t... Is>(std::index_sequence<Is...>) {
-
 				(m_Engine->SetArg(Is, args), ...);
-
 			}(std::make_index_sequence<sizeof...(Args)>());
 
 			m_Engine->Execute();
@@ -64,23 +63,23 @@ namespace Perplex
 				return m_Engine->GetReturn<ReturnType>();
 		}
 
-		AngelObject CreateObject(Entity entity);
-		AngelObject CreateObject(const std::string& className, Entity entity);
+		AngelObject CreateObject(Entity entity, const std::vector<AngelProperty>& properties);
+		AngelObject CreateObject(const std::string& className, Entity entity, const std::vector<AngelProperty>& properties);
 
 		asIScriptFunction* GetMethod(const std::string& className, const std::string& funcName);
 
 		AngelEngine& Engine() { return *m_Engine; }
 		const std::string& Name() { return m_Name; }
-		const std::vector<ScriptProperty>& Properties() { return m_Properties; }
+		const std::vector<AngelProperty>& Properties() { return m_Properties; }
 	private:
-		AngelModule(asIScriptModule* mod, AngelEngine* ctx, const std::string& name);
+		AngelModule(asIScriptModule* mod, AngelEngine* ctx, const std::string& name, const std::vector<AngelProperty>& properties);
 
 		asIScriptFunction* GetFunctionByName(const std::string& funcName);
 	private:
 		asIScriptModule* m_Module;
 		AngelEngine* m_Engine;
 		std::string m_Name;
-		std::vector<ScriptProperty> m_Properties;
+		std::vector<AngelProperty> m_Properties;
 
 		friend class AngelEngine;
 	};

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Perplex/Parsing/Parser.h>
+
 #include <string>
 #include <type_traits>
 #include <bit>
@@ -7,6 +9,7 @@
 class asIScriptEngine;
 class asIScriptContext;
 class asIScriptFunction;
+class asITypeInfo;
 struct asSFuncPtr;
 
 namespace Perplex
@@ -88,9 +91,16 @@ namespace Perplex
 
 		void SetObject(void* obj);
 
-		asIScriptContext* GetContext() { return m_Context; }
+		template<typename T>
+		int GetTypeID()
+		{
+			std::string_view typeName = GetTypeName<T>();
+			return GetTypeIDByName(typeName);
+		}
+		int GetTypeIDByName(const char* typeName);
+		asITypeInfo* GetTypeInfoByName(const char* typeName);
 
-		static AngelEngine& Get() { static AngelEngine engine; return engine; }
+		asIScriptContext* GetContext() { return m_Context; }
 	private:
 		void SetArgByte(int arg, uint8_t val);
 		void SetArgWord(int arg, uint16_t val);

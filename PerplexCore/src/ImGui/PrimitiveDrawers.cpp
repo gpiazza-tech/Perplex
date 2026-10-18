@@ -14,9 +14,49 @@ namespace Perplex
 	constexpr float min = 0.0f;
 	constexpr float max = 0.0f;
 
-	bool Draw(int& value, const char* label, int min, int max)
+	bool Draw(bool& value, const char* label)
+	{
+		return ImGui::Checkbox(label, &value);
+	}
+
+	bool Draw(int8_t& value, const char* label, int min, int max)
+	{
+		return ImGui::DragScalar(label, ImGuiDataType_S8, &value, speed, &min, &max);
+	}
+
+	bool Draw(int16_t& value, const char* label, int min, int max)
+	{
+		return ImGui::DragScalar(label, ImGuiDataType_S16, &value, speed, &min, &max);
+	}
+
+	bool Draw(int32_t& value, const char* label, int min, int max)
 	{
 		return ImGui::DragInt(label, &value, speed, min, max);
+	}
+
+	bool Draw(int64_t& value, const char* label, int min, int max)
+	{
+		return ImGui::DragScalar(label, ImGuiDataType_S64, &value, speed, &min, &max);
+	}
+
+	bool Draw(uint8_t& value, const char* label, int min, int max)
+	{
+		return ImGui::DragScalar(label, ImGuiDataType_U8, &value, speed, &min, &max);
+	}
+
+	bool Draw(uint16_t& value, const char* label, int min, int max)
+	{
+		return ImGui::DragScalar(label, ImGuiDataType_U16, &value, speed, &min, &max);
+	}
+
+	bool Draw(uint32_t& value, const char* label, int min, int max)
+	{
+		return ImGui::DragScalar(label, ImGuiDataType_U32, &value, speed, &min, &max);
+	}
+
+	bool Draw(uint64_t& value, const char* label, int min, int max)
+	{
+		return ImGui::DragScalar(label, ImGuiDataType_U64, &value, speed, &min, &max);
 	}
 
 	bool Draw(float& value, const char* label)
@@ -30,11 +70,6 @@ namespace Perplex
 		constexpr double stepFast = 0.0;
 
 		return ImGui::InputDouble(label, &value, step, stepFast, format);
-	}
-
-	bool Draw(bool& value, const char* label)
-	{
-		return ImGui::Checkbox(label, &value);
 	}
 
 	bool Draw(std::string& value, const char* label, bool editable)

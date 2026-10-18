@@ -13,5 +13,8 @@ namespace Perplex
 		static bool TryCreateDirectories(const std::filesystem::path& directory);
 
 		static std::filesystem::path GameRootDirectory();
+
+		static std::string LoadTextFile(const std::filesystem::path& directory);
+		static void SaveTextFile(const std::filesystem::path& directory, const std::string& text);
 	};
 }

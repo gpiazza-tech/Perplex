@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdlib.h>
+#include <glm/fwd.hpp>
 
 typedef struct Vec2
 {
@@ -60,10 +61,8 @@ static inline Vec2 Vec2_Create(float x, float y)
 
 typedef struct Bounds
 {
-	float CenterX;
-	float CenterY;
-	float BoundsX;
-	float BoundsY;
+	glm::vec2 Center;
+	glm::vec2 Extents;
 } Bounds;
 
 typedef struct Radius
@@ -95,14 +94,6 @@ static inline int RandomInt()
 static inline int RandomIntRange(float min, float max)
 {
 	return (int)(RandomFloat() * (max - min) + min);
-}
-
-static inline Vec2 RandomPointInBounds(const Bounds* bounds)
-{
-	Vec2 point;
-	point.x = RandomFloatRange(bounds->CenterX - bounds->BoundsX, bounds->CenterX + bounds->BoundsX);
-	point.y = RandomFloatRange(bounds->CenterY - bounds->BoundsY, bounds->CenterY + bounds->BoundsY);
-	return point;
 }
 
 static inline float Lerp(float a, float b, float t)

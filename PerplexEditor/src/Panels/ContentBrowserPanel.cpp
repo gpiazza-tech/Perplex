@@ -85,10 +85,11 @@ namespace Perplex
 					std::string fileName = templatePath.stem().string();
 
 					if (ImGui::MenuItem(fileName.c_str()))
-						m_RenameFilePopup.Open(fileName, [templatePath, currentDirectory](const std::string& newStr)
+						m_RenameFilePopup.Open(fileName, [templatePath, currentDirectory](const std::string& name)
 							{
-								fs::path newFileDir = currentDirectory / (newStr + templatePath.extension().string());
-								fs::copy_file(templatePath, newFileDir);
+								std::string content = FileIO::LoadTextFile(templatePath);
+								ReplaceAll(content, "{{FILENAME}}", name);
+								FileIO::SaveTextFile(currentDirectory / (name + templatePath.extension().string()), content);
 							});
 				}
 

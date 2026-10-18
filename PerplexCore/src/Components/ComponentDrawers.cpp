@@ -8,7 +8,11 @@
 #include <Perplex/ImGui/PrimitiveDrawers.h>
 #include <Perplex/ImGui/PerplexDrawers.h>
 #include <Perplex/Assets/AssetType.h>
-#include <Perplex/Scripting/ScriptData.h>
+#include <Perplex/Angel/AngelModule.h>
+#include <Perplex/Angel/AngelProperty.h>
+#include <Perplex/Perpixel/PerpixelSpawnShape.h>
+#include <Perplex/Text/Alignment.h>
+#include <c/perplex_math.h>
 #include <pxr/pxr.h>
 
 #include <imgui.h>
@@ -16,7 +20,8 @@
 
 #include <string>
 #include <format>
-#include <Perplex/Angel/AngelModule.h>
+#include <climits>
+#include <vector>
 
 namespace Perplex
 {
@@ -165,12 +170,12 @@ namespace Perplex
 
 		if (component.Size() == 1)
 		{
-			std::vector<ScriptProperty>& properties = component.At(0).Properties;
+			std::vector<AngelProperty>& properties = component.At(0).Properties;
 
 			for (auto& property : properties)
 			{
-				ImGui::PushID(property.GetPtr());
-				property.DrawGui();
+				ImGui::PushID(property.Name.c_str());
+				DrawAngelProperty(property);
 				ImGui::PopID();
 			}
 		}
@@ -223,6 +228,8 @@ namespace Perplex
 	void Draw(GuiSelection<BoxColliderComponent> component)
 	{
 		DrawSelection(PERPLEX_SUBSELECTION(component, Scale), "Scale");
+		DrawSelection(PERPLEX_SUBSELECTION(component, IsSensor), "Is Sensor");
+		DrawSelection(PERPLEX_SUBSELECTION(component, IsBullet), "Is Bullet");
 	}
 
 	void Draw(GuiSelection<PhysicsBodyComponent> component)

@@ -2,9 +2,15 @@
 
 #include <string>
 #include <vector>
+#include <type_traits>
 
 namespace Perplex
 {
+	inline constexpr bool Contains(std::string_view str, std::string_view pattern)
+	{
+		return str.find(pattern.data()) != std::string::npos;
+	}
+
 	inline constexpr std::string_view Between(std::string_view str, char start, char end)
 	{
 		size_t startPos = str.find(start);
@@ -85,6 +91,8 @@ namespace Perplex
 		std::string_view funcSig = __FUNCSIG__;
 		std::string_view nameAndParameters = After(funcSig, " __cdecl ");
 		std::string_view cName = Between(nameAndParameters, '<', '>');
+		if constexpr (std::is_fundamental_v<T>)
+			return cName;
 		std::string_view fullName = After(cName, " ");
 		std::string_view name = AfterLast(fullName, "::");
 		return name;

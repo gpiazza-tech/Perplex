@@ -9,10 +9,6 @@
 #include <Perplex/Core/Core.h>
 #include <Perplex/Core/Timestep.h>
 #include <Perplex/Core/UUID.h>
-#include <Perplex/Scripting/ScriptData.h>
-#include <Perplex/Scripting/ScriptInstance.h>
-#include <Perplex/Scripting/ScriptProperty.h>
-#include <Perplex/Perpixel/PerpixelSystem.h>
 
 #include <memory>
 #include <vector>
@@ -22,20 +18,6 @@
 namespace Perplex
 {
 	Interpreter::Interpreter(Ref<Scene> scene) : SceneSystem(scene) {}
-
-	static void SyncProperties(ScriptComponent& scriptComponent)
-	{
-		std::vector<ScriptProperty> oldProperties = scriptComponent.Properties;
-		scriptComponent.Properties = scriptComponent.ScriptAsset.GetData<ScriptData>()->Properties;
-
-		for (auto& oldProperty : oldProperties)
-		{
-			for (auto& newProperty : scriptComponent.Properties)
-			{
-				newProperty.TrySync(oldProperty);
-			}
-		}
-	}
 
 	void Interpreter::OnSceneStart()
 	{
@@ -56,6 +38,8 @@ namespace Perplex
 
 	void Interpreter::OnSceneUpdate(Timestep ts)
 	{
+		HW_PROFILE_FUNCTION();
+
 		// Call Update
 		auto view = m_Scene->View<ScriptComponent>();
 		for (auto e : view)
@@ -71,7 +55,7 @@ namespace Perplex
 				{
 					Ref<AngelModule> angelModule = sc.ScriptAsset.GetData<AngelModule>();
 					if (angelModule)
-						m_ScriptInstanceMap.emplace(entityID, angelModule->CreateObject(entity));
+						m_ScriptInstanceMap.emplace(entityID, angelModule->CreateObject(entity, sc.Properties));
 					m_ScriptInstanceMap.at(entityID).Call<void>("Start");
 				}
 				m_ScriptInstanceMap.at(entityID).Call<void>("Update", ts.GetSeconds());
@@ -104,7 +88,10 @@ namespace Perplex
 		UUID entityID = entity.GetUUID();
 
 		if (m_ScriptInstanceMap.contains(entityID))
+		{
+			m_ScriptInstanceMap.at(entityID).Release();
 			m_ScriptInstanceMap.erase(entityID);
+		}
 	}
 
 	void Interpreter::OnScriptAssetReimported(Asset asset)
@@ -116,7 +103,8 @@ namespace Perplex
 
 			if ((UUID)sc.ScriptAsset == (UUID)asset)
 			{
-				SyncProperties(sc);
+				// SyncProperties(sc);
+				HW_CORE_WARN("Property syncing not implemented!");
 			}
 		}
 	}

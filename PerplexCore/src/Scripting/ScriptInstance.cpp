@@ -158,7 +158,7 @@ namespace Perplex
 
 		m_Unit.AddSymbol("Scene_PlaySound", +[](Scene* scene, const char* filepath) { scene->GetSystem<AudioSystem>().PlaySound(filepath); });
 		m_Unit.AddSymbol("Scene_StartLoop", +[](Scene* scene, const char* filepath) { return scene->GetSystem<AudioSystem>().StartLoop(filepath); });
-		m_Unit.AddSymbol("Scene_EndLoop", +[](Scene* scene, Sound* sound) { scene->GetSystem<AudioSystem>().EndLoop(sound); });
+		m_Unit.AddSymbol("Scene_EndLoop", +[](Scene* scene, Sound sound) { scene->GetSystem<AudioSystem>().EndLoop(sound); });
 
 		m_Unit.AddSymbol("Scene_GetTime", +[](Scene* scene) { return scene->GetTime(); });
 		m_Unit.AddSymbol("Scene_CameraShake", +[](Scene* scene, float trauma) { scene->CameraShake(trauma); });

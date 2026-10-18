@@ -8,4 +8,9 @@
 namespace Perplex
 {
 	AngelObject::AngelObject(asIScriptObject* obj, AngelModule* mod) : m_Object(obj), m_Module(mod) { }
+
+	void AngelObject::Release()
+	{
+		m_Object->Release();
+	}
 }

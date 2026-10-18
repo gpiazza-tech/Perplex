@@ -4,7 +4,7 @@
 
 struct ma_engine;
 struct ma_sound;
-using Sound = ma_sound;
+using Sound = ma_sound*;
 
 namespace Perplex
 {
@@ -15,8 +15,8 @@ namespace Perplex
 		~AudioEngine();
 
 		void PlaySound(const std::filesystem::path& audioFile);
-		Sound* StartLoop(const std::filesystem::path& audioFile);
-		void EndLoop(Sound* sound);
+		Sound StartLoop(const std::filesystem::path& audioFile);
+		void EndLoop(Sound sound);
 
 		void Stop();
 		void Start();

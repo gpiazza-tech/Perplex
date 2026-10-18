@@ -30,8 +30,8 @@ namespace Perplex
 		void OnComponentRemoved(Entity entity) override;
 
 		void PlaySound(const std::filesystem::path& audioFile);
-		Sound* StartLoop(const std::filesystem::path& audioFile);
-		void EndLoop(Sound* sound);
+		Sound StartLoop(const std::filesystem::path& audioFile);
+		void EndLoop(Sound sound);
 	private:
 		AudioEngine m_AudioEngine{};
 	};

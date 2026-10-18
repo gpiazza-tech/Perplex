@@ -2,6 +2,8 @@
 
 #include <Perplex/Components/Components.h>
 
+#include <pxr/pxr.h>
+
 namespace Perplex
 {
 	class Entity;

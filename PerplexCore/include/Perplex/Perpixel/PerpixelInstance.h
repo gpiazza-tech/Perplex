@@ -20,10 +20,15 @@ namespace Perplex
 		void SpawnPixel(const Pixel& pxl) { m_Pixels.emplace_back(pxl); };
 
 		const size_t GetAlivePixelCount() const;
+
+		void SetStarted(bool b) { m_Started = b; }
+		bool Started() const { return m_Started; }
 	private:
 		PerpixelShape m_SpawnShape{};
 
 		std::vector<Pixel> m_SpawnPixels{};
 		std::vector<Pixel> m_Pixels{};
+
+		bool m_Started{ false };
 	};
 }

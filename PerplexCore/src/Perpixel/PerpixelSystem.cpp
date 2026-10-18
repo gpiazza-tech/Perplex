@@ -27,7 +27,8 @@ namespace Perplex
 		if (scriptInstance)
 		{
 			std::vector<Pixel>& pixels = instance.GetPixels();
-			scriptInstance->Call<void>("PerpixelStart", pixels.data(), pixels.size());
+			for (auto& pxl : pixels)
+				scriptInstance->Call<void>("StartPerpixel", &pxl);
 		}
 	}
 
@@ -38,7 +39,8 @@ namespace Perplex
 		if (scriptInstance)
 		{
 			std::vector<Pixel>& pixels = instance.GetPixels();
-			scriptInstance->Call<void>("PerpixelUpdate", ts.GetSeconds(), pixels.data(), pixels.size());
+			for (auto& pxl : pixels)
+				scriptInstance->Call<void>("UpdatePerpixel", &pxl, ts.GetSeconds());
 		}
 	}
 
@@ -48,7 +50,7 @@ namespace Perplex
 		std::optional<AngelObject> scriptInstance = interpreter.GetInstance(entity.GetUUID());
 		if (scriptInstance)
 		{
-			scriptInstance->Call<void>("PerpixelEnd");
+			scriptInstance->Call<void>("EndPerpixel");
 		}
 	}
 
@@ -63,13 +65,13 @@ namespace Perplex
 
 			PerpixelInstance& perpixelInstance = m_PerpixelInstanceMap.at(entityID);
 			perpixelInstance.ResetPixels();
-
-			TryCallPerpixelStart(entity, perpixelInstance);
 		}
 	}
 
 	void PerpixelSystem::OnSceneUpdate(Timestep ts)
 	{
+		HW_PROFILE_FUNCTION();
+
 		if (m_Scene->IsPaused())
 			return;
 
@@ -87,6 +89,11 @@ namespace Perplex
 			const PerpixelRendererComponent& perpixelComponent = view.get<PerpixelRendererComponent>(e);
 			PerpixelInstance& perpixelInstance = m_PerpixelInstanceMap.at(entityID);
 
+			if (!perpixelInstance.Started())
+			{
+				perpixelInstance.SetStarted(true);
+				TryCallPerpixelStart(entity, perpixelInstance);
+			}
 			if (perpixelInstance.GetAlivePixelCount() > 0)
 				TryCallPerpixelUpdate(ts, entity, perpixelInstance);
 			else
@@ -99,7 +106,6 @@ namespace Perplex
 
 	}
 
-
 	void PerpixelSystem::OnComponentAdded(Entity entity)
 	{
 		UUID entityID = entity.GetUUID();
@@ -110,9 +116,6 @@ namespace Perplex
 
 		perpixelInstance.SetSpawnShape(perpixelComponent.Shape);
 		perpixelInstance.ResetPixels();
-
-		if (m_Scene->IsPlaying())
-			TryCallPerpixelStart(entity, perpixelInstance);
 	}
 
 	void PerpixelSystem::OnComponentRemoved(Entity entity)

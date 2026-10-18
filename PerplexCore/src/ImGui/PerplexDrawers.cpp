@@ -1,6 +1,7 @@
 #include <Perplex/pch.h>
 #include <Perplex/ImGui/PerplexDrawers.h>
 
+#include <Perplex/Components/Components.h>
 #include <Perplex/ImGui/PrimitiveDrawers.h>
 #include <Perplex/Core/Core.h>
 #include <Perplex/Core/Log.h>
@@ -8,6 +9,8 @@
 #include <Perplex/Assets/Asset.h>
 #include <Perplex/Assets/AssetType.h>
 #include <Perplex/Scene/Entity.h>
+#include <Perplex/Angel/AngelProperty.h>
+#include <Perplex/Angel/AngelUtils.h>
 
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -17,6 +20,7 @@
 #include <climits>
 #include <string>
 #include <vector>
+#include <cstdint>
 
 namespace Perplex
 {
@@ -70,7 +74,7 @@ namespace Perplex
 				{
 					HW_CORE_WARN("File is not a valid Perplex Asset!");
 				}
-				else if (payloadAsset->GetType() != type)
+				else if (type != AssetType::Asset && payloadAsset->GetType() != type)
 				{
 					HW_CORE_WARN("{0} does not match the field's asset type!", payloadAsset->GetName().string());
 				}
@@ -218,6 +222,54 @@ namespace Perplex
 		}
 
 		return changed;
+	}
+
+	bool DrawAngelProperty(AngelProperty& value)
+	{
+		if (value.Type == "" || value.Name == "" || value.Data.size() == 0)
+			return false;
+
+		if (value.Type == PX_TYPESTR_VOID)
+			HW_CORE_ASSERT(false, "Cannot draw void property!");
+		if (value.Type == PX_TYPESTR_BOOL)
+			return Draw(*(bool*)value.Data.data(), value.Name.c_str());
+		if (value.Type == PX_TYPESTR_INT8)
+			return Draw(*(int8_t*)value.Data.data(), value.Name.c_str());
+		if (value.Type == PX_TYPESTR_INT16)
+			return Draw(*(int16_t*)value.Data.data(), value.Name.c_str());
+		if (value.Type == PX_TYPESTR_INT32)
+			return Draw(*(int32_t*)value.Data.data(), value.Name.c_str());
+		if (value.Type == PX_TYPESTR_INT64)
+			return Draw(*(int64_t*)value.Data.data(), value.Name.c_str());
+		if (value.Type == PX_TYPESTR_UINT8)
+			return Draw(*(uint8_t*)value.Data.data(), value.Name.c_str());
+		if (value.Type == PX_TYPESTR_UINT16)
+			return Draw(*(uint16_t*)value.Data.data(), value.Name.c_str());
+		if (value.Type == PX_TYPESTR_UINT32)
+			return Draw(*(uint32_t*)value.Data.data(), value.Name.c_str());
+		if (value.Type == PX_TYPESTR_UINT64)
+			return Draw(*(uint64_t*)value.Data.data(), value.Name.c_str());
+		if (value.Type == PX_TYPESTR_FLOAT)
+			return Draw(*(float*)value.Data.data(), value.Name.c_str());
+		if (value.Type == PX_TYPESTR_DOUBLE)
+			return Draw(*(double*)value.Data.data(), value.Name.c_str());
+		if (value.Type == "Vec2")
+			return Draw(*(glm::vec2*)value.Data.data(), value.Name.c_str());
+		if (value.Type == "Vec3")
+			return Draw(*(glm::vec3*)value.Data.data(), value.Name.c_str());
+		if (value.Type == "Vec4")
+			return Draw(*(glm::vec4*)value.Data.data(), value.Name.c_str());
+		if (value.Type == "Bounds")
+			return Draw(*(Bounds*)value.Data.data(), value.Name.c_str());
+		if (value.Type == "Radius")
+			return Draw(*(Radius*)value.Data.data(), value.Name.c_str());
+		if (value.Type == "Asset")
+			return DrawAssetField(value.Name.c_str(), *(Asset*)value.Data.data(), AssetType::Asset);
+		if (value.Type == "PrefabAsset")
+			return DrawAssetField(value.Name.c_str(), *(Asset*)value.Data.data(), AssetType::PrefabAsset);
+
+		HW_CORE_ASSERT(false, "Cannot draw property!");
+		return false;
 	}
 
 	bool DrawAssetVector(std::vector<Asset>& vec, const char* label, AssetType assetType)

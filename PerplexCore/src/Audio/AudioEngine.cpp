@@ -51,7 +51,7 @@ namespace Perplex
 		}
 	}
 
-	Sound* AudioEngine::StartLoop(const fs::path& audioFile)
+	Sound AudioEngine::StartLoop(const fs::path& audioFile)
 	{
 		fs::path absPath = Application::Get().GetGame().AssetsDirectory / audioFile;
 
@@ -79,7 +79,7 @@ namespace Perplex
 		return sound;
 	}
 
-	void AudioEngine::EndLoop(Sound* sound)
+	void AudioEngine::EndLoop(Sound sound)
 	{
 		ma_sound_uninit(sound);
 		delete sound;

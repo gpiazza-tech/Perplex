@@ -43,12 +43,12 @@ namespace Perplex
 		m_AudioEngine.PlaySound(audioFile);
 	}
 
-	Sound* AudioSystem::StartLoop(const std::filesystem::path& audioFile)
+	Sound AudioSystem::StartLoop(const std::filesystem::path& audioFile)
 	{
 		return m_AudioEngine.StartLoop(audioFile);
 	}
 
-	void AudioSystem::EndLoop(Sound* sound)
+	void AudioSystem::EndLoop(Sound sound)
 	{
 		m_AudioEngine.EndLoop(sound);
 	}

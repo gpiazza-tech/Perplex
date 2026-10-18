@@ -62,7 +62,11 @@ namespace Perplex
 				std::vector<Entity> selection;
 
 				for (auto& node : m_SelectedNodes)
-					selection.emplace_back(scene->GetEntity(node));
+				{
+					Entity nodeEntity = scene->GetEntity(node);
+					if (nodeEntity)
+						selection.emplace_back(scene->GetEntity(node));
+				}
 
 				DrawComponents(selection);
 			}

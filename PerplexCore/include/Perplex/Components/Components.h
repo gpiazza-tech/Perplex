@@ -3,6 +3,7 @@
 #include <Perplex/Core/UUID.h>
 #include <Perplex/Assets/Asset.h>
 #include <Perplex/Scripting/ScriptData.h>
+#include <Perplex/Angel/AngelProperty.h>
 #include <Perplex/Perpixel/PerpixelSpawnShape.h>
 #include <Perplex/Text/Alignment.h>
 #include <pxr/pxr.h>
@@ -181,17 +182,12 @@ namespace Perplex
 
 	struct ScriptComponent
 	{
-		Asset ScriptAsset;
-		std::vector<ScriptProperty> Properties;
+		Asset ScriptAsset{};
+		std::vector<AngelProperty> Properties{};
 		bool AlwaysReceiveUpdates{ false };
 
-		ScriptComponent()
-			: ScriptAsset(Asset()), Properties(std::vector<ScriptProperty>())
-		{ }
+		ScriptComponent() = default;
 		ScriptComponent(const ScriptComponent& other) = default;
-		ScriptComponent(const std::filesystem::path& filepath)
-			: ScriptAsset(Asset(filepath)), Properties(ScriptAsset.GetData<ScriptData>()->Properties)
-		{ }
 	};
 
 	struct PerpixelRendererComponent
@@ -206,6 +202,8 @@ namespace Perplex
 	struct BoxColliderComponent
 	{
 		glm::vec2 Scale{ 1.0f, 1.0f };
+		bool IsSensor{ false };
+		bool IsBullet{ false };
 
 		BoxColliderComponent() = default;
 		BoxColliderComponent(const BoxColliderComponent&) = default;

@@ -20,8 +20,8 @@ namespace Perplex
 	class Scene;
 	class Entity;
 	
-	void HitEnter(Ref<Scene> scene, UUID first, UUID second);
-	void HitExit(Ref<Scene> scene, UUID first, UUID second);
+	void HitEnter(Ref<Scene> scene, UUID first, UUID second, glm::vec2 point);
+	void HitExit(Ref<Scene> scene, UUID first, UUID second, glm::vec2 point);
 
 	class Simulator : SceneSystem
 	{

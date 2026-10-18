@@ -4,6 +4,10 @@
 #include <Perplex/Components/Components.h>
 #include <Perplex/Scene/EntityNode.h>
 #include <Perplex/Perpixel/PerpixelSpawnShape.h>
+#include <Perplex/Angel/AngelProperty.h>
+#include <Perplex/Serialization/JsonHelper.h>
+#include <Perplex/Text/Alignment.h>
+#include <c/perplex_math.h>
 
 namespace Perplex
 {
@@ -37,10 +41,11 @@ namespace Perplex
 		Postprocessing, Bloom, BloomThreshold, BloomFilterRadius, Tonemapping, Pixelate)
 
 	// Script
+	PERPLEX_DEFINE_JSON_STRUCT(AngelProperty, Name, Type, Data)
 	PERPLEX_DEFINE_JSON_STRUCT(ScriptComponent, ScriptAsset, Properties, AlwaysReceiveUpdates)
 
 	// Box Collider
-	PERPLEX_DEFINE_JSON_STRUCT(BoxColliderComponent, Scale)
+	PERPLEX_DEFINE_JSON_STRUCT(BoxColliderComponent, Scale, IsSensor, IsBullet)
 
 	// Physics Body
 	PERPLEX_DEFINE_JSON_STRUCT(PhysicsBodyComponent, GravityScale, Density, Friction, LockRotation)

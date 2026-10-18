@@ -8,7 +8,7 @@
 #include <Perplex/Components/Components.h>
 #include <Perplex/Core/Timestep.h>
 #include <Perplex/Scripting/Interpreter.h>
-#include <Perplex/Scripting/ScriptInstance.h>
+#include <Perplex/Physics/HitInfo.h>
 
 #include <glm/fwd.hpp>
 #include <box2d/box2d.h>
@@ -62,9 +62,12 @@ namespace Perplex
 		b2BodyDef bodyDef = b2DefaultBodyDef();
 		b2Polygon dynamicBox = b2MakeBox(halfSize.x, halfSize.y);
 		b2ShapeDef shapeDef = b2DefaultShapeDef();
+		shapeDef.isSensor = collider.IsSensor;
 		shapeDef.enableContactEvents = true;
+		shapeDef.enableSensorEvents = true;
 
 		bodyDef.position = { globalTransform.Position.x, globalTransform.Position.y };
+		bodyDef.isBullet = collider.IsBullet;
 
 		Box2DUserData* userData = new Box2DUserData{};
 		userData->OldBox2DPosition = { globalTransform.Position.x, globalTransform.Position.y };
@@ -113,6 +116,8 @@ namespace Perplex
 
 	void Simulator::OnSceneUpdate(Timestep ts)
 	{
+		HW_PROFILE_FUNCTION();
+
 		// TODO: this function should be called on a separate thread with
 		//		a consitent framerate!
 
@@ -183,7 +188,7 @@ namespace Perplex
 			UUID firstID = m_BodyMap.at(std::bit_cast<uint64_t>(beginEvent->shapeIdA));
 			UUID secondID = m_BodyMap.at(std::bit_cast<uint64_t>(beginEvent->shapeIdB));
 
-			HitEnter(m_Scene, firstID, secondID);
+			HitEnter(m_Scene, firstID, secondID, glm::vec2{});
 		}
 		for (int i = 0; i < contactEvents.endCount; ++i)
 		{
@@ -195,7 +200,31 @@ namespace Perplex
 				UUID firstID = m_BodyMap.at(std::bit_cast<uint64_t>(endEvent->shapeIdA));
 				UUID secondID = m_BodyMap.at(std::bit_cast<uint64_t>(endEvent->shapeIdB));
 
-				HitExit(m_Scene, firstID, secondID);
+				HitExit(m_Scene, firstID, secondID, glm::vec2{});
+			}
+		}
+
+		b2SensorEvents sensorEvents = b2World_GetSensorEvents(WORLD);
+		for (int i = 0; i < sensorEvents.beginCount; ++i)
+		{
+			b2SensorBeginTouchEvent* beginEvent = sensorEvents.beginEvents + i;
+
+			UUID firstID = m_BodyMap.at(std::bit_cast<uint64_t>(beginEvent->sensorShapeId));
+			UUID secondID = m_BodyMap.at(std::bit_cast<uint64_t>(beginEvent->visitorShapeId));
+
+			HitEnter(m_Scene, firstID, secondID, glm::vec2{});
+		}
+		for (int i = 0; i < sensorEvents.endCount; ++i)
+		{
+			b2SensorEndTouchEvent* endEvent = sensorEvents.endEvents + i;
+
+			// Use b2Shape_IsValid because a shape may have been destroyed
+			if (b2Shape_IsValid(endEvent->sensorShapeId) && b2Shape_IsValid(endEvent->visitorShapeId))
+			{
+				UUID firstID = m_BodyMap.at(std::bit_cast<uint64_t>(endEvent->sensorShapeId));
+				UUID secondID = m_BodyMap.at(std::bit_cast<uint64_t>(endEvent->visitorShapeId));
+
+				HitExit(m_Scene, firstID, secondID, glm::vec2{});
 			}
 		}
 	}
@@ -254,6 +283,13 @@ namespace Perplex
 		// Entity should always have a BoxColliderComponent
 		const BoxColliderComponent& collider = entity.GetComponent<BoxColliderComponent>();
 
+		if (b2Body_IsBullet(bodyId) != collider.IsBullet)
+			b2Body_SetBullet(bodyId, collider.IsBullet);
+		if (b2Shape_IsSensor(shapeId) != collider.IsSensor)
+		{
+			HW_CORE_WARN("Collider property 'IsSensor' cannot be changed during runtime!");
+		}
+
 		if (entity.HasComponent<PhysicsBodyComponent>())
 		{
 			const PhysicsBodyComponent& bodyComp = entity.GetComponent<PhysicsBodyComponent>();
@@ -281,7 +317,7 @@ namespace Perplex
 		}
 	}
 
-	void HitEnter(Ref<Scene> scene, UUID first, UUID second)
+	void HitEnter(Ref<Scene> scene, UUID first, UUID second, glm::vec2 point)
 	{
 		Interpreter& interpreter = scene->GetSystem<Interpreter>();
 
@@ -289,12 +325,12 @@ namespace Perplex
 		Entity firstEntity = scene->GetEntity(first);
 
 		std::optional<AngelObject> secondInstance = interpreter.GetInstance(second);
-		Entity secondEntity = scene->GetEntity(first);
+		Entity secondEntity = scene->GetEntity(second);
 
 		if (firstInstance)
-			firstInstance->Call<void>("HitEnter", secondEntity);
+			firstInstance->Call<void>("HitEnter", HitInfo{ secondEntity, point });
 		if (secondInstance)
-			secondInstance->Call<void>("HitEnter", firstEntity);
+			secondInstance->Call<void>("HitEnter", HitInfo{ firstEntity, point });
 	}
 
 	float Simulator::GetTimescale() const
@@ -307,7 +343,7 @@ namespace Perplex
 		m_Timescale = timescale;
 	}
 
-	void HitExit(Ref<Scene> scene, UUID first, UUID second)
+	void HitExit(Ref<Scene> scene, UUID first, UUID second, glm::vec2 point)
 	{
 		Interpreter& interpreter = scene->GetSystem<Interpreter>();
 
@@ -315,11 +351,11 @@ namespace Perplex
 		Entity firstEntity = scene->GetEntity(first);
 
 		std::optional<AngelObject> secondInstance = interpreter.GetInstance(second);
-		Entity secondEntity = scene->GetEntity(first);
+		Entity secondEntity = scene->GetEntity(second);
 
 		if (firstInstance)
-			firstInstance->Call<void>("HitExit", secondEntity);
+			firstInstance->Call<void>("HitExit", HitInfo{ secondEntity, point });
 		if (secondInstance)
-			secondInstance->Call<void>("HitExit", firstEntity);
+			secondInstance->Call<void>("HitExit", HitInfo{ firstEntity, point });
 	}
 }

@@ -7,6 +7,7 @@
 #include <optional>
 #include <string_view>
 #include <system_error>
+#include <string>
 #include <fstream>
 
 namespace fs = std::filesystem;
@@ -39,5 +40,20 @@ namespace Perplex
 	std::filesystem::path FileIO::GameRootDirectory()
 	{
 		return Application::Get().GetGame().RootDirectory;
+	}
+
+	std::string FileIO::LoadTextFile(const std::filesystem::path& directory)
+	{
+		std::ifstream ifs(directory.string());
+		std::ostringstream oss;
+		oss << ifs.rdbuf();
+
+		return oss.str();
+	}
+
+	void FileIO::SaveTextFile(const std::filesystem::path& directory, const std::string& text)
+	{
+		std::ofstream ofs(directory.string());
+		ofs << text;
 	}
 }

@@ -33,9 +33,9 @@ namespace Perplex
         m_SceneRenderer.Render(SceneManager::Get().ActiveScene());
         m_SceneRenderer.DrawToScreen();
 
-        auto [mouseX, mouseY] = Input::GetMousePosition();
-        glm::vec2 mousePos = m_SceneRenderer.ScreenToWorldPosition({ mouseX, mouseY });
-        Input::SetMouseWorldPosition({ mousePos.x, mousePos.y });
+        glm::vec2 mousePos = Input::GetMousePosition();
+        glm::vec2 mouseWorldPos = m_SceneRenderer.ScreenToWorldPosition(mousePos);
+        Input::SetMouseWorldPosition(mouseWorldPos);
 
         SceneManager::Get().OnUpdateEnd();
     }
